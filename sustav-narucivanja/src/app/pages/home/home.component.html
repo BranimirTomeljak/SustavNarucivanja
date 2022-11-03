@@ -1,79 +1,22 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Sustav naručivanja</title>
-    <style type="text/css"></style>
-  </head>
-  <body>
-    <div id="page">
-      <app-main-navigation></app-main-navigation>
+<body>
+  <app-main-navigation></app-main-navigation>
 
-      <div class="feature">
-        <div class="feature-inner">
-          <h1>Naslov</h1>
-        </div>
-      </div>
+  <h1>Naslov</h1>
 
-      <div id="content">
-        <div id="content-inner">
-          <main id="contentbar">
-            <div class="article">
-              <!--random generiranje-->
-              <p>
-                <script>
-                  generateText(3);
-                </script>
-              </p>
-            </div>
-          </main>
+  <p>
+    <script>
+      generateText(3);
+    </script>
+  </p>
 
-          <nav id="sidebar">
-            <div class="widget">
-              <h3>Dodajte</h3>
-              <ul>
-                <!--linkovi-->
-                <li><a href="#">Link 1</a></li>
-                <li><a href="#">Link 2</a></li>
-              </ul>
-            </div>
-          </nav>
+  <nav id="sidebar">
+    <h3>Dodajte</h3>
+    <ul>
+      <!--linkovi-->
+      <li><a href="#">Link 1</a></li>
+      <li><a href="#">Link 2</a></li>
+    </ul>
+  </nav>
 
-          <div class="clr"></div>
-        </div>
-      </div>
-
-      <div id="footerblurb">
-        <div id="footerblurb-inner">
-          <div class="column">
-            <h2><span>Nesto</span></h2>
-            <p>
-              <script>
-                generateText(2);
-              </script>
-            </p>
-          </div>
-          <div class="column">
-            <h2><span>Nesto</span></h2>
-            <p>
-              <script>
-                generateText(2);
-              </script>
-            </p>
-          </div>
-          <div class="column">
-            <h2><span>Nesto</span></h2>
-            <p>
-              <script>
-                generateText(2);
-              </script>
-            </p>
-          </div>
-
-          <div class="clr"></div>
-        </div>
-      </div>
-    </div>
-  </body>
-  <app-main-footer></app-main-footer>
-</html>
+  <app-main-footer class="footer"></app-main-footer>
+</body>
