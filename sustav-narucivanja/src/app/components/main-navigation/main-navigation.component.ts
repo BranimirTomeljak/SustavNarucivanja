@@ -5,4 +5,10 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './main-navigation.component.html',
   styleUrls: ['./main-navigation.component.scss'],
 })
-export class MainNavigationComponent {}
+export class MainNavigationComponent {
+  public links = [
+    { title: 'Home', path: '/' },
+    { title: 'Login', path: '/login' },
+    { title: 'Register', path: '/register' },
+  ];
+}

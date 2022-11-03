@@ -1,0 +1,14 @@
+@import '../../../assets/styles/variables.scss';
+
+mat-toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: $main-color;
+    color: $secondary-color;
+}
+
+button {
+    background-color: transparent;
+    color: $secondary-color;
+}
