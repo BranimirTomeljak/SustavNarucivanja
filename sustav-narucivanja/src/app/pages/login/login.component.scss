@@ -3,9 +3,8 @@
 .footer {
     position: absolute;
     bottom: 0;
-    width: 100%;
+    width: 100vw;
     height: 2.5rem;
-    padding: 10px;
 }
 
 .mat-form-field {
@@ -16,7 +15,6 @@
   .register {
     color: $main-color;
   }
-
 
   mat-card-title,
   mat-card-content {
