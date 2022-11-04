@@ -6,18 +6,29 @@
   <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
     <mat-form-field>
       <mat-label>Email</mat-label>
-      <input matInput placeholder="Email" formControlName="email" />
+      <input
+        matInput
+        type="email"
+        placeholder="Email"
+        formControlName="email"
+      />
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Lozinka</mat-label>
-      <input matInput placeholder="Password" formControlName="password" />
+      <input
+        matInput
+        type="password"
+        placeholder="Password"
+        formControlName="password"
+      />
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Ponovi lozinku</mat-label>
       <input
         matInput
+        type="password"
         placeholder="Repeated Password"
         formControlName="repeatedPassword"
       />
@@ -25,23 +36,32 @@
 
     <mat-form-field>
       <mat-label>Ime</mat-label>
-      <input matInput placeholder="Name" formControlName="name" />
+      <input matInput type="text" placeholder="Name" formControlName="name" />
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Prezime</mat-label>
-      <input matInput placeholder="Surname" formControlName="surname" />
+      <input
+        matInput
+        type="text"
+        placeholder="Surname"
+        formControlName="surname"
+      />
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Spol</mat-label>
-      <input matInput placeholder="Sex" formControlName="sex" />
+      <mat-select formControlName="sex">
+        <mat-option value="musko">Muško</mat-option>
+        <mat-option value="zensko">Žensko</mat-option>
+      </mat-select>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Broj mobitela</mat-label>
       <input
         matInput
+        type="text"
         placeholder="Phone number"
         formControlName="phoneNumber"
       />

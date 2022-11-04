@@ -17,5 +17,17 @@ export class RegisterComponent {
     phoneNumber: new FormControl('', [Validators.required]),
   });
 
-  public onFormSubmit(): void {}
+  public onFormSubmit(): void {
+    const data = {
+      email: this.form.get('email')?.value,
+      password: this.form.get('password')?.value,
+      repeatedPassword: this.form.get('repeatedPassword')?.value,
+      name: this.form.get('name')?.value,
+      surname: this.form.get('surname')?.value,
+      sex: this.form.get('sex')?.value,
+      phoneNumber: this.form.get('phoneNumber')?.value,
+    };
+
+    console.log(data);
+  }
 }
