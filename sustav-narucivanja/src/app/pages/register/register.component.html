@@ -1,1 +1,58 @@
-<p>register works!</p>
+<app-main-navigation></app-main-navigation>
+
+<div class="container">
+  <h1>Registriraj se</h1>
+
+  <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput placeholder="Email" formControlName="email" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Lozinka</mat-label>
+      <input matInput placeholder="Password" formControlName="password" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Ponovi lozinku</mat-label>
+      <input
+        matInput
+        placeholder="Repeated Password"
+        formControlName="repeatedPassword"
+      />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Ime</mat-label>
+      <input matInput placeholder="Name" formControlName="name" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Prezime</mat-label>
+      <input matInput placeholder="Surname" formControlName="surname" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Spol</mat-label>
+      <input matInput placeholder="Sex" formControlName="sex" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Broj mobitela</mat-label>
+      <input
+        matInput
+        placeholder="Phone number"
+        formControlName="phoneNumber"
+      />
+    </mat-form-field>
+
+    <button type="submit" color="primary" mat-raised-button>Potvrdi</button>
+
+    <div class="info">
+      <a routerLink="/login">Već imaš račun, registriraj se!</a>
+    </div>
+  </form>
+</div>
+
+<app-main-footer class="footer"></app-main-footer>

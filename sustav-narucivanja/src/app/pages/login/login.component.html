@@ -4,19 +4,15 @@
   <mat-card-title>Prijavi se</mat-card-title>
   <mat-card-content>
     <form [formGroup]="form" (ngSubmit)="submit()">
-      <p>
-        <mat-form-field>
-          <mat-label>Email</mat-label>
-          <input matInput placeholder="Email" formControlName="email" />
-        </mat-form-field>
-      </p>
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="Email" formControlName="email" />
+      </mat-form-field>
 
-      <p>
-        <mat-form-field>
-          <mat-label>Lozinka</mat-label>
-          <input matInput placeholder="Password" formControlName="password" />
-        </mat-form-field>
-      </p>
+      <mat-form-field>
+        <mat-label>Lozinka</mat-label>
+        <input matInput placeholder="Password" formControlName="password" />
+      </mat-form-field>
 
       <p *ngIf="error" class="error">
         {{ error }}
@@ -29,12 +25,10 @@
       </mat-card-actions>
 
       <div class="info">
-        Ako nemaš svoj račun, <a href="/register"> registriraj se!</a>
+        <a href="/register">Nemaš svoj račun, registriraj se!</a>
       </div>
-      
-
     </form>
   </mat-card-content>
 </mat-card>
 
-<app-main-footer class = "footer"></app-main-footer>
+<app-main-footer class="footer"></app-main-footer>
