@@ -1,16 +1,40 @@
-<mat-card>
-  <mat-card-title>Log in</mat-card-title>
+<app-main-navigation></app-main-navigation>
 
+<mat-card>
+  <mat-card-title>Login</mat-card-title>
   <mat-card-content>
-    <form *ngIf="form" [formGroup]="form">
-      <mat-form-field>
-        <mat-label>Email</mat-label>
-        <input matInput placeholder="Email" formControlName="email" />
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Password</mat-label>
-        <input matInput placeholder="Password" formControlName="password" />
-      </mat-form-field>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <p>
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="Email" formControlName="email" />
+        </mat-form-field>
+      </p>
+
+      <p>
+        <mat-form-field>
+          <mat-label>Password</mat-label>
+          <input matInput placeholder="Password" formControlName="password" />
+        </mat-form-field>
+      </p>
+
+      <p *ngIf="error" class="error">
+        {{ error }}
+      </p>
+
+      <mat-card-actions>
+        <div class="button">
+          <button type="submit" mat-button>Login</button>
+        </div>
+      </mat-card-actions>
+
+      <div class="info">
+        Ako nemaš svoj račun, <a href="/register"> registriraj se!</a>
+      </div>
+      
+
     </form>
   </mat-card-content>
 </mat-card>
+
+<app-main-footer class = "footer"></app-main-footer>
