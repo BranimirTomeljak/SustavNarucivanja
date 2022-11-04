@@ -31,12 +31,23 @@
     background-color: red;
   }
 
-  .button {
-    display: flex;
-    justify-content: flex-end;
-  }
-
   .info {
     display: flex;
     justify-content: center;
   }
+
+.container {
+    width: 70vw;
+    margin: auto;
+    display: block;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+button {
+    margin: 20px;
+}

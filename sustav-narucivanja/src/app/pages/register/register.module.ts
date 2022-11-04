@@ -15,7 +15,6 @@ import { RegisterComponent } from './register.component';
   imports: [
     CommonModule,
     MainNavigationModule,
-    MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
