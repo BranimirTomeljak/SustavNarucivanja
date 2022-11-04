@@ -14,14 +14,13 @@ import { LoginComponent } from './login.component';
   declarations: [LoginComponent],
   imports: [
     CommonModule,
-    MatCardModule,
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MainNavigationModule,
     MainFooterModule,
-    RouterModule
+    RouterModule,
   ],
   exports: [LoginComponent],
 })

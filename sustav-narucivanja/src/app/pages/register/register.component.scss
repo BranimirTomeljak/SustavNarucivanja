@@ -1,0 +1,52 @@
+@import '../../../assets/styles/variables.scss';
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100vw;
+    height: 2.5rem;
+}
+
+.mat-form-field {
+    width: 100%;
+    min-width: 300px;
+  }
+
+  .register {
+    color: $main-color;
+  }
+
+
+  mat-card-title,
+  mat-card-content {
+    display: flex;
+    justify-content: center;
+  }
+
+  .error {
+    padding: 16px;
+    width: 300px;
+    color: white;
+    background-color: red;
+  }
+
+  .info {
+    display: flex;
+    justify-content: center;
+  }
+
+.container {
+    width: 70vw;
+    margin: auto;
+    display: block;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+button {
+    margin: 20px;
+}
