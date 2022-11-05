@@ -9,6 +9,7 @@ import { RouterModule } from '@angular/router';
 import { MainFooterModule } from 'src/app/components/main-footer/main-footer.module';
 import { MainNavigationModule } from 'src/app/components/main-navigation/main-navigation.module';
 import { LoginComponent } from './login.component';
+import {MatIconModule} from '@angular/material/icon';
 
 @NgModule({
   declarations: [LoginComponent],
@@ -16,6 +17,7 @@ import { LoginComponent } from './login.component';
     CommonModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MainNavigationModule,
