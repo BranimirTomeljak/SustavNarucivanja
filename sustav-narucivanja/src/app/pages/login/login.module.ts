@@ -19,7 +19,6 @@ import { LoginComponent } from './login.component';
     ReactiveFormsModule,
     MatFormFieldModule,
     MainNavigationModule,
-    MainFooterModule,
     RouterModule,
   ],
   exports: [LoginComponent],
