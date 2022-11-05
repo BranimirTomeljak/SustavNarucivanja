@@ -19,7 +19,6 @@ import { RegisterComponent } from './register.component';
     MatInputModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MainFooterModule,
     RouterModule,
     MatSelectModule,
   ],

@@ -1,7 +1,7 @@
 <app-main-navigation></app-main-navigation>
 
 <div class="container">
-  <h1>Registriraj se</h1>
+  <h1>Create a {{ type }}</h1>
 
   <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
     <mat-form-field>
@@ -21,16 +21,6 @@
         type="password"
         placeholder="Password"
         formControlName="password"
-      />
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Ponovi lozinku</mat-label>
-      <input
-        matInput
-        type="password"
-        placeholder="Repeated Password"
-        formControlName="repeatedPassword"
       />
     </mat-form-field>
 
@@ -68,9 +58,5 @@
     </mat-form-field>
 
     <button type="submit" color="primary" mat-raised-button>Potvrdi</button>
-
-    <div class="info">
-      <a routerLink="/login">Već imaš račun, registriraj se!</a>
-    </div>
   </form>
 </div>

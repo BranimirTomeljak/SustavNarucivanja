@@ -10,5 +10,6 @@ export class MainNavigationComponent {
     { title: 'Naslovna', path: '/' },
     { title: 'Prijava', path: '/login' },
     { title: 'Registracija', path: '/register' },
+    { title: 'Admin', path: '/admin' },
   ];
 }
