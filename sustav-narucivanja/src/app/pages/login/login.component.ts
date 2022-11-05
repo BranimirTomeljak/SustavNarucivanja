@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component,} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -7,8 +7,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-  @Output() sumbitEM = new EventEmitter();
-
+  hide = true;
   public error?: string;
 
   public form: FormGroup = new FormGroup({
@@ -16,9 +15,12 @@ export class LoginComponent {
     password: new FormControl('', [Validators.required]),
   });
 
-  submit() {
-    if (this.form.valid) {
-      this.sumbitEM.emit(this.form.value);
-    }
+  public onFormSubmit() : void {
+    const data = {
+      email: this.form.get('email')?.value,
+      password: this.form.get('password')?.value,
+    };
+
+    console.log(data);
   }
 }
