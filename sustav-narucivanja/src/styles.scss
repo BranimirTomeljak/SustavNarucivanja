@@ -2,6 +2,9 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
 
+/* angular-cli file: src/styles.css */
+@import "../node_modules/angular-calendar/css/angular-calendar.css";
+
 // /* Stilove ovdje */
 
 // html, #page { padding:0; margin:0;}
@@ -56,3 +59,5 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
 
 // /* Clear both sides to assist with div alignment  */
 // .clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';
