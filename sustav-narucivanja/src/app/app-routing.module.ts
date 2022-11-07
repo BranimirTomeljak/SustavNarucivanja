@@ -12,6 +12,8 @@ import { HomeComponent } from './pages/home/home.component';
 import { HomeModule } from './pages/home/home.module';
 import { LoginComponent } from './pages/login/login.component';
 import { LoginModule } from './pages/login/login.module';
+import { PatientComponent } from './pages/patient/patient.component';
+import { PatientModule } from './pages/patient/patient.module';
 import { RegisterComponent } from './pages/register/register.component';
 import { RegisterModule } from './pages/register/register.module';
 
@@ -21,6 +23,7 @@ const routes: Routes = [
     children: [
       { path: '', component: HomeComponent },
       { path: 'admin', component: AdminComponent },
+      { path: 'patient', component: PatientComponent }
     ],
   },
   {
@@ -51,6 +54,7 @@ const routes: Routes = [
     DoctorModule,
     TechModule,
     TeamModule,
+    PatientModule
   ],
   exports: [RouterModule],
 })
