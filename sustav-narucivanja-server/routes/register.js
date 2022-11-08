@@ -4,7 +4,7 @@ var router = express.Router();
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   let jsonResponse = {
-    "email": "ante",
+    "email": req.email,
     "password": "tomeljak",
     "repeatedPassword": "ante",
     "name": "ante",
@@ -12,7 +12,8 @@ router.get('/', function(req, res, next) {
     "sex": "ante",
     "phoneNumber": "ante"
   }
-  res.json(jsonResponse);
+  console.log(req.headers); //za dobit email sa frontenda
+  res.json(req.body);
 });
 
 module.exports = router;

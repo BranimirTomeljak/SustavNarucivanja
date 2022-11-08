@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+/*router.get('/', function(req, res, next) {
   let jsonResponse = {
     "email": "ante",
     "password": "tomeljak",
@@ -13,6 +13,14 @@ router.get('/', function(req, res, next) {
     "phoneNumber": "ante"
   }
   res.json(jsonResponse);
+});*/
+
+router.post('/', function(req, res, next) {
+  const data = {
+    'email': req.headers.email,
+    'password': req.headers.password
+  }
+  res.json(data);
 });
 
 module.exports = router;
