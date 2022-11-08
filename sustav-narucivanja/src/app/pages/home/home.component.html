@@ -1,22 +1,36 @@
 <body>
   <app-main-navigation></app-main-navigation>
 
-  <h1>Dobro došli na sustav naručivanja RH</h1>
+  <h1 style="font-size: 3rem; text-align: center">
+    Dobro došli na sustav naručivanja HZZO-a
+  </h1>
 
   <p>
-    <script>
-      generateText(3);
-    </script>
+    Jedinstveni kalendar naručivanja predstavlja unaprjeđenje postojećeg sustava
+    eNaručivanja putem Centralnog zdravstvenog informacijskog sustava Republike
+    Hrvatske (CEZIH). Izmjene koje se uvode u sustav za temelj imaju povezivanje
+    bolničkih informatičkih sustava (BIS) u Jedinstveni kalendar naručivanja,
+    transparentan svim razinama zdravstvene zaštite.
   </p>
 
-  <nav id="sidebar">
-    <h3>Naručite se 0-24h</h3>
-    <ul>
-      <!--linkovi-->
-      <li><a href="#">Link 1</a></li>
-      <li><a href="#">Link 2</a></li>
-    </ul>
-  </nav>
+  <!-- <ul class="list">
+    <mat-card>
+      <button mat-raised-button color="primary" class="buttons">
+        Kalendar pregleda
+      </button>
 
+      <button mat-raised-button color="basic">Prijavite se u sustav</button>
+    </mat-card>
+  </ul> -->
+
+  <div class="img">
+    <img
+      src="assets\img\hzzo.jpg"
+      width="30%"
+      draggable="false"
+      (dragstart)="(false)"
+      class="unselectable"
+    />
+  </div>
   <app-main-footer class="footer"></app-main-footer>
 </body>
