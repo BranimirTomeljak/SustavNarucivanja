@@ -16,7 +16,7 @@ CREATE SCHEMA public;
 `
 
 
-const sql_create_patient = `CREATE TABLE patient (
+const sql_create_patient = `CREATE TABLE users (
     id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name text NOT NULL,
     surname text NOT NULL,
@@ -39,6 +39,7 @@ const sql_create_nurse = `CREATE TABLE nurse (
     name text NOT NULL UNIQUE,
     mail text NOT NULL UNIQUE
 )`;
+
 
 const sql_create_appointment = `CREATE TABLE appointment (
     id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
