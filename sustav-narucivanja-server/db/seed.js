@@ -16,7 +16,7 @@ CREATE SCHEMA public;
 `
 
 
-const sql_create_patient = `CREATE TABLE users (
+const sql_create_users = `CREATE TABLE users (
     id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name text NOT NULL,
     surname text NOT NULL,
@@ -28,30 +28,47 @@ const sql_create_patient = `CREATE TABLE users (
     doctorId int NOT NULL
 )`;
 
+const sql_create_patient = `CREATE TABLE patient (
+    nFailedAppointments INT NOT NULL,
+    id INT NOT NULL,
+    doctorid INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES users(id),
+    FOREIGN KEY (doctorid) REFERENCES doctor(id)
+)`;
+
 const sql_create_doctor = `CREATE TABLE doctor (
-    id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name text NOT NULL UNIQUE,
-    mail text NOT NULL UNIQUE
+    id INT NOT NULL,
+    teamid INT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES users(id),
+    FOREIGN KEY (teamid) REFERENCES team(id)
 )`;
 
 const sql_create_nurse = `CREATE TABLE nurse (
-    id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name text NOT NULL UNIQUE,
-    mail text NOT NULL UNIQUE
+    id INT NOT NULL,
+    teamid INT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES users(id),
+    FOREIGN KEY (teamid) REFERENCES team(id)
 )`;
 
+const sql_create_team = `CREATE TABLE team (
+    id INT NOT NULL,
+    PRIMARY KEY (id)
+)`;
 
 const sql_create_appointment = `CREATE TABLE appointment (
-    id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    patient int NOT NULL,
-    time_when DATE NOT NULL,
-    how_long int NOT NULL,
-    doctor int,
-    nurse int,
-    CONSTRAINT who CHECK ((doctor IS NULL AND nurse IS NOT NULL) OR (doctor IS NOT NULL AND nurse is NULL))
+    patientid INT NOT NULL,
+    doctorid INT,
+    nurseid INT,
+    FOREIGN KEY (patientid) REFERENCES patient(id),
+    FOREIGN KEY (doctorid) REFERENCES doctor(id),
+    FOREIGN KEY (nurseid) REFERENCES nurse(id)
 )`;
 
-const sql_insert_patient = `INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId)
+
+const sql_insert_users = `INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId)
     VALUES 
     ('Ciril', 'Tominac', 'M', '0941012013', 'CirilTominac0@gmail.com', '11112013', '2003-2-18', '1135454'),
     ('Izak', 'Maric', 'M', '0981012014', 'IzakMaric1@gmail.com', '11122014', '1932-2-1', '1135454'),
@@ -1056,40 +1073,31 @@ const sql_insert_patient = `INSERT INTO users (name, surname, sex, phoneNumber, 
     
 `;
 
-const sql_insert_doctor = `INSERT INTO doctor (
-    name, mail)
-    VALUES 
-    ('Pero', 'pero.p@gmail.com'),
-    ('Ante', 'ante.p@gmail.com'),
-    ('Iva', 'iva.p@gmail.com');
-`;
-
-const sql_insert_nurse = `INSERT INTO nurse (
-    name, mail)
-    VALUES 
-    ('Pero', 'pero.p@gmail.com'),
-    ('Ante', 'ante.p@gmail.com'),
-    ('Iva', 'iva.p@gmail.com');
-`;
 
 let table_names = [
-    "patient",
+    "users",
+    "team",
     "doctor",
     "nurse",
+    "patient",
     "appointment"
 ]
 
 let tables = [
-    sql_create_patient,
+    sql_create_users,
+    sql_create_team,
     sql_create_doctor,
     sql_create_nurse,
+    sql_create_patient,
     sql_create_appointment,
 ];
 
 let table_data = [
-    sql_insert_patient,
-    sql_insert_doctor,
-    sql_insert_nurse,
+    sql_insert_users,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
     undefined,
 ]
 
