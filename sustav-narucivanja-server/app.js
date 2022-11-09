@@ -23,6 +23,7 @@ var patientRouter = require("./routes/patient");
 var createRouter = require("./routes/create");
 var loginRouter = require("./routes/login");
 var registerRouter = require("./routes/register");
+var logoutRouter = require("./routes/logout");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -30,27 +31,23 @@ app.use(express.static(path.join(__dirname, "public")));
 //app.use(logger('dev'));
 //app.use(cookieParser());
 
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET, // Key we want to keep secret which will encrypt all of our information
+    resave: false,                      // Should we resave our session variables if nothing has changes which we dont
+    saveUninitialized: false,           // Save empty value if there is no vaue which we do not want to do
+  })
+);
+app.use(passport.initialize());         // Function inside passport which initializes passport
+app.use(passport.session());            // Store our variables to be persisted across the whole session. Works with app.use(Session) above
+app.use(flash());
+
 app.use("/admin", adminRouter);
 app.use("/patient", patientRouter);
 app.use("/create", createRouter);
 app.use("/login", loginRouter);
 app.use("/register", registerRouter);
-
-app.use(
-  session({
-    // Key we want to keep secret which will encrypt all of our information
-    secret: process.env.SESSION_SECRET,
-    // Should we resave our session variables if nothing has changes which we dont
-    resave: false,
-    // Save empty value if there is no vaue which we do not want to do
-    saveUninitialized: false,
-  })
-);
-// Funtion inside passport which initializes passport
-app.use(passport.initialize());
-// Store our variables to be persisted across the whole session. Works with app.use(Session) above
-app.use(passport.session());
-app.use(flash());
+app.use("/logout", logoutRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -66,14 +63,6 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render("error");
-});
-
-app.get('/logout', (req, res) => {
-  req.logOut(function(err){
-      if(err){ return next(err); }
-      req.flash("success_msg", "You have logged out");
-      res.redirect('/users/login');
-  });
 });
 
 function checkAuthenticated(req, res, next) {

@@ -1,9 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
-router.get("/patient", checkNotAuthenticated, (req, res) => {
-  console.log("oce to");
+router.get("/", checkNotAuthenticated, (req, res) => {
   console.log(req.isAuthenticated());
   //res.render("dashboard", { user: req.user.name });
 });

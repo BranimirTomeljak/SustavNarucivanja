@@ -5,25 +5,11 @@ const flash = require("express-flash");
 var router = express.Router();
 //import { checkAuthenticated, checkNotAuthenticated } from '../app.js';
 
-/* GET users listing. */
 router.get("/", checkAuthenticated, function (req, res, next) {
   //otic na stranicu
   //res.render ili nesto, pitat Marina kako ovo
 });
 
-/*router.post('/', function(req, res, next) {
-  const data = {
-    'mail': req.body.mail,
-    'password': req.body.password,
-    'repeatedPassword': req.body.repeatedPassword,
-    'name': req.body.name,
-    'surname': req.body.surname,
-    'sex': req.body.sex,
-    'phoneNumber': req.body.phoneNumber
-  }
-  res.json(data);
-  console.log(req.body);
-});*/
 
 router.post("/", async (req, res) => {
   let {
