@@ -51,7 +51,7 @@ const sql_create_appointment = `CREATE TABLE appointment (
     CONSTRAINT who CHECK ((doctor IS NULL AND nurse IS NOT NULL) OR (doctor IS NOT NULL AND nurse is NULL))
 )`;
 
-const sql_insert_patient = `INSERT INTO patient (name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId)
+const sql_insert_patient = `INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId)
     VALUES 
     ('Ciril', 'Tominac', 'M', '0941012013', 'CirilTominac0@gmail.com', '11112013', '2003-2-18', '1135454'),
     ('Izak', 'Maric', 'M', '0981012014', 'IzakMaric1@gmail.com', '11122014', '1932-2-1', '1135454'),
