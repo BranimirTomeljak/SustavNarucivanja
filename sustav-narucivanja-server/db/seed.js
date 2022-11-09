@@ -16,7 +16,7 @@ CREATE SCHEMA public;
 `
 
 
-const sql_create_patient = `CREATE TABLE patient (
+const sql_create_patient = `CREATE TABLE users (
     id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name text NOT NULL UNIQUE,
     email text NOT NULL UNIQUE
@@ -34,6 +34,7 @@ const sql_create_nurse = `CREATE TABLE nurse (
     email text NOT NULL UNIQUE
 )`;
 
+
 const sql_create_appointment = `CREATE TABLE appointment (
     id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     patient int NOT NULL,
@@ -44,7 +45,7 @@ const sql_create_appointment = `CREATE TABLE appointment (
     CONSTRAINT who CHECK ((doctor IS NULL AND nurse IS NOT NULL) OR (doctor IS NOT NULL AND nurse is NULL))
 )`;
 
-const sql_insert_patient = `INSERT INTO patient (name, email)
+const sql_insert_patient = `INSERT INTO users (name, email)
     VALUES 
     ('Pero', 'pero.p@gmail.com'),
     ('Ante', 'ante.p@gmail.com'),
