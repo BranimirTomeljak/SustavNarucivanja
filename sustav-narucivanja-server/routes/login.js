@@ -18,8 +18,10 @@ router.post(
   })
 );
 
-function checkAuthenticated(req, res, next) {
+function checkAuthenticated(req, res, next) { // ne ulazi uopce
+  console.log("jesan pajdo");
   if (req.isAuthenticated()) {
+    console.log("jesan pajdo");
     return res.redirect("/patient");
   }
   next();
