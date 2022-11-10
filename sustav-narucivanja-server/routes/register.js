@@ -59,6 +59,9 @@ router.post("/", async (req, res) => {
   if (password !== repeatedPassword) {
     errors.push({ message: "Passwords do not match" });
   }
+  /*if(phoneNumber.length !== 9 || phoneNumber.length !== 10) {
+    errors.push({ message: "Croatian phone number must have 9 or 10 digits" });
+  }*/
 
   if (errors.length > 0) {
     console.log(errors);
@@ -77,9 +80,8 @@ router.post("/", async (req, res) => {
         console.log(results.rows);
 
         if (results.rows.length > 0) {
-          return res.render("register", {
-            message: "mail already registered",
-          });
+          //return res.render("register", {message: "mail already registered",});
+          console.log("mail already registered");
         } else {
           pool.query(
             `INSERT INTO users (name,
