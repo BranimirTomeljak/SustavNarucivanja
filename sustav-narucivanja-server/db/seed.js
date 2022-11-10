@@ -16,7 +16,7 @@ CREATE SCHEMA public;
 `
 
 
-const sql_create_patient = `CREATE TABLE users (
+const sql_create_users = `CREATE TABLE users (
     id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name text NOT NULL,
     surname text NOT NULL,
@@ -28,30 +28,56 @@ const sql_create_patient = `CREATE TABLE users (
     doctorId int NOT NULL
 )`;
 
+const sql_create_admin = `CREATE TABLE admin (
+    id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES users(id)
+)`;
+
+const sql_create_patient = `CREATE TABLE patient (
+    nFailedAppointments INT NOT NULL,
+    id INT NOT NULL,
+    doctorid INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES users(id),
+    FOREIGN KEY (doctorid) REFERENCES doctor(id)
+)`;
+
 const sql_create_doctor = `CREATE TABLE doctor (
-    id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name text NOT NULL UNIQUE,
-    mail text NOT NULL UNIQUE
+    id INT NOT NULL,
+    teamid INT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES users(id),
+    FOREIGN KEY (teamid) REFERENCES team(id)
 )`;
 
 const sql_create_nurse = `CREATE TABLE nurse (
-    id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name text NOT NULL UNIQUE,
-    mail text NOT NULL UNIQUE
+    id INT NOT NULL,
+    teamid INT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES users(id),
+    FOREIGN KEY (teamid) REFERENCES team(id)
 )`;
 
+const sql_create_team = `CREATE TABLE team (
+    id INT NOT NULL,
+    PRIMARY KEY (id)
+)`;
 
 const sql_create_appointment = `CREATE TABLE appointment (
-    id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    patient int NOT NULL,
-    time_when DATE NOT NULL,
-    how_long int NOT NULL,
-    doctor int,
-    nurse int,
-    CONSTRAINT who CHECK ((doctor IS NULL AND nurse IS NOT NULL) OR (doctor IS NOT NULL AND nurse is NULL))
-)`;
+    id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    patientid INT NOT NULL,
+    doctorid INT,
+    nurseid INT,
+    time TIMESTAMP,
+    duration INTERVAL, 
+    FOREIGN KEY (patientid) REFERENCES patient(id),
+    FOREIGN KEY (doctorid) REFERENCES doctor(id),
+    FOREIGN KEY (nurseid) REFERENCES nurse(id)
+)`; // TODO fix duration
 
-const sql_insert_patient = `INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId)
+
+const sql_insert_users = `INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId)
     VALUES 
     ('Ciril', 'Tominac', 'M', '0941012013', 'CirilTominac0@gmail.com', '11112013', '2003-2-18', '1135454'),
     ('Izak', 'Maric', 'M', '0981012014', 'IzakMaric1@gmail.com', '11122014', '1932-2-1', '1135454'),
@@ -1056,41 +1082,49 @@ const sql_insert_patient = `INSERT INTO users (name, surname, sex, phoneNumber, 
     
 `;
 
-const sql_insert_doctor = `INSERT INTO doctor (
-    name, mail)
-    VALUES 
-    ('Pero', 'pero.p@gmail.com'),
-    ('Ante', 'ante.p@gmail.com'),
-    ('Iva', 'iva.p@gmail.com');
-`;
+const sql_insert_team = `INSERT INTO team (id) VALUES (1), (2), (3), (4), (5)`
+const sql_insert_admin = `INSERT INTO admin (id) VALUES (2), (3), (5)`
+const sql_insert_doctor = `INSERT INTO doctor (id, teamid) VALUES (7, NULL), (9, 1), (11, 1), (13, 2), (15, 3)`
+const sql_insert_nurse = `INSERT INTO nurse (id, teamid) VALUES (8, NULL), (10, 1), (12, 1), (14, 2), (16, 3)`
+const sql_insert_patient = `INSERT INTO patient (nFailedAppointments, id, doctorid) VALUES 
+    (0, 100, 7), (0, 101, 7), (0, 102, 7)`
 
-const sql_insert_nurse = `INSERT INTO nurse (
-    name, mail)
-    VALUES 
-    ('Pero', 'pero.p@gmail.com'),
-    ('Ante', 'ante.p@gmail.com'),
-    ('Iva', 'iva.p@gmail.com');
-`;
+const sql_insert_appointments = `INSERT INTO appointment (patientid, doctorid, nurseid, time, duration) VALUES 
+    (100, 7, NULL, '2015-01-10 00:51:14', '00:20:00'),
+    (101, 7, NULL, '2015-01-10 01:51:14', '00:20:00'),
+    (101, 9, NULL, '2015-01-10 01:51:14', '00:20:00'),
+    (101, 7, NULL, '2015-01-10 22:00:14', '02:20:00')
+`
+
 
 let table_names = [
-    "patient",
+    "users",
+    "admin",
+    "team",
     "doctor",
     "nurse",
+    "patient",
     "appointment"
 ]
 
 let tables = [
-    sql_create_patient,
+    sql_create_users,
+    sql_create_admin,
+    sql_create_team,
     sql_create_doctor,
     sql_create_nurse,
+    sql_create_patient,
     sql_create_appointment,
 ];
 
 let table_data = [
-    sql_insert_patient,
+    sql_insert_users,
+    sql_insert_admin,
+    sql_insert_team,
     sql_insert_doctor,
     sql_insert_nurse,
-    undefined,
+    sql_insert_patient,
+    sql_insert_appointments,
 ]
 
 let indexes = [
