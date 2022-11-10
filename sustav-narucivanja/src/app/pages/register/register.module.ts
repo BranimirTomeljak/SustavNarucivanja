@@ -9,6 +9,7 @@ import { RouterModule } from '@angular/router';
 import { MainFooterModule } from 'src/app/components/main-footer/main-footer.module';
 import { MainNavigationModule } from 'src/app/components/main-navigation/main-navigation.module';
 import { RegisterComponent } from './register.component';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [RegisterComponent],
@@ -18,6 +19,7 @@ import { RegisterComponent } from './register.component';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
+    MatAutocompleteModule,
     MatButtonModule,
     RouterModule,
     MatSelectModule,
