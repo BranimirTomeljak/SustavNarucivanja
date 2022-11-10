@@ -28,6 +28,12 @@ const sql_create_users = `CREATE TABLE users (
     doctorId int NOT NULL
 )`;
 
+const sql_create_admin = `CREATE TABLE admin (
+    id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES users(id)
+)`;
+
 const sql_create_patient = `CREATE TABLE patient (
     nFailedAppointments INT NOT NULL,
     id INT NOT NULL,
@@ -59,13 +65,16 @@ const sql_create_team = `CREATE TABLE team (
 )`;
 
 const sql_create_appointment = `CREATE TABLE appointment (
+    id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     patientid INT NOT NULL,
     doctorid INT,
     nurseid INT,
+    time TIMESTAMP,
+    duration INTERVAL, 
     FOREIGN KEY (patientid) REFERENCES patient(id),
     FOREIGN KEY (doctorid) REFERENCES doctor(id),
     FOREIGN KEY (nurseid) REFERENCES nurse(id)
-)`;
+)`; // TODO fix duration
 
 
 const sql_insert_users = `INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId)
@@ -1073,9 +1082,24 @@ const sql_insert_users = `INSERT INTO users (name, surname, sex, phoneNumber, ma
     
 `;
 
+const sql_insert_team = `INSERT INTO team (id) VALUES (1), (2), (3), (4), (5)`
+const sql_insert_admin = `INSERT INTO admin (id) VALUES (2), (3), (5)`
+const sql_insert_doctor = `INSERT INTO doctor (id, teamid) VALUES (7, NULL), (9, 1), (11, 1), (13, 2), (15, 3)`
+const sql_insert_nurse = `INSERT INTO nurse (id, teamid) VALUES (8, NULL), (10, 1), (12, 1), (14, 2), (16, 3)`
+const sql_insert_patient = `INSERT INTO patient (nFailedAppointments, id, doctorid) VALUES 
+    (0, 100, 7), (0, 101, 7), (0, 102, 7)`
+
+const sql_insert_appointments = `INSERT INTO appointment (patientid, doctorid, nurseid, time, duration) VALUES 
+    (100, 7, NULL, '2015-01-10 00:51:14', '00:20:00'),
+    (101, 7, NULL, '2015-01-10 01:51:14', '00:20:00'),
+    (101, 9, NULL, '2015-01-10 01:51:14', '00:20:00'),
+    (101, 7, NULL, '2015-01-10 22:00:14', '02:20:00')
+`
+
 
 let table_names = [
     "users",
+    "admin",
     "team",
     "doctor",
     "nurse",
@@ -1085,6 +1109,7 @@ let table_names = [
 
 let tables = [
     sql_create_users,
+    sql_create_admin,
     sql_create_team,
     sql_create_doctor,
     sql_create_nurse,
@@ -1094,11 +1119,12 @@ let tables = [
 
 let table_data = [
     sql_insert_users,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
+    sql_insert_admin,
+    sql_insert_team,
+    sql_insert_doctor,
+    sql_insert_nurse,
+    sql_insert_patient,
+    sql_insert_appointments,
 ]
 
 let indexes = [

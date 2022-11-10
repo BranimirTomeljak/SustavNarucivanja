@@ -122,6 +122,13 @@ class User {
         return result
     }
 
+    async _saveIdToDb(table){
+        if (this.id !== undefined)
+            throw 'cannot have defined id and try to save the user'
+        const sql = "INSERT INTO " + table + " (id) VALUES ('" + this.id + " )";
+        const result = await db.query(sql, []);
+    }
+
     //umetanje zapisa o korisniku u bazu podataka
     async removeUserFromDb(){
         if (this.id === undefined)
@@ -157,14 +164,18 @@ class Doctor extends User{
     change_appointment(when, how_long){
         // TODO
     }
+
+    saveToDb(){
+        this._saveIdToDb('doctor')
+    }
 }
 
 class Nurse extends User{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
     }
-    isNurse(){
-        return True
+    saveToDb(){
+        this._saveIdToDb('nurse')
     }
 }
 
@@ -172,8 +183,8 @@ class Admin extends User{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
     }
-    isAdmin(){
-        return True
+    saveToDb(){
+        this._saveIdToDb('admin')
     }
 }
 
