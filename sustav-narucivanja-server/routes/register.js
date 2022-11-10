@@ -1,8 +1,9 @@
 var express = require("express");
+var router = express.Router();
 const bcrypt = require("bcrypt");
 const { pool } = require("../dbConfig");
 const flash = require("express-flash");
-var router = express.Router();
+
 //import { checkAuthenticated, checkNotAuthenticated } from '../app.js';
 
 router.get("/", checkAuthenticated, function (req, res, next) {
@@ -124,13 +125,6 @@ function checkAuthenticated(req, res, next) {
     return res.redirect("/patient");
   }
   next();
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/login");
 }
 
 module.exports = router;

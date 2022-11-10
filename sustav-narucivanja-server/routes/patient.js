@@ -6,13 +6,6 @@ router.get("/", checkNotAuthenticated, (req, res) => {
   //res.render("dashboard", { user: req.user.name });
 });
 
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect("/patient");
-  }
-  next();
-}
-
 function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();

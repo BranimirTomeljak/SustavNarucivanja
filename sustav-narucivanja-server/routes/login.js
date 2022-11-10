@@ -1,7 +1,7 @@
 var express = require("express");
+var router = express.Router();
 const passport = require("passport");
 const flash = require("express-flash");
-var router = express.Router();
 
 router.get("/", checkAuthenticated, (req, res) => {
   // flash sets a messages variable. passport sets the error message
@@ -18,20 +18,12 @@ router.post(
   })
 );
 
-function checkAuthenticated(req, res, next) { // ne ulazi uopce
-  console.log("jesan pajdo");
+function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    console.log("jesan pajdo");
+    console.log("Logged in -> got another login request -> wrong login data -> ovaj ispis"); //nez sta ce nan ovo al aj
     return res.redirect("/patient");
   }
   next();
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/login");
 }
 
 module.exports = router;

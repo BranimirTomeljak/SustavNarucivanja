@@ -129,7 +129,7 @@ class User {
         const result = await db.query(sql, []);
     }
 
-    //umetanje zapisa o korisniku u bazu podataka
+    //brisanje zapisa o korisniku u bazi podataka
     async removeUserFromDb(){
         if (this.id === undefined)
             throw 'cannot have defined id and try to save the user'

@@ -65,7 +65,7 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-function checkAuthenticated(req, res, next) {
+/*function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return res.redirect("/patient");
   }
@@ -79,7 +79,7 @@ function checkNotAuthenticated(req, res, next) {
   res.redirect("/login");
 }
 
-//export {checkAuthenticated, checkNotAuthenticated};
+export {checkAuthenticated, checkNotAuthenticated};*/
 
 module.exports = app;
 
