@@ -67,6 +67,22 @@
       />
     </mat-form-field>
 
+    <mat-form-field>
+      <mat-label>Vaš liječnik</mat-label>
+      <input
+        matInput
+        type="text"
+        placeholder="Your doctor"
+        formControlName="doctor"
+        [formControl]="myControl"
+        [matAutocomplete]="auto"/>
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of filteredOptions | async "[value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
     <button type="submit" color="primary" mat-raised-button>Potvrdi</button>
 
     <div class="info">
