@@ -24,7 +24,7 @@ class User {
 
     //dohvat korisnika na osnovu mail adrese
     static async fetchBymail(mail) {
-
+        mail = "'" + mail + "'"
         let results = await User.dbGetUserBy('mail', mail, 'users')
         let newUser = new User()
 
@@ -48,24 +48,11 @@ class User {
         return newUser
     }
 
-    //dohvat korisnika na osnovu id korisnika (tablica users)
-    static async fetchById(id) {
-
-        let results = await User.dbGetUserBy('id', id, 'users')
-        let newUser = new User()
-
-        if( results.length > 0 ) {
-            newUser = new User(results[0].id, results[0].name, results[0].surname,
-                results[0].sex, results[0].phonenumber, results[0].mail, results[0].password, results[0].dateofbirth)
-        }
-        return newUser
-    }
-
     //da li je korisnik pohranjen u bazu podataka?
-    isPersisted() {
+    async isUserInDb() {
         if (this.id === undefined)
             return false
-        u = User.fetchById(this.id)
+        let u = await User.fetchById(this.id)
         return u.id !== undefined
     }
 
@@ -103,7 +90,6 @@ class User {
     static async dbGetUserBy(what, that, table){
         const sql = 'SELECT * FROM ' + table + ' WHERE ' + what + ' = ' + that;
         const result = await db.query(sql, []);
-        console.log('result is', result, table, what, that)
         return result;
     }
 
@@ -140,51 +126,156 @@ class User {
         return result
     }
 
+    copySelfUser(){
+        return User(
+            this.id, this.name, this.surname, this.sex, this.phonenumber, this.mail, this.password, this.dateofbirth
+        )
+    }
 }
 
 
 class Patient extends User{
-    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
+    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, doctorid, nFailedAppointments){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
+        this.nFailedAppointments = nFailedAppointments
+        this.doctorid = doctorid
     }
 
-    make_appointment(when, how_long){
-        // TODO
-        app = Appointment(when, how_long)
-        app.saveUserToDb()
+    async addToDb(){
+        if (await this.isUserInDb())
+            console.log('the user was alread there')
+        else
+            await this.saveUserToDb()
+        
+        const sql = "INSERT INTO patient (id, doctorid, nFailedAppointments) VALUES (" +
+             [this.id, this.doctorid, this.nFailedAppointments].join(",") + " )";
+        await db.query(sql, []);
+
+    }
+
+    static async getById(id){
+        let users = await Patient.dbGetUserBy('id', id, 'users')
+        let user = users[0]
+        const sql = 'SELECT * FROM patient WHERE id = ' + id;
+        const result = await db.query(sql, []);
+        if (result.length === 0)
+            throw 'user does not exist'
+        return new Patient(
+            user.id, user.name, user.surname, user.sex, user.phonenumber, user.mail, user.password, user.dateofbirth,
+            result[0].doctorid, result[0].nfailedappointments
+            )
+
     }
 }
 
 
-class Doctor extends User{
-    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
-        super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
-    }
-
-    change_appointment(when, how_long){
-        // TODO
-    }
-
-    saveToDb(){
-        this._saveIdToDb('doctor')
-    }
-}
 
 class Nurse extends User{
+    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, teamid){
+        super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
+        this.teamid = teamid
+    }
+
+    async addToDb(){
+        if (await this.isUserInDb())
+            console.log('the user was alread there')
+        else
+            await this.saveUserToDb()
+        
+        const sql = "INSERT INTO nurse (id, teamid) VALUES (" +
+            [this.id, this.teamid].join(",") + " )";
+        await db.query(sql, []);
+
+    }
+
+    static async getById(id){
+        let users = await Nurse.dbGetUserBy('id', id)
+        let user = users[0]
+        const sql = 'SELECT * FROM nurse WHERE id = ' + id;
+        const result = await db.query(sql, []);
+        if (result.length === 0)
+            throw 'user does not exist'
+        return Nurse(
+            user.id, user.name, user.surname, user.sex, user.phonenumber, user.mail, user.password, user.dateofbirth,
+            result.teamid
+        )
+    }
+
+    async getAll(){
+        const sql = 'SELECT * FROM nurse Natural Join user';
+        const results = await db.query(sql, []);
+        if (results.length === 0)
+            throw 'user does not exist'
+        toreturn = []
+        for (let result of results)
+            toreturn.append(
+                Nurse(
+                    result.id, result.name, result.surname, result.sex, result.phonenumber, result.mail, result.password, result.dateofbirth,
+                    resuult.teamid
+                )
+            )
+    }
+}
+
+class Doctor extends Nurse{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
     }
-    saveToDb(){
-        this._saveIdToDb('nurse')
+
+    async addToDb(){
+        if (await this.isUserInDb())
+            console.log('already there')
+        else
+            this.saveUserToDb()
+
+        const sql = "INSERT INTO doctor (id, teamid) VALUES (" +
+            [this.id, this.teamid].join(",") + " )";
+        await db.query(sql, []);
+
+
     }
+
+    static async getById(id){
+        let users = await Doctor.dbGetUserBy('id', id)
+        let user = users[0]
+        const sql = 'SELECT * FROM doctor WHERE id = ' + id;
+        const result = await db.query(sql, []);
+        if (result.length === 0)
+            throw 'user does not exist'
+        return Doctor(
+            user.id, user.name, user.surname, user.sex, user.phonenumber, user.mail, user.password, user.dateofbirth,
+            result.teamid
+        )
+    }
+
+    async getAll(){
+        const sql = 'SELECT * FROM doctor Natural Join user';
+        const results = await db.query(sql, []);
+        if (results.length === 0)
+            throw 'user does not exist'
+        toreturn = []
+        for (let result of results)
+            toreturn.append(
+                Doctor(
+                    result.id, result.name, result.surname, result.sex, result.phonenumber, result.mail, result.password, result.dateofbirth,
+                    resuult.teamid
+                )
+            )
+    }
+
 }
 
 class Admin extends User{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
     }
-    saveToDb(){
-        this._saveIdToDb('admin')
+    async addToDb(){
+        const sql = "INSERT INTO admin (id) VALUES (" + this.id + " )";
+        await db.query(sql, []);
+        if (await this.isUserInDb())
+            console.log('user already there')
+        else
+            this.saveUserToDb()
     }
 }
 
@@ -230,5 +321,5 @@ async function test(){
 
 }
 
-test()
+// test()
 

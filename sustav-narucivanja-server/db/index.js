@@ -31,5 +31,6 @@ async function query(text, params){
 
 module.exports = {
     query: query,
+    dangerous_query: dangerous_query,
     pool: pool
 }
