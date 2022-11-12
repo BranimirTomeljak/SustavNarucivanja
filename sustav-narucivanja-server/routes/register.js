@@ -6,12 +6,6 @@ const flash = require("express-flash");
 
 //import { checkAuthenticated, checkNotAuthenticated } from '../app.js';
 
-router.get("/", checkAuthenticated, function (req, res, next) {
-  //otic na stranicu
-  //res.render ili nesto, pitat Marina kako ovo
-});
-
-
 router.post("/", async (req, res) => {
   let {
     name,
@@ -60,6 +54,7 @@ router.post("/", async (req, res) => {
 
   if (errors.length > 0) {
     console.log(errors);
+    res.redirect(400, "/register"); // dodat da se ispisu errori na frontendu
   } else {
     hashedPassword = await bcrypt.hash(password, 10);
     console.log(hashedPassword);
@@ -75,8 +70,8 @@ router.post("/", async (req, res) => {
         console.log(results.rows);
 
         if (results.rows.length > 0) {
-          //return res.render("register", {message: "mail already registered",});
           console.log("mail already registered");
+          res.redirect(400, "/register");
         } else {
           pool.query(
             `INSERT INTO users (name,
@@ -105,7 +100,7 @@ router.post("/", async (req, res) => {
               }
               console.log(results.rows);
               req.flash("success_msg", "You are now registered. Please log in");
-              res.redirect("/login");
+              res.redirect(200,"/login");
             }
           );
         }
@@ -113,12 +108,5 @@ router.post("/", async (req, res) => {
     );
   }
 });
-
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect("/patient");
-  }
-  next();
-}
 
 module.exports = router;

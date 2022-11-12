@@ -7,6 +7,7 @@ router.get("/", checkAuthenticated, (req, res) => {
   // flash sets a messages variable. passport sets the error message
   console.log(req.session.flash.error);
   //res.render("login.ejs");
+  res.redirect(401, "/login");
 });
 
 router.post(
@@ -20,8 +21,8 @@ router.post(
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    console.log("Logged in -> got another login request -> wrong login data -> ovaj ispis"); //nez sta ce nan ovo al aj
-    return res.redirect("/patient");
+    console.log("Logged in -> got another login request"); //nez sta ce nan ovo al aj
+    return res.redirect(200, "/patient");
   }
   next();
 }
