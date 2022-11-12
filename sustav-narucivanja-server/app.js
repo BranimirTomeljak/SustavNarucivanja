@@ -3,7 +3,7 @@ var express = require("express");
 var path = require("path");
 var app = express();
 
-const { pool } = require("./dbConfig");
+const { pool } = require("./db/dbConfig");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const flash = require("express-flash");
@@ -15,7 +15,7 @@ require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
 
-const initializePassport = require("./passportConfig");
+const initializePassport = require("./db/passportConfig");
 initializePassport(passport);
 
 var adminRouter = require("./routes/admin");

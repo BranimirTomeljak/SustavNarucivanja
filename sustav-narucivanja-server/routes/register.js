@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const bcrypt = require("bcrypt");
-const { pool } = require("../dbConfig");
+const { pool } = require("../db/dbConfig");
 const flash = require("express-flash");
 
 //import { checkAuthenticated, checkNotAuthenticated } from '../app.js';
@@ -20,7 +20,6 @@ router.post("/", async (req, res) => {
     phoneNumber,
     mail,
     password,
-    repeatedPassword,
     dateOfBirth,
     doctorId,
   } = req.body;
@@ -34,7 +33,6 @@ router.post("/", async (req, res) => {
     phoneNumber,
     mail,
     password,
-    repeatedPassword,
     dateOfBirth,
     doctorId,
   });
@@ -46,7 +44,6 @@ router.post("/", async (req, res) => {
     !phoneNumber ||
     !mail ||
     !password ||
-    !repeatedPassword ||
     !dateOfBirth ||
     !doctorId
   ) {
@@ -57,9 +54,6 @@ router.post("/", async (req, res) => {
     errors.push({ message: "Password must be a least 6 characters long" });
   }
 
-  if (password !== repeatedPassword) {
-    errors.push({ message: "Passwords do not match" });
-  }
   /*if(phoneNumber.length !== 9 || phoneNumber.length !== 10) {
     errors.push({ message: "Croatian phone number must have 9 or 10 digits" });
   }*/
