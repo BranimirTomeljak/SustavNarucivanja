@@ -35,9 +35,9 @@ const sql_create_admin = `CREATE TABLE admin (
 )`;
 
 const sql_create_patient = `CREATE TABLE patient (
-    nFailedAppointments INT NOT NULL,
     id INT NOT NULL,
     doctorid INT NOT NULL,
+    nFailedAppointments INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES users(id),
     FOREIGN KEY (doctorid) REFERENCES doctor(id)
