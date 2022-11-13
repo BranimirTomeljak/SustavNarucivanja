@@ -7,22 +7,21 @@ router.get("/", checkAuthenticated, (req, res) => {
   // flash sets a messages variable. passport sets the error message
   console.log(req.session.flash.error);
   //res.render("login.ejs");
-  res.redirect(401, "/login");
+  res.sendStatus(401);
 });
 
 router.post(
   "/",
-  passport.authenticate("local", {
-    successRedirect: "/patient",
-    failureRedirect: "/login",
-    failureFlash: true,
-  })
+  passport.authenticate("local", { failureFlash: true }),
+  function (req, res) {
+    res.sendStatus(200);
+  }
 );
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     console.log("Logged in -> got another login request"); //nez sta ce nan ovo al aj
-    return res.redirect(200, "/patient");
+    return res.sendStatus(200);
   }
   next();
 }

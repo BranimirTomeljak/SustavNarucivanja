@@ -3,14 +3,14 @@ var router = express.Router();
 
 router.get("/", checkNotAuthenticated, (req, res) => {
   console.log(req.isAuthenticated());
-  res.redirect(200, "/patient");
+  res.sendStatus(200);
 });
 
 function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect(401, "/login");
+  res.sendStatus(401);
 }
 
 module.exports = router;

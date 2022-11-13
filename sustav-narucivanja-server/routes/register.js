@@ -4,7 +4,9 @@ const bcrypt = require("bcrypt");
 const { pool } = require("../db/dbConfig");
 const flash = require("express-flash");
 
-//import { checkAuthenticated, checkNotAuthenticated } from '../app.js';
+/*app.get("/users/register", checkAuthenticated, (req, res) => {
+  res.render("register.ejs");
+});*/
 
 router.post("/", async (req, res) => {
   let {
@@ -54,7 +56,7 @@ router.post("/", async (req, res) => {
 
   if (errors.length > 0) {
     console.log(errors);
-    res.redirect(400, "/register"); // dodat da se ispisu errori na frontendu
+    res.sendStatus(400); // dodat da se ispisu errori na frontendu
   } else {
     hashedPassword = await bcrypt.hash(password, 10);
     console.log(hashedPassword);
@@ -71,7 +73,7 @@ router.post("/", async (req, res) => {
 
         if (results.rows.length > 0) {
           console.log("mail already registered");
-          res.redirect(400, "/register");
+          res.sendStatus(400);
         } else {
           pool.query(
             `INSERT INTO users (name,
@@ -100,7 +102,7 @@ router.post("/", async (req, res) => {
               }
               console.log(results.rows);
               req.flash("success_msg", "You are now registered. Please log in");
-              res.redirect(200,"/login");
+              res.sendStatus(200);
             }
           );
         }

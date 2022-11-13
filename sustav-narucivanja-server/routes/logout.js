@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
     req.logOut(function(err){
         if(err){ return next(err); }
         req.flash("success_msg", "You have logged out");
-        res.redirect(200, '/login'); //promijenit u nesto drugo
+        res.sendStatus(200);
     });
   });
 
