@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
+const cookieParser = require('cookie-parser')
 require("dotenv").config();
 
 var adminRouter = require('./routes/admin');
@@ -33,8 +34,6 @@ var logoutRouter = require("./routes/logout");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
-//app.use(logger('dev'));
-//app.use(cookieParser());
 
 app.use(
   session({
@@ -46,6 +45,7 @@ app.use(
 app.use(passport.initialize());         // Function inside passport which initializes passport
 app.use(passport.session());            // Store our variables to be persisted across the whole session. Works with app.use(Session) above
 app.use(flash());
+app.use(cookieParser());
 
 app.use("/admin", adminRouter);
 app.use("/patient", patientRouter);
