@@ -101,9 +101,9 @@ router.post("/", async (req, res) => {
               if (err) {
                 throw err;
               }
-              console.log(results.rows);
+              console.log(results.rows[0]);
               req.flash("success_msg", "You are now registered. Please log in");
-              res.end(JSON.stringify(results.rows));
+              res.json(results.rows[0]);
             }
           );
         }

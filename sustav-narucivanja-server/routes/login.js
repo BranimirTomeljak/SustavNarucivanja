@@ -23,8 +23,9 @@ router.post(
       (err, results) => {
         if (err) {
           console.log(err);
+          res.sendStatus(404);
         }
-        res.end(JSON.stringify(results.rows));
+        res.json(results.rows[0]);
       }
     );
   }
