@@ -68,6 +68,7 @@ router.post("/", async (req, res) => {
       (err, results) => {
         if (err) {
           console.log(err);
+          res.sendStatus(404);
         }
         console.log(results.rows);
 
@@ -99,6 +100,7 @@ router.post("/", async (req, res) => {
             ],
             (err, results) => {
               if (err) {
+                res.sendStatus(404);
                 throw err;
               }
               console.log(results.rows[0]);
