@@ -10,8 +10,13 @@ const flash = require("express-flash");
 const session = require("express-session");
 require("dotenv").config();
 
-//var cookieParser = require('cookie-parser');
-//var logger = require('morgan');
+var adminRouter = require('./routes/admin');
+var patientRouter = require('./routes/patient');
+var createRouter = require('./routes/create');
+var loginRouter = require('./routes/login');
+var registerRouter = require('./routes/register');
+var appointmentRouter = require('./routes/appointment');
+var patientRouter = require('./routes/patient');
 
 const PORT = process.env.PORT || 3000;
 
@@ -48,6 +53,8 @@ app.use("/create", createRouter);
 app.use("/login", loginRouter);
 app.use("/register", registerRouter);
 app.use("/logout", logoutRouter);
+app.use('/appointment', appointmentRouter);
+app.use('/patient', patientRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

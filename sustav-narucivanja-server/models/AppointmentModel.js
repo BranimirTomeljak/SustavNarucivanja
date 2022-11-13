@@ -25,17 +25,17 @@ class Appointment {
         let appointments = await Appointment.dbGetBy('appointment', property, id)
         let toreturn = []
         for (let app of appointments){
-            toreturn.push( new Appointment(app.id, app.patientid, app.time, app.duration, app.doctorid, app.nurseid))
+            toreturn.push( new Appointment(app.id, app.patientid, app.doctorid, app.nurseid, app.time, app.duration))
         }
         return toreturn
     }
 
     //da li je appointment pohranjen u bazu podataka?
-    isSavedToDb() {
+    async isSavedToDb() {
         if (this.id === undefined)
             return false
-        u = Appointment.fetchBy('id', this.id)
-        return u.id !== undefined
+        let apps = await Appointment.fetchBy('id', this.id)
+        return apps.length == 1
     }
 
     //dohvat korisnika iz baze podataka na osnovu `what` i `table` odakle uzimamo
@@ -89,21 +89,20 @@ class Appointment {
                        (`+beg+`<= a.time and `+ end + `<=a.time))
                     and (patientid = `  + this.patientid + ` or doctorid = ` + this.doctorid +`) 
         `
-        console.log(sql)
         const result = await db.query(sql, []);
-        console.log('the result')
-        console.log(result)
+        if (result.length){
+            console.log('conflicts')
+            console.log(result, this.id, result.length, result.length>0)
+        }
 
-        if (this.id !== undefined || 1)
+        if (this.id !== undefined)
             return result.length > 0
         return result.length > 1
     }
 
 }
 
-module.exports = {
-    'Appointment' : Appointment,
-}
+module.exports = Appointment
 
 
 async function test(){
