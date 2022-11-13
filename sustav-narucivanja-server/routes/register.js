@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const { pool } = require("../db/dbConfig");
 const flash = require("express-flash");
 
-/*app.get("/users/register", checkAuthenticated, (req, res) => {
+/*app.get("/users/register", checkAuthenticated, (req, res) => { //zasad nek stoji komentirano ali tribat ce nan posli (kad pokusavamo pristupit register pageu, a vec smo logirani)
   res.render("register.ejs");
 });*/
 
@@ -76,7 +76,8 @@ router.post("/", async (req, res) => {
           res.sendStatus(400);
         } else {
           pool.query(
-            `INSERT INTO users (name,
+            `INSERT INTO users (
+              name,
               surname,
               sex,
               phoneNumber,
@@ -84,8 +85,8 @@ router.post("/", async (req, res) => {
               password,
               dateOfBirth,
               doctorId)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-                RETURNING id, password`,
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            RETURNING name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId`,
             [
               name,
               surname,
@@ -102,7 +103,7 @@ router.post("/", async (req, res) => {
               }
               console.log(results.rows);
               req.flash("success_msg", "You are now registered. Please log in");
-              res.sendStatus(200);
+              res.end(JSON.stringify(results.rows));
             }
           );
         }
