@@ -3,6 +3,7 @@ var router = express.Router();
 const { pool } = require("../db/dbConfig");
 const passport = require("passport");
 const flash = require("express-flash");
+const { json } = require("express");
 
 /*router.get("/", checkAuthenticated, (req, res) => {  //zasad nek stoji komentirano ali tribat ce nan posli (kad pokusavamo pristupit login pageu, a vec smo logirani)
   // flash sets a messages variable. passport sets the error message  
@@ -11,8 +12,7 @@ const flash = require("express-flash");
   res.sendStatus(401);
 });*/
 
-router.post(
-  "/",
+router.post( "/",
   passport.authenticate("local", { failureFlash: true }),
   function (req, res) {
     let { mail } = req.body;
@@ -25,6 +25,7 @@ router.post(
           console.log(err);
           res.sendStatus(404);
         }
+        res.cookie("id", results.rows[0].id, { maxAge: 5184000000 }); //nakon 60 dana se cookie briše, standardna sigurnosna mjera
         res.json(results.rows[0]);
       }
     );
