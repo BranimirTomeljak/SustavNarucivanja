@@ -5,7 +5,6 @@ const { Patient } = require('../models/UserModel');
 
 var router = express.Router();
 
-
 // get all appointemnts from an `id` with `role`
 router.get('/', checkNotAuthenticated, async function(req, res, next) {
   let id   = req.query.id
@@ -44,7 +43,7 @@ function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/login");
+  res.sendStatus(401);
 }
 
 
