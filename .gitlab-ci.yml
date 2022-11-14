@@ -5,6 +5,6 @@ variables:
 
 deploy:
   stage: deploy
-  image: registry.gitlab.com/static-web-apps/azure-static-web-apps-deploy
+  image: https://gitlab.com/null75/sustav-narucivanja
   script:
     - echo "App deployed successfully."
