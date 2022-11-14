@@ -27,7 +27,10 @@ export class LoginComponent implements OnDestroy {
       password: this.form.get('password')?.value as string,
     };
 
-    const loginSubscription = this.authService.login(data).subscribe();
+    // const loginSubscription = this.authService.login(data).subscribe();
+    const loginSubscription = this.authService
+      .getAppointment({ id: '1', role: 'doctor' })
+      .subscribe();
 
     this.subscription.add(loginSubscription);
   }

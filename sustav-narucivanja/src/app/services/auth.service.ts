@@ -20,6 +20,12 @@ export class AuthService {
   }
 
   public register(data: IRegisterData) {
-    return this.http.post('http://localhost:3000/login', data);
+    return this.http.post('http://localhost:3000/register', data);
+  }
+
+  public getAppointment(data: { id: string; role: string }) {
+    return this.http.get(
+      `http://localhost:3000?role=${data.role}&id=${data.id}`
+    );
   }
 }
