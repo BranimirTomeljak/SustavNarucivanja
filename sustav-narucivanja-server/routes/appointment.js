@@ -13,7 +13,7 @@ router.get('/', async function(req, res, next) {
     throw 'no admin here'
   let field = {'doctor':'doctorid', 'patient':'patientid', 'nurse':'nurseid'}[role]
   let apps = await Appointment.fetchBy(field, id)
-  res.json(apps);
+  res.json({message: 'hello'});
 });
 
 // create appointment with `patientid`, nurse or doctor id 

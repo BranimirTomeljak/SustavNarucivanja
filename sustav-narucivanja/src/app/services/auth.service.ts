@@ -25,7 +25,7 @@ export class AuthService {
 
   public getAppointment(data: { id: string; role: string }) {
     return this.http.get(
-      `http://localhost:3000?role=${data.role}&id=${data.id}`
+      `http://localhost:3000/appointment?role=${data.role}&id=${data.id}`
     );
   }
 }
