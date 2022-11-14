@@ -16,10 +16,10 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   public login(data: ILoginData) {
-    return this.http.post('/api/login', data);
+    return this.http.post('http://localhost:3000/login', data);
   }
 
   public register(data: IRegisterData) {
-    return this.http.post('/api/register', data);
+    return this.http.post('http://localhost:3000/login', data);
   }
 }
