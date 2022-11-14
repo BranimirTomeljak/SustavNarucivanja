@@ -139,6 +139,7 @@ class Patient extends User{
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
         this.nFailedAppointments = nFailedAppointments
         this.doctorid = doctorid
+        this.type = 'patient'
     }
 
     async addToDb(){
@@ -174,6 +175,7 @@ class Nurse extends User{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, teamid){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
         this.teamid = teamid
+        this.type = 'nurse'
     }
 
     async addToDb(){
@@ -220,6 +222,7 @@ class Nurse extends User{
 class Doctor extends Nurse{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
+        this.type = 'doctor'
     }
 
     async addToDb(){
@@ -268,6 +271,7 @@ class Doctor extends Nurse{
 class Admin extends User{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
+        this.type = 'admin'
     }
     async addToDb(){
         const sql = "INSERT INTO admin (id) VALUES (" + this.id + " )";

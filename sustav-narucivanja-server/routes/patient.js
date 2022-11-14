@@ -7,9 +7,13 @@ var router = express.Router();
 
 // get all appointemnts from an `id` with `role`
 router.get('/', checkNotAuthenticated, async function(req, res, next) {
-  let id   = req.query.id
-  let patient = await Patient.getById(id)
-  res.json(patient);
+  if (req.session.user.type === 'patient'){
+    let patient = await Patient.getById(id)
+    patient.password = undefined
+    res.json(patient);
+  }
+  else
+    res.sendStatus(404);
 });
 
 // create appointment with `patientid`, nurse or doctor id 
