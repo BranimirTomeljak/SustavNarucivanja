@@ -46,12 +46,14 @@ router.post("/", async (req, res) => {
     errors.push({ message: "Please enter all fields" });
   }
 
-  if (password.length < 6) {
+  if (password?.length < 6) {
     errors.push({ message: "Password must be a least 6 characters long" });
+    res.sendStatus(400);
   }
 
-  /*if(phoneNumber.length !== 9 || phoneNumber.length !== 10) {
+  /*if(phoneNumber?.length !== 9 || phoneNumber?.length !== 10) {
     errors.push({ message: "Croatian phone number must have 9 or 10 digits" });
+    res.sendStatus(400);
   }*/
 
   if (errors.length > 0) {
