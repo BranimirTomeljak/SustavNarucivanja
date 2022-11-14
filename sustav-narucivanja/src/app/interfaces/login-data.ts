@@ -1,4 +1,4 @@
 export interface ILoginData {
-  email: string;
+  mail: string;
   password: string;
 }
