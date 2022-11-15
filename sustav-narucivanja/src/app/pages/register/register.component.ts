@@ -24,16 +24,43 @@ export class RegisterComponent implements OnDestroy, OnInit {
 
   public form: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required]),
-    repeatedPassword: new FormControl('', [Validators.required]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+    ]),
+    repeatedPassword: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+    ]),
     name: new FormControl('', [Validators.required]),
     surname: new FormControl('', [Validators.required]),
     sex: new FormControl('', [Validators.required]),
-    phoneNumber: new FormControl('', [Validators.required]),
+    phoneNumber: new FormControl('', [
+      Validators.required,
+      Validators.minLength(9),
+      Validators.maxLength(10),
+    ]),
     doctor: new FormControl('', [Validators.required]),
   });
 
   public onFormSubmit(): void {
+    if (
+      this.form.get('password')?.value !==
+      this.form.get('repeatedPassword')?.value
+    ) {
+      this.snackBar.open('Lozinke se moraju podudarati', 'Zatvori', {
+        duration: 1000,
+      });
+      return;
+    }
+
+    if (this.form.invalid) {
+      this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {
+        duration: 1000,
+      });
+      return;
+    }
+
     const data: IRegisterData = {
       mail: this.form.get('email')?.value,
       password: this.form.get('password')?.value,
@@ -51,7 +78,9 @@ export class RegisterComponent implements OnDestroy, OnInit {
       .register(data)
       .pipe(
         catchError(() => {
-          this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {});
+          this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {
+            duration: 1000,
+          });
           return EMPTY;
         })
       )

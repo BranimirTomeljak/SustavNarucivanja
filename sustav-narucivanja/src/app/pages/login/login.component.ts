@@ -24,10 +24,18 @@ export class LoginComponent implements OnDestroy {
 
   public form: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+    ]),
   });
 
   public onFormSubmit(): void {
+    if (this.form.invalid) {
+      this.snackbar.open('Pogrešni podaci', 'Zatvori', { duration: 1000 });
+      return;
+    }
+
     const data: ILoginData = {
       mail: this.form.get('email')?.value as string,
       password: this.form.get('password')?.value as string,
@@ -37,7 +45,7 @@ export class LoginComponent implements OnDestroy {
       .login(data)
       .pipe(
         catchError(() => {
-          this.snackbar.open('Pogrešni podaci', 'Zatvori', {});
+          this.snackbar.open('Pogrešni podaci', 'Zatvori', { duration: 1000 });
           return EMPTY;
         })
       )
