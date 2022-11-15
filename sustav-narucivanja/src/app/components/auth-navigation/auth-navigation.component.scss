@@ -12,3 +12,9 @@ button {
     background-color: transparent;
     color: $secondary-color;
 }
+
+h1 {
+    &:hover {
+        cursor: pointer;
+    }
+}
