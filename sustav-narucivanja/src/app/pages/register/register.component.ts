@@ -49,14 +49,14 @@ export class RegisterComponent implements OnDestroy, OnInit {
       this.form.get('repeatedPassword')?.value
     ) {
       this.snackBar.open('Lozinke se moraju podudarati', 'Zatvori', {
-        duration: 1000,
+        duration: 2000,
       });
       return;
     }
 
     if (this.form.invalid) {
-      this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {
-        duration: 1000,
+      this.snackBar.open('Unesite sve potrebne podatke', 'Zatvori', {
+        duration: 2000,
       });
       return;
     }
@@ -79,7 +79,7 @@ export class RegisterComponent implements OnDestroy, OnInit {
       .pipe(
         catchError(() => {
           this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {
-            duration: 1000,
+            duration: 2000,
           });
           return EMPTY;
         })
