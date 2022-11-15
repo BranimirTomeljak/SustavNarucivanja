@@ -1,0 +1,17 @@
+@startuml team
+
+class Team {
+    teamName: string
+    doctorId: int
+
+    {static} fetchByTeamName(teamName) 
+    isPersisted()
+    _checkIsIn(where)    
+    {static} dbGetTeamBy(what, that, table)   
+    saveTeamToDb()
+    _saveteamNameToDb(table)
+    removeTeamFromDb()
+}
+
+
+@enduml

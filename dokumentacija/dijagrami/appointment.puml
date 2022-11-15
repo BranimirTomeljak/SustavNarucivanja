@@ -1,0 +1,21 @@
+@startuml appointment
+
+class Appointment {
+    appointmentId: int
+    patientId: int
+    doctorId: int
+    nurse: int
+    time: timestamp
+    duration: interval
+
+    {static} fetchBy(property, id) 
+    isSavedToDb()
+    {static} dbGetBy(table, what, that)    
+    saveToDb()    
+    removeFromDb()
+    _stringify(a)
+    conflictsWithDb ()
+}
+
+
+@enduml
