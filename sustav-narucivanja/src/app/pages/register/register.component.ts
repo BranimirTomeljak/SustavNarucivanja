@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { EMPTY, Subscription } from 'rxjs';
 import { IRegisterData } from 'src/app/interfaces/register-data';
 import { AuthService } from 'src/app/services/auth.service';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { catchError, map, startWith } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +16,11 @@ import { map, startWith } from 'rxjs/operators';
 export class RegisterComponent implements OnDestroy, OnInit {
   private readonly subscription = new Subscription();
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly snackBar: MatSnackBar,
+    private readonly router: Router
+  ) {}
 
   public form: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -41,7 +47,17 @@ export class RegisterComponent implements OnDestroy, OnInit {
 
     console.log(data);
 
-    const registerSubscription = this.authService.register(data).subscribe();
+    const registerSubscription = this.authService
+      .register(data)
+      .pipe(
+        catchError(() => {
+          this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {});
+          return EMPTY;
+        })
+      )
+      .subscribe(() => {
+        this.router.navigate(['/']);
+      });
     this.subscription.add(registerSubscription);
   }
 

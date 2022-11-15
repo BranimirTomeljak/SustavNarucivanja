@@ -5,6 +5,5 @@
     <button *ngFor="let link of links" mat-button [routerLink]="link.path">
       {{ link.title }}
     </button>
-    <button mat-button (click)="onLogoutClick()">Odjavite se</button>
   </div>
 </mat-toolbar>
