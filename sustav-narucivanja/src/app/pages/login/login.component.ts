@@ -37,7 +37,7 @@ export class LoginComponent implements OnDestroy {
       .login(data)
       .pipe(
         catchError(() => {
-          this.snackbar.open('Pogrešni podaci', 'Zatvori', {});
+          this.snackbar.open('Pogrešni podaci', 'Zatvori', { duration: 1000 });
           return EMPTY;
         })
       )

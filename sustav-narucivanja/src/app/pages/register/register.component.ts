@@ -51,7 +51,9 @@ export class RegisterComponent implements OnDestroy, OnInit {
       .register(data)
       .pipe(
         catchError(() => {
-          this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {});
+          this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {
+            duration: 1000,
+          });
           return EMPTY;
         })
       )
