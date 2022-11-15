@@ -9,13 +9,21 @@ import { IUser } from '../interfaces/user';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly _user$ = new BehaviorSubject<IUser | null>(null);
+  private readonly _user$ = new BehaviorSubject<IUser | null>(
+    localStorage.getItem('user')
+      ? JSON.parse(localStorage.getItem('user')!)
+      : null
+  );
   public user$ = this._user$.asObservable();
 
   constructor(private http: HttpClient) {}
 
   public login(data: ILoginData) {
-    return this.http.post('/api/login', data);
+    return this.http.post('/api/login', data).pipe(
+      tap((resp) => {
+        localStorage.setItem('user', JSON.stringify(resp));
+      })
+    );
   }
 
   public register(data: IRegisterData) {
