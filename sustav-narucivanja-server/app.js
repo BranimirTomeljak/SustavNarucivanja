@@ -47,14 +47,14 @@ app.use(passport.initialize());         // Function inside passport which initia
 app.use(passport.session());            // Store our variables to be persisted across the whole session. Works with app.use(Session) above
 app.use(flash());
 
-app.use("/admin", adminRouter);
-app.use("/patient", patientRouter);
-app.use("/create", createRouter);
-app.use("/login", loginRouter);
-app.use("/register", registerRouter);
-app.use("/logout", logoutRouter);
-app.use('/appointment', appointmentRouter);
-app.use('/patient', patientRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/patient", patientRouter);
+app.use("/api/create", createRouter);
+app.use("/api/login", loginRouter);
+app.use("/api/register", registerRouter);
+app.use("/api/logout", logoutRouter);
+app.use('/api/appointment', appointmentRouter);
+app.use('/api/patient', patientRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
