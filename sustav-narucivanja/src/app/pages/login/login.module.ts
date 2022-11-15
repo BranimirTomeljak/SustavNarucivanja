@@ -9,7 +9,8 @@ import { RouterModule } from '@angular/router';
 import { MainFooterModule } from 'src/app/components/main-footer/main-footer.module';
 import { MainNavigationModule } from 'src/app/components/main-navigation/main-navigation.module';
 import { LoginComponent } from './login.component';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
+import { AuthNavigationModule } from 'src/app/components/auth-navigation/auth-navigation.module';
 
 @NgModule({
   declarations: [LoginComponent],
@@ -20,7 +21,7 @@ import {MatIconModule} from '@angular/material/icon';
     MatIconModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MainNavigationModule,
+    AuthNavigationModule,
     RouterModule,
   ],
   exports: [LoginComponent],

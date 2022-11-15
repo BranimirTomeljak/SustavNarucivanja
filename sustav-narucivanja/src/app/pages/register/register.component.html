@@ -1,4 +1,4 @@
-<app-main-navigation></app-main-navigation>
+<app-auth-navigation></app-auth-navigation>
 
 <div class="container">
   <h1>Registriraj se</h1>
@@ -75,10 +75,14 @@
         placeholder="Your doctor"
         formControlName="doctor"
         [formControl]="myControl"
-        [matAutocomplete]="auto"/>
+        [matAutocomplete]="auto"
+      />
       <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let option of filteredOptions | async "[value]="option">
-          {{option}}
+        <mat-option
+          *ngFor="let option of filteredOptions | async"
+          [value]="option"
+        >
+          {{ option }}
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>

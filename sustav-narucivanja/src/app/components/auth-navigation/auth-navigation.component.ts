@@ -5,4 +5,9 @@ import { Component } from '@angular/core';
   templateUrl: './auth-navigation.component.html',
   styleUrls: ['./auth-navigation.component.scss'],
 })
-export class AuthNavigationComponent {}
+export class AuthNavigationComponent {
+  public links = [
+    { title: 'Prijava', path: '/login' },
+    { title: 'Registracija', path: '/register' },
+  ];
+}

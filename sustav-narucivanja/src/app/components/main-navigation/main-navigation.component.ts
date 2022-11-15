@@ -8,8 +8,6 @@ import { Component, OnInit } from '@angular/core';
 export class MainNavigationComponent {
   public links = [
     { title: 'Naslovna', path: '/' },
-    { title: 'Prijava', path: '/login' },
-    { title: 'Registracija', path: '/register' },
-    { title: 'Admin', path: '/admin' },
+    { title: 'Profil', path: '/patient' },
   ];
 }

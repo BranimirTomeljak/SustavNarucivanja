@@ -9,13 +9,14 @@ import { RouterModule } from '@angular/router';
 import { MainFooterModule } from 'src/app/components/main-footer/main-footer.module';
 import { MainNavigationModule } from 'src/app/components/main-navigation/main-navigation.module';
 import { RegisterComponent } from './register.component';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { AuthNavigationModule } from 'src/app/components/auth-navigation/auth-navigation.module';
 
 @NgModule({
   declarations: [RegisterComponent],
   imports: [
     CommonModule,
-    MainNavigationModule,
+    AuthNavigationModule,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,

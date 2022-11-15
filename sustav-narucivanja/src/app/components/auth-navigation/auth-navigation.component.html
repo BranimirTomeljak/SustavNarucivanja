@@ -1,1 +1,9 @@
-<p>auth-navigation works!</p>
+<mat-toolbar>
+  <h1>Sustav naručivanja</h1>
+
+  <div>
+    <button *ngFor="let link of links" mat-button [routerLink]="link.path">
+      {{ link.title }}
+    </button>
+  </div>
+</mat-toolbar>
