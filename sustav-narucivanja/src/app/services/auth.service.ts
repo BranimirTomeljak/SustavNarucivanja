@@ -22,6 +22,7 @@ export class AuthService {
     return this.http.post('/api/login', data).pipe(
       tap((resp) => {
         localStorage.setItem('user', JSON.stringify(resp));
+        this._user$.next(resp);
       })
     );
   }
@@ -30,6 +31,7 @@ export class AuthService {
     return this.http.post('/api/register', data).pipe(
       tap((resp) => {
         localStorage.setItem('user', JSON.stringify(resp));
+        this._user$.next(resp);
       })
     );
   }

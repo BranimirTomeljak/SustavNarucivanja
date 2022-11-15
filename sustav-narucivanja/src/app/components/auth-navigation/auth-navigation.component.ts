@@ -7,6 +7,7 @@ import { Component } from '@angular/core';
 })
 export class AuthNavigationComponent {
   public links = [
+    { title: 'Naslovna', path: '/' },
     { title: 'Prijava', path: '/login' },
     { title: 'Registracija', path: '/register' },
   ];

@@ -20,10 +20,10 @@ import { RegisterComponent } from './pages/register/register.component';
 import { RegisterModule } from './pages/register/register.module';
 
 const routes: Routes = [
+  { path: '', component: HomeComponent },
   {
     path: '',
     children: [
-      { path: '', component: HomeComponent },
       { path: 'admin', component: AdminComponent },
       { path: 'patient', component: PatientComponent },
     ],

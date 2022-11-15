@@ -1,5 +1,10 @@
 <body>
-  <app-main-navigation></app-main-navigation>
+  <app-main-navigation
+    *ngIf="user$ | async; else authNavigationTemplate"
+  ></app-main-navigation>
+  <ng-template #authNavigationTemplate>
+    <app-auth-navigation></app-auth-navigation>
+  </ng-template>
 
   <h1 style="font-size: 3rem; text-align: center">
     Dobro došli na sustav naručivanja HZZO-a
