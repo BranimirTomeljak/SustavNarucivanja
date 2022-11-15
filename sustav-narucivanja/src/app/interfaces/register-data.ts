@@ -1,4 +1,10 @@
 export interface IRegisterData {
-  email: string;
+  mail: string;
+  password: string;
   name: string;
+  surname: string;
+  phoneNumber: string;
+  sex: string;
+  dateOfBirth: Date;
+  doctorId: number;
 }
