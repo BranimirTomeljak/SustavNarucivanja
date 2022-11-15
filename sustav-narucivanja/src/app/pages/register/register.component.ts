@@ -55,7 +55,7 @@ export class RegisterComponent implements OnDestroy, OnInit {
     }
 
     if (this.form.invalid) {
-      this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {
+      this.snackBar.open('Unesite sve potrebne podatke', 'Zatvori', {
         duration: 2000,
       });
       return;
