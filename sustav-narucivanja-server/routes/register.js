@@ -50,13 +50,9 @@ router.post("/", async (req, res) => {
     errors.push({ message: "Password must be a least 6 characters long" });
   }
 
-  if(phoneNumber?.length !== 9 || phoneNumber?.length !== 10) {
+  if(phoneNumber?.length !== 9 && phoneNumber?.length !== 10) {
     errors.push({ message: "Croatian phone number must have 9 or 10 digits" });
   }
-
-  /*if(phoneNumber.length !== 9 || phoneNumber.length !== 10) {
-    errors.push({ message: "Croatian phone number must have 9 or 10 digits" });
-  }*/
 
   if (errors.length > 0) {
     console.log(errors);
