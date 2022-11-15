@@ -23,13 +23,14 @@ export class LoginComponent implements OnDestroy {
 
   public onFormSubmit(): void {
     const data: ILoginData = {
-      email: this.form.get('email')?.value as string,
+      mail: this.form.get('email')?.value as string,
       password: this.form.get('password')?.value as string,
     };
 
-    console.log(data);
-
     const loginSubscription = this.authService.login(data).subscribe();
+    // const loginSubscription = this.authService
+    //   .getAppointment({ id: '1', role: 'doctor' })
+    //   .subscribe();
 
     this.subscription.add(loginSubscription);
   }

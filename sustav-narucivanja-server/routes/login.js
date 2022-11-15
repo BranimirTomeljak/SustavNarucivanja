@@ -15,6 +15,7 @@ router.post(
   "/",
   passport.authenticate("local", { failureFlash: true }),
   function (req, res) {
+    console.log('usao u post');
     let { mail } = req.body;
     pool.query(
       `SELECT * FROM users

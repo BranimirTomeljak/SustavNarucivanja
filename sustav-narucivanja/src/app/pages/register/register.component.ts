@@ -1,4 +1,4 @@
-import { Component, OnDestroy , OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IRegisterData } from 'src/app/interfaces/register-data';
@@ -24,28 +24,24 @@ export class RegisterComponent implements OnDestroy, OnInit {
     surname: new FormControl('', [Validators.required]),
     sex: new FormControl('', [Validators.required]),
     phoneNumber: new FormControl('', [Validators.required]),
-    doctor: new FormControl('',[Validators.required])
+    doctor: new FormControl('', [Validators.required]),
   });
 
   public onFormSubmit(): void {
-    const data = {
-      email: this.form.get('email')?.value,
+    const data: IRegisterData = {
+      mail: this.form.get('email')?.value,
       password: this.form.get('password')?.value,
-      repeatedPassword: this.form.get('repeatedPassword')?.value,
       name: this.form.get('name')?.value,
       surname: this.form.get('surname')?.value,
       sex: this.form.get('sex')?.value,
       phoneNumber: this.form.get('phoneNumber')?.value,
+      dateOfBirth: new Date(),
+      doctorId: 1,
     };
 
     console.log(data);
 
-    const regData: IRegisterData = {
-      email: this.form.get('email')?.value as string,
-      name: this.form.get('name')?.value as string,
-    };
-
-    const registerSubscription = this.authService.register(regData).subscribe();
+    const registerSubscription = this.authService.register(data).subscribe();
     this.subscription.add(registerSubscription);
   }
 
@@ -53,7 +49,7 @@ export class RegisterComponent implements OnDestroy, OnInit {
     this.subscription.unsubscribe();
   }
 
-  myControl = new FormControl("");
+  myControl = new FormControl('');
 
   // TO DO
   // napuniti options imenima doktora iz baze
@@ -67,7 +63,7 @@ export class RegisterComponent implements OnDestroy, OnInit {
     'Dr. Ante Pavlović',
     'Siniša Vuco',
     'Dr. Who',
-    'Dr. Doctor'
+    'Dr. Doctor',
   ];
   filteredOptions!: Observable<string[]>;
 
