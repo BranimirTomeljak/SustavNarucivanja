@@ -29,4 +29,9 @@ export class AuthService {
   public register(data: IRegisterData) {
     return this.http.post('/api/register', data);
   }
+
+  public logout() {
+    localStorage.removeItem('user');
+    this._user$.next(null);
+  }
 }
