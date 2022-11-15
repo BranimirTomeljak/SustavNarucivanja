@@ -11,6 +11,7 @@ import { MainNavigationModule } from 'src/app/components/main-navigation/main-na
 import { RegisterComponent } from './register.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AuthNavigationModule } from 'src/app/components/auth-navigation/auth-navigation.module';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [RegisterComponent],
@@ -24,6 +25,7 @@ import { AuthNavigationModule } from 'src/app/components/auth-navigation/auth-na
     MatButtonModule,
     RouterModule,
     MatSelectModule,
+    MatSnackBarModule,
   ],
   exports: [RegisterComponent],
 })

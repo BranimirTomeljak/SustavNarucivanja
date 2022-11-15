@@ -27,7 +27,11 @@ export class AuthService {
   }
 
   public register(data: IRegisterData) {
-    return this.http.post('/api/register', data);
+    return this.http.post('/api/register', data).pipe(
+      tap((resp) => {
+        localStorage.setItem('user', JSON.stringify(resp));
+      })
+    );
   }
 
   public logout() {
