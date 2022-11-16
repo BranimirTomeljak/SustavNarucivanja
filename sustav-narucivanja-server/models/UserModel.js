@@ -26,7 +26,7 @@ class User {
     static async fetchBymail(mail) {
         mail = "'" + mail + "'"
         let results = await User.dbGetUserBy('mail', mail, 'users')
-        let newUser = new User()
+        let newUser = undefined
 
         if( results.length > 0 ) {
             newUser = new User(results[0].id, results[0].name, results[0].surname,
@@ -150,7 +150,7 @@ class Patient extends User{
         
         const sql = "INSERT INTO patient (id, doctorid, nFailedAppointments) VALUES (" +
              [this.id, this.doctorid, this.nFailedAppointments].join(",") + " )";
-        await db.query(sql, []);
+        await db.query(sql, [], true);
 
     }
 

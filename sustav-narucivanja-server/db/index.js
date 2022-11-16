@@ -18,14 +18,15 @@ dangerous_query = (text, params) => {
         });
 }
 
-async function query(text, params){
+async function query(text, params, throwerr=False){
     try {
         const result = await dangerous_query(text, params);
         return result.rows;
     } catch (err) {
         console.error("Error while querying the database:")
         console.log(err);
-        throw err
+        if (throwerr)
+            throw err
     }
 }
 
