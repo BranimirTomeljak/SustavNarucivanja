@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AnonGuard } from './guards/anon/anon.guard';
+import { AuthGuard } from './guards/auth/auth.guard';
 import { AdminComponent } from './pages/admin/admin.component';
 import { AdminModule } from './pages/admin/admin.module';
 import { DoctorComponent } from './pages/admin/create/doctor/doctor.component';
@@ -18,13 +20,14 @@ import { RegisterComponent } from './pages/register/register.component';
 import { RegisterModule } from './pages/register/register.module';
 
 const routes: Routes = [
+  { path: '', component: HomeComponent },
   {
     path: '',
     children: [
-      { path: '', component: HomeComponent },
       { path: 'admin', component: AdminComponent },
-      { path: 'patient', component: PatientComponent }
+      { path: 'patient', component: PatientComponent },
     ],
+    canActivate: [AuthGuard],
   },
   {
     path: 'create',
@@ -40,6 +43,7 @@ const routes: Routes = [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
     ],
+    canActivate: [AnonGuard],
   },
   { path: '**', redirectTo: '' },
 ];
@@ -54,7 +58,7 @@ const routes: Routes = [
     DoctorModule,
     TechModule,
     TeamModule,
-    PatientModule
+    PatientModule,
   ],
   exports: [RouterModule],
 })

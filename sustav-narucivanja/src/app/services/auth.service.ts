@@ -9,21 +9,35 @@ import { IUser } from '../interfaces/user';
   providedIn: 'root',
 })
 export class AuthService {
-  private URL = '';
-  private readonly _user$ = new BehaviorSubject<IUser | null>(null);
+  private readonly _user$ = new BehaviorSubject<IUser | null>(
+    localStorage.getItem('user')
+      ? JSON.parse(localStorage.getItem('user')!)
+      : null
+  );
   public user$ = this._user$.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  public login(data: ILoginData): Observable<IUser | null> {
-    return this.http
-      .post<IUser>(this.URL, data)
-      .pipe(tap((resp) => this._user$.next(resp)));
+  public login(data: ILoginData) {
+    return this.http.post('/api/login', data).pipe(
+      tap((resp) => {
+        localStorage.setItem('user', JSON.stringify(resp));
+        this._user$.next(resp);
+      })
+    );
   }
 
-  public register(data: IRegisterData): Observable<IUser | null> {
-    return this.http
-      .post<IUser>(this.URL, data)
-      .pipe(tap((resp) => this._user$.next(resp)));
+  public register(data: IRegisterData) {
+    return this.http.post('/api/register', data).pipe(
+      tap((resp) => {
+        localStorage.setItem('user', JSON.stringify(resp));
+        this._user$.next(resp);
+      })
+    );
+  }
+
+  public logout() {
+    localStorage.removeItem('user');
+    this._user$.next(null);
   }
 }
