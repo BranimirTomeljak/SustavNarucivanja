@@ -1,3 +1,8 @@
+process.on('uncaughtException', function (err) {
+  console.error(err);
+  console.log("Node NOT Exiting...");
+});
+
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -90,6 +95,6 @@ export {checkAuthenticated, checkNotAuthenticated};*/
 
 module.exports = app;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', function() {
+    console.log('Listening to port:  ' + PORT);
 });
