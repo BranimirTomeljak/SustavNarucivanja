@@ -26,7 +26,7 @@ class User {
     static async fetchBymail(mail) {
         mail = "'" + mail + "'"
         let results = await User.dbGetUserBy('mail', mail, 'users')
-        let newUser = new User()
+        let newUser = undefined
 
         if( results.length > 0 ) {
             newUser = new User(results[0].id, results[0].name, results[0].surname,
@@ -139,6 +139,7 @@ class Patient extends User{
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
         this.nFailedAppointments = nFailedAppointments
         this.doctorid = doctorid
+        this.type = 'patient'
     }
 
     async addToDb(){
@@ -149,7 +150,7 @@ class Patient extends User{
         
         const sql = "INSERT INTO patient (id, doctorid, nFailedAppointments) VALUES (" +
              [this.id, this.doctorid, this.nFailedAppointments].join(",") + " )";
-        await db.query(sql, []);
+        await db.query(sql, [], true);
 
     }
 
@@ -174,6 +175,7 @@ class Nurse extends User{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, teamid){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
         this.teamid = teamid
+        this.type = 'nurse'
     }
 
     async addToDb(){
@@ -220,6 +222,7 @@ class Nurse extends User{
 class Doctor extends Nurse{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
+        this.type = 'doctor'
     }
 
     async addToDb(){
@@ -268,6 +271,7 @@ class Doctor extends Nurse{
 class Admin extends User{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
+        this.type = 'admin'
     }
     async addToDb(){
         const sql = "INSERT INTO admin (id) VALUES (" + this.id + " )";

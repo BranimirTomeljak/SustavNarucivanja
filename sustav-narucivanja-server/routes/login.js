@@ -3,6 +3,8 @@ var router = express.Router();
 const { pool } = require("../db/dbConfig");
 const passport = require("passport");
 const flash = require("express-flash");
+const { json } = require("express");
+const { User, Patient, Doctor, Nurse, Admin } = require('../models/UserModel');
 
 /*router.get("/", checkAuthenticated, (req, res) => {  //zasad nek stoji komentirano ali tribat ce nan posli (kad pokusavamo pristupit login pageu, a vec smo logirani)
   // flash sets a messages variable. passport sets the error message  
@@ -11,21 +13,32 @@ const flash = require("express-flash");
   res.sendStatus(401);
 });*/
 
-router.post(
-  "/",
+router.post( "/",
   passport.authenticate("local", { failureFlash: true }),
   function (req, res) {
+    console.log('hello')
+    console.log(req.body)
     let { mail } = req.body;
     pool.query(
       `SELECT * FROM users
         WHERE mail = $1`,
       [mail],
-      (err, results) => {
+      async (err, results) => {
         if (err) {
           console.log(err);
           res.sendStatus(404);
         }
-        res.json(results.rows[0]);
+        let id = results.rows[0].id
+        let user = await User.fetchById(id)
+        if (user.isPatient())
+          res.session.user = await Patient.getById(id)
+        else if (user.Doctor())
+          res.session.user = await Doctor.getById(id)
+        else if (user.Nurse())
+          res.session.user = await Nurse.getById(id)
+        else if (user.Admin())
+          res.session.user = await Admin.getById(id)
+        res.sendStatus(200);
       }
     );
   }

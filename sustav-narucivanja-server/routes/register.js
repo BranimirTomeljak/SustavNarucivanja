@@ -3,10 +3,7 @@ var router = express.Router();
 const bcrypt = require("bcrypt");
 const { pool } = require("../db/dbConfig");
 const flash = require("express-flash");
-
-/*app.get("/users/register", checkAuthenticated, (req, res) => { //zasad nek stoji komentirano ali tribat ce nan posli (kad pokusavamo pristupit register pageu, a vec smo logirani)
-  res.render("register.ejs");
-});*/
+const { User, Patient } = require("../models/UserModel");
 
 router.post("/", async (req, res) => {
   let {
@@ -33,6 +30,7 @@ router.post("/", async (req, res) => {
     doctorId,
   });
 
+  // check for errors
   if (
     !name ||
     !surname ||
@@ -44,74 +42,60 @@ router.post("/", async (req, res) => {
     !doctorId
   ) {
     errors.push({ message: "Please enter all fields" });
+    res.sendStatus(400);
+    return
   }
 
   if (password.length < 6) {
     errors.push({ message: "Password must be a least 6 characters long" });
+    res.sendStatus(400);
+    return
   }
 
-  /*if(phoneNumber.length !== 9 || phoneNumber.length !== 10) {
+  if(phoneNumber?.length !== 9 || phoneNumber?.length !== 10) {
     errors.push({ message: "Croatian phone number must have 9 or 10 digits" });
-  }*/
-
-  if (errors.length > 0) {
-    console.log(errors);
-    res.sendStatus(400); // dodat da se ispisu errori na frontendu
-  } else {
-    hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
-    // Validation passed
-    pool.query(
-      `SELECT * FROM users
-        WHERE mail = $1`,
-      [mail],
-      (err, results) => {
-        if (err) {
-          console.log(err);
-          res.sendStatus(404);
-        }
-        console.log(results.rows);
-
-        if (results.rows.length > 0) {
-          console.log("mail already registered");
-          res.sendStatus(400);
-        } else {
-          pool.query(
-            `INSERT INTO users (
-              name,
-              surname,
-              sex,
-              phoneNumber,
-              mail,
-              password,
-              dateOfBirth,
-              doctorId)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            RETURNING name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId`,
-            [
-              name,
-              surname,
-              sex,
-              phoneNumber,
-              mail,
-              hashedPassword,
-              dateOfBirth,
-              doctorId,
-            ],
-            (err, results) => {
-              if (err) {
-                res.sendStatus(404);
-                throw err;
-              }
-              console.log(results.rows[0]);
-              req.flash("success_msg", "You are now registered. Please log in");
-              res.json(results.rows[0]);
-            }
-          );
-        }
-      }
-    );
+    res.sendStatus(400);
+    return
   }
+
+  let user = await User.fetchBymail(mail)
+  if (user !== undefined){
+    errors.push({ message: "Email already registered" });
+    res.sendStatus(400);
+    return
+  }
+
+  user = await User.dbGetUserBy('phoneNumber', phoneNumber, 'user')
+  if (user !== undefined){
+    errors.push({ message: "Phone number already registered." });
+    res.sendStatus(400);
+    return
+  }
+
+  // actually add the person to the database
+  hashedPassword = await bcrypt.hash(password, 10);
+  console.log(hashedPassword);
+
+  let patient = new Patient(
+    undefined,
+    name,
+    surname,
+    sex,
+    phoneNumber,
+    mail,
+    hashedPassword,
+    dateOfBirth,
+    doctorId,
+    0
+  )
+  try{
+    patient.addToDb()
+    res.sendStatus(200);
+  }
+  catch{
+    res.sendStatus(400);
+  }
+
 });
 
 module.exports = router;
