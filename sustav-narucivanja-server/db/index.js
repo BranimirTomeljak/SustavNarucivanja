@@ -8,19 +8,18 @@ const pool = new Pool({
     port: 5432,
 });
 
-dangerous_query = (text, params) => {
-    const start = Date.now();
-    return pool.query(text, params)
+dangerous_query = async (text, params) => {
+    return await pool.query(text, params)
         .then(res => {
-            const duration = Date.now() - start;
-            //console.log('executed query', {text, params, duration, rows: res.rows});
             return res;
         });
 }
 
 async function query(text, params, throwerr=false){
     try {
+        console.log(text)
         const result = await dangerous_query(text, params);
+        console.log(result.rows)
         return result.rows;
     } catch (err) {
         console.error("Error while querying the database:")

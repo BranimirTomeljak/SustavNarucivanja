@@ -71,10 +71,10 @@ router.post("/", async (req, res) => {
     return
   }
 
-  user = await User.dbGetUserBy('phoneNumber', phoneNumber, 'user')
+  user = await User.dbGetUserBy('phoneNumber', "'"+phoneNumber+"'", 'users')
   console.log(user)
 
-  if (user !== undefined){
+  if (user.length > 0){
     errors.push({ message: "Phone number already registered." });
     console.log('phone number already registered')
     res.sendStatus(400);
@@ -100,7 +100,7 @@ router.post("/", async (req, res) => {
   )
   try{
     patient.addToDb()
-    res.sendStatus(200);
+    res.json(patient);
   }
   catch{
     res.sendStatus(400);

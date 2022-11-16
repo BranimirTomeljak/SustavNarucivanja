@@ -15,36 +15,26 @@ const { User, Patient, Doctor, Nurse, Admin } = require('../models/UserModel');
 
 router.post( "/",
   passport.authenticate("local", { failureFlash: true }),
-  function (req, res) {
+  async function (req, res) {
     console.log('hello')
     console.log(req.body)
     let { mail } = req.body;
-    pool.query(
-      `SELECT * FROM users
-        WHERE mail = $1`,
-      [mail],
-      async (err, results) => {
-        if (err) {
-          console.log(err);
-          res.sendStatus(404);
-        }
-        let id = results.rows[0].id
-        let user = await User.fetchById(id)
-        user.password = undefined
-        console.log(user)
-        if (res.session === undefined)
-          res.session = {}
-        if (user.isPatient())
-          res.session.user = await Patient.getById(id)
-        else if (user.isDoctor())
-          res.session.user = await Doctor.getById(id)
-        else if (user.isNurse())
-          res.session.user = await Nurse.getById(id)
-        else if (user.isAdmin())
-          res.session.user = await Admin.getById(id)
-        res.sendStatus(200);
-      }
-    );
+    let user = await User.fetchBymail(mail)
+
+    let id = user.id
+    console.log(user)
+    if (res.session === undefined)
+      res.session = {}
+    if (user.isPatient())
+      res.session.user = await Patient.getById(id)
+    else if (user.isDoctor())
+      res.session.user = await Doctor.getById(id)
+    else if (user.isNurse())
+      res.session.user = await Nurse.getById(id)
+    else if (user.isAdmin())
+      res.session.user = await Admin.getById(id)
+    res.json(res.session.user);
+
   }
 );
 
