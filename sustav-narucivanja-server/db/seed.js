@@ -1084,7 +1084,7 @@ const sql_insert_users = `INSERT INTO users (name, surname, sex, phoneNumber, ma
 
 const sql_insert_team = `INSERT INTO team (id) VALUES (1), (2), (3), (4), (5)`
 const sql_insert_admin = `INSERT INTO admin (id) VALUES (2), (3), (5)`
-const sql_insert_doctor = `INSERT INTO doctor (id, teamid) VALUES (7, NULL), (9, 1), (11, 1), (13, 2), (15, 3)`
+const sql_insert_doctor = `INSERT INTO doctor (id, teamid) VALUES (7, NULL), (1, 1), (2, 1), (3, 2), (4, 3), (5, 3), (6, 3), (10, 3), (8, 3), (9, 3)`
 const sql_insert_nurse = `INSERT INTO nurse (id, teamid) VALUES (8, NULL), (10, 1), (12, 1), (14, 2), (16, 3)`
 const sql_insert_patient = `INSERT INTO patient (nFailedAppointments, id, doctorid) VALUES 
     (0, 100, 7), (0, 101, 7), (0, 102, 7)`

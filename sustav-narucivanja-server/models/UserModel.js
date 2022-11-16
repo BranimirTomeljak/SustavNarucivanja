@@ -81,7 +81,7 @@ class User {
     async _checkIsIn(where){
         const sql = "SELECT * FROM " + where + " where id = " + this.id
         const result = await db.query(sql, []);
-        return result.rows.length > 0;
+        return result.length > 0;
     }
 
 
@@ -98,7 +98,7 @@ class User {
         if (this.id !== undefined)
             throw 'cannot have defined id and try to save the user'
 
-        const sql = "INSERT INTO users (name, surname, sex, phonenumber, mail, password, dateofbirth, doctorid) VALUES ('" +
+        const sql = "INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId) VALUES ('" +
             this.name + "', '" + this.surname + "', '" +
             this.sex + "', '" + this.phonenumber + "', '" + this.mail + "', '" +
             this.password + "', '" + this.dateofbirth + "' ,1) RETURNING id;" // TODO remove doctor id

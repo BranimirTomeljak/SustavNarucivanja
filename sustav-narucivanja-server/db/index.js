@@ -18,7 +18,7 @@ dangerous_query = (text, params) => {
         });
 }
 
-async function query(text, params, throwerr=False){
+async function query(text, params, throwerr=false){
     try {
         const result = await dangerous_query(text, params);
         return result.rows;

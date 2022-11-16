@@ -30,13 +30,17 @@ router.post( "/",
         }
         let id = results.rows[0].id
         let user = await User.fetchById(id)
+        user.password = undefined
+        console.log(user)
+        if (res.session === undefined)
+          res.session = {}
         if (user.isPatient())
           res.session.user = await Patient.getById(id)
-        else if (user.Doctor())
+        else if (user.isDoctor())
           res.session.user = await Doctor.getById(id)
-        else if (user.Nurse())
+        else if (user.isNurse())
           res.session.user = await Nurse.getById(id)
-        else if (user.Admin())
+        else if (user.isAdmin())
           res.session.user = await Admin.getById(id)
         res.sendStatus(200);
       }
