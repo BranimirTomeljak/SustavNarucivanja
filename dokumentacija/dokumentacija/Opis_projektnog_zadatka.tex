@@ -15,18 +15,28 @@ ogleda se u dva osnovna aspekta njegove realizacije. Sustav će biti realiziran 
             \texttt{}{Primjer korištenja ovakvih funkcionalnosti u stvarnosti je stranica Reservatic.com koja pruža online sustav rezervacija za uslužne sektore. }
             \newline
              
-             \includegraphics[width=\textwidth]{slike/slicne1.jpg}
-             \newline
+\begin{figure}[H]
+			             \includegraphics[width=\textwidth]{slike/slicne1.jpg}
+			            \caption{Početna stranica Reservatic.com}
+			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+		            \end{figure}
 
 
              
              \texttt{}{Početna stranica posjeduje kratke informacije o sustavu, a header gumbe za registraciju i prijavu, koji će biti slični u implementaciji Null grupe 2022./2023.}
              \newline
-            
-             \includegraphics[width=\textwidth]{slike/slicne2.jpg}
-             \newline
+              \begin{figure}[H]
+			             \includegraphics[width=\textwidth]{slike/slicne2.jpg}
+			            \caption{Registracija u Reservatic.com}
+			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+		            \end{figure}
+            \begin{figure}[H]
+			             \includegraphics[width=\textwidth]{slike/slicne3.jpg}
+			            \caption{Razlika između Reservatic.com i Null grupe}
+			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+		            \end{figure}
 
-              \includegraphics[width=\textwidth]{slike/slicne3.jpg}
+             
 
 
   
@@ -47,12 +57,9 @@ e-pošte. Ciljane dobne skupine su od 18 do 65 godina starosti, aplikacija će b
   
             \textcolor{black}{Opseg projekta opisat ćemo kroz korisničke zahtjeve i ciljeve, vremenske rokove i troškove. 
             }
-            \texttt{}{Korisnici aplikacije  ́ce biti pacijenti, liječnici, medicinske sestre i administratori. Osnovna funkcionalnost dostupna pacijentima je zakazivanje pregleda kod liječnika opće medicine te slanje podsjetnika za termine putem SMS poruka ili e-pošte.}
-            \textt{ Prilikom registracije u aplikaciju pacijent unosi osnovne podatke te lozinku i 
-odabir liječnika. Za unesene osnovne podatke osiguravamo provjeru 
-konzistentnosti s podacima iz baze podataka. Pri uspješnoj registraciji 
-pacijent zaprima potvrdu na registriranu adresu e-pošte. Nakon toga korisnik postaje pacijent i dobiva neke mogućnosti. 
-Pacijenti se prijavljuju za termin kod liječnika ili sestre. Za prijavu kod liječnika pacijent odabire liječnika, termin i tip pregleda. Za prijavu kod sestre, pacijentu se dodjeljuje prvi slobodan termin od unaprijed dogovorenih termina. Pacijenti potvrđuju odabrani termin, a liječnici dobivaju obavijest o rezervaciji termina. Pacijent ima mogućnost otkazati termin najkasnije 24 sata prije početka.
+            \texttt{}{Korisnici aplikacije će biti pacijenti, liječnici, medicinske sestre i administratori. Osnovna funkcionalnost dostupna pacijentima je zakazivanje pregleda kod liječnika opće medicine te slanje podsjetnika za termine putem SMS poruka ili e-pošte.}
+            \texttt{}{ Prilikom registracije u aplikaciju pacijent unosi osnovne podatke te lozinku i odabir liječnika. Za unesene osnovne podatke osiguravamo provjeru konzistentnosti s podacima iz baze podataka. Pri uspješnoj registraciji pacijent zaprima potvrdu na registriranu adresu e-pošte. Nakon toga korisnik postaje pacijent i dobiva neke mogućnosti. Pacijenti se prijavljuju za termin kod liječnika ili sestre. Za prijavu kod liječnika
+pacijent odabire liječnika, termin i tip pregleda. Za prijavu kod sestre, pacijentu se dodjeljuje prvi slobodan termin od unaprijed dogovorenih termina. Pacijenti potvrđuju odabrani termin, a liječnici dobivaju obavijest o rezervaciji termina. Pacijent ima mogućnost otkazati termin najkasnije 24 sata prije početka.
 Sustav automatski generira potvrdu termina i šalje obavijest putem 
 preferiranog kanala komunikacije SMS ili e-pošta. Sustav automatski šalje 
 podsjetnike pacijentima o zakazanom terminu s eventualnom 
@@ -68,11 +75,11 @@ Vremensko ograničenje za prvu verziju projekta je 7 tjedana. Za ukupan projekt 
 
 \texttt{}{
 Troškovi projekta svedeni su na minimum. Satnica radnicima biti će 0 kuna jer se projekt radi u svrhe provjere znanja studenata. Null grupa spremna je odvojiti iznos od 500 kuna za ulaganje u hosting poslužitelja i web aplikacije.
-}
+}\newline
 
 
 
-         \textbf{\textit{Moguće nadogradnje}}\\
+              \textbf{\textit{Moguće nadogradnje}}\\
 
 \texttt{}{
 Projektanti Null grupe 2022./2023. dogovorili su da nemaju plan mijenjanja korisničkih zahtjeva te će se sve odraditi kako je i sam korisnik htio. Ukoliko bude potrebe, Null grupa je spremna uložiti dodatno vrijeme izvan okvira zadane satnice u implementaciju dodatnih mogućnosti u rad sustava i inovaciju. 
@@ -81,11 +88,11 @@ Projektanti Null grupe 2022./2023. dogovorili su da nemaju plan mijenjanja koris
 
 
         
-		\section{Primjeri u \LaTeX u}
+		%\section{Primjeri u \LaTeX u}
 		
-		\textit{Ovo potpoglavlje izbrisati.}\\
+		%\textit{Ovo potpoglavlje izbrisati.}\\
 
-		U nastavku se nalaze različiti primjeri kako koristiti osnovne funkcionalnosti \LaTeX a koje su potrebne za izradu dokumentacije. Za dodatnu pomoć obratiti se asistentu na projektu ili potražiti upute na sljedećim web sjedištima:
+		%U nastavku se nalaze različiti primjeri kako koristiti osnovne funkcionalnosti \LaTeX a koje su potrebne za izradu dokumentacije. Za dodatnu pomoć obratiti se asistentu na projektu ili potražiti upute na sljedećim web sjedištima:
 		
 		
 		%\begin{itemize}
@@ -128,7 +135,7 @@ Projektanti Null grupe 2022./2023. dogovorili su da nemaju plan mijenjanja koris
 	
 	%\begin{longtblr}[
 			%label=none,
-			5entry=none
+			%entry=none
 			%]{
 			%	width = \textwidth,
 			%	colspec={|X[8,l]|X[8, l]|X[16, l]|}, 
