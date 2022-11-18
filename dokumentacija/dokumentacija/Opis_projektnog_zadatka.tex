@@ -3,8 +3,7 @@
 		\textbf{\textit{Cilj projektnog zadatka}}\\
 		
 		\texttt{}{Kako je zdravlje najvažnija stvar u ljudskome životu za normalnu funkcionalnost društva, došlo je vrijeme da stvari krenu na bolje i da se naše zdravstvo modernizira. Zdravstvo samo po sebi je ogroman sustav sa jako puno sudionika, bilo radnika ili pacijenata, stoga se na prvu čini jako teško riješiti problem ubrzanja naručivanja pregleda i poboljšanja korisničkih usluga u zdravtsvu. No, nakon sažimanja i kompresiranja problema u manje stavke, možemo sa sigurnošću reći da je problem rješiv i ostvariv. Cilj ovog projektnog zadatka je realizirati sustav planiranja zdravstvenih usluga i komunikacije s 
-korisnicima koji bi omogućio učinkovite primarne, polikliničke i bolničke zdravstvene usluge u hrvatskom zdravstvu, lako dostupne svim građanima. U daljnjim točkama objasnit će se sva problematika i solucije projekta.
-ogleda se u dva osnovna aspekta njegove realizacije. Sustav će biti realiziran korištenjem AngularJS frontend okvirom kao web aplikacija dostupna svim građanima Republike Hrvatske.  } \newline \newline
+korisnicima koji bi omogućio učinkovite primarne, polikliničke i bolničke zdravstvene usluge u hrvatskom zdravstvu, lako dostupne svim građanima. Kako su korisnici ove aplikacije svi punoljetni građani Republike Hrvatske, sustav mora omogućavati jednostavnu uporabu sustava naručivanja koja mora biti prilagođena svim uzrastima.  } \newline \newline
             \textbf{\textit{Potencijalna korist projekta}}\\ 
             \newline
             \texttt{}{Korist ovog projekta može se iskazati na više načina. Korisnost samog rada biti će na pomoć najprije djelatnicima hrvatskog zdravstva koji će biti odriješeni javljanja na telefon i odgovaranja na email poruke svojih pacijenata, već će biti u mogućnosti fokusirati se na svoj rad, a ne gubiti vrijeme na formalnosti. Naravno, ovaj sustav će biti jednako tako koristan i pacijentima koji neće morati pisati duge mailove i čekati nekoliko dana kako bi im se djelatnik javio na poziv. Dakle s obje strane imamo veliko poboljšanje. Sustav će omogućiti konstantnu mogućnost prijave pregleda kod željenog zdravstvenika, neovisno koji je dan u tjednu. Pacijenti će tako imati sigurniji život i puno će brže obavljati samo prijavu pregleda. }
@@ -41,7 +40,7 @@ ogleda se u dva osnovna aspekta njegove realizacije. Sustav će biti realiziran 
 
   
               
-              \texttt{}{Registracija je klasična i tu nema nikakve posebnosti. Zanimljiva činjenica je da je Reservatic.com dodao naplaćivanje korištenja sustava za sve tvrtke, a Null grupa će to raditi za HZZO bez naplate. Dakle Reservatic.com je proširena verzija projektnog sustava Null grupe 2022./2023.}
+              \texttt{}{Registracija na stranici Reservatic.com je jednostavna i laka za uporabu. Dizajn Reservatic.com stranice vrlo je intuitivan i jednostavan za razumijevanje. Zanimljiva činjenica je da je Reservatic.com dodao naplaćivanje korištenja sustava za sve tvrtke po čemu se stranice Null grupe i Reservatic.com razlikuju.}
               \newline
             
 		       \textbf{\textit{Ciljana skupina korisnika}}\\
@@ -49,16 +48,18 @@ ogleda se u dva osnovna aspekta njegove realizacije. Sustav će biti realiziran 
          
   
             \texttt{}{
-            Korisnici aplikacije će biti pacijenti, liječnici, medicinske sestre i administratori. Osnovna funkcionalnost dostupna pacijentima je zakazivanje pregleda kod 
-liječnika opće medicine te slanje podsjetnika za termine putem SMS poruka ili 
-e-pošte. Ciljane dobne skupine su od 18 do 65 godina starosti, aplikacija će biti jednostavna za korištenje kako bi svaki građanin mogao pristupiti istoj i koristiti ju.  }	
+            Korisnici aplikacije će biti pacijenti, liječnici, medicinske sestre i administratori.
+            Većinu korisnika činit će pacijenti i oni su najvažniji dio populacije. Aplikacija mora biti prilagođena svim uzrastima što će se postići izradom što jednostavnijih sučelja i dizajna.
+            Ciljane dobne skupine su od 18 godina starosti do najstarijih građana. Aplikacija mora biti jednostavna za korištenje kako bi svaki građanin mogao pristupiti istoj i koristiti ju.  }
+            \newline
 
-\textbf{\textit{Opseg projekta}}\\
+
+                  \textbf{\textit{Opseg projekta}}\\
   
             \textcolor{black}{Opseg projekta opisat ćemo kroz korisničke zahtjeve i ciljeve, vremenske rokove i troškove. 
             }
             \texttt{}{Korisnici aplikacije će biti pacijenti, liječnici, medicinske sestre i administratori. Osnovna funkcionalnost dostupna pacijentima je zakazivanje pregleda kod liječnika opće medicine te slanje podsjetnika za termine putem SMS poruka ili e-pošte.}
-            \texttt{}{ Prilikom registracije u aplikaciju pacijent unosi osnovne podatke te lozinku i odabir liječnika. Za unesene osnovne podatke osiguravamo provjeru konzistentnosti s podacima iz baze podataka. Pri uspješnoj registraciji pacijent zaprima potvrdu na registriranu adresu e-pošte. Nakon toga korisnik postaje pacijent i dobiva neke mogućnosti. Pacijenti se prijavljuju za termin kod liječnika ili sestre. Za prijavu kod liječnika
+            \texttt{}{ Prilikom registracije u aplikaciju pacijent unosi osnovne podatke te lozinku i odabir liječnika. Za unesene osnovne podatke osiguravamo provjeru konzistentnosti s podacima iz baze podataka. Pri uspješnoj registraciji pacijent prima potvrdu na svoju registriranu adresu e-pošte. Nakon toga korisnik postaje pacijent i dobiva neke mogućnosti. Pacijenti se prijavljuju za termin kod liječnika ili sestre. Za prijavu kod liječnika
 pacijent odabire liječnika, termin i tip pregleda. Za prijavu kod sestre, pacijentu se dodjeljuje prvi slobodan termin od unaprijed dogovorenih termina. Pacijenti potvrđuju odabrani termin, a liječnici dobivaju obavijest o rezervaciji termina. Pacijent ima mogućnost otkazati termin najkasnije 24 sata prije početka.
 Sustav automatski generira potvrdu termina i šalje obavijest putem 
 preferiranog kanala komunikacije SMS ili e-pošta. Sustav automatski šalje 
@@ -68,13 +69,13 @@ personaliziranom porukom}
 
 
 \texttt{}{
-Vremensko ograničenje za prvu verziju projekta je 7 tjedana. Za ukupan projekt predviđeno je 14 tjedana rada. Na projektu radi 6 osoba, za svaku je predviđeno 15 sati rada tjedno. Dakle ukupno je predviđeno vrijeme od 1260 sati. 
+Vremensko ograničenje za prvu verziju projekta je 7 tjedana. Za drugu verziju, odnosno ukupan projekt predviđeno je 14 tjedana rada. Na projektu radi 6 osoba, za svaku je predviđeno 10 sati rada tjedno. Dakle ukupno je predviđeno vrijeme od 840 sati projektnog rada. 840 sati trošit će se većinski na rad, ali isto tako značajan dio odlazi na sastanke koji se održavaju minimalno svaki tjedan po 3 sata.
 }
 \newline
 
 
 \texttt{}{
-Troškovi projekta svedeni su na minimum. Satnica radnicima biti će 0 kuna jer se projekt radi u svrhe provjere znanja studenata. Null grupa spremna je odvojiti iznos od 500 kuna za ulaganje u hosting poslužitelja i web aplikacije.
+Troškovi projekta svedeni su na minimum. Satnica radnicima biti će 0 kuna jer se projekt radi u svrhe provjere znanja studenata. Null grupa spremna je odvojiti iznos od 100 EUR (753 HRK) za ulaganje u hosting poslužitelja i web aplikacije.
 }\newline
 
 
@@ -82,7 +83,8 @@ Troškovi projekta svedeni su na minimum. Satnica radnicima biti će 0 kuna jer 
               \textbf{\textit{Moguće nadogradnje}}\\
 
 \texttt{}{
-Projektanti Null grupe 2022./2023. dogovorili su da nemaju plan mijenjanja korisničkih zahtjeva te će se sve odraditi kako je i sam korisnik htio. Ukoliko bude potrebe, Null grupa je spremna uložiti dodatno vrijeme izvan okvira zadane satnice u implementaciju dodatnih mogućnosti u rad sustava i inovaciju. 
+Projektanti Null grupe 2022./2023. dogovorili su da nemaju plan mijenjanja korisničkih zahtjeva te će se sve odraditi kako je i sam korisnik htio. Ukoliko bude potrebe, Null grupa je spremna 
+ promijeniti dijelove plana programa i izvršiti implementaciju dodatnih mogućnosti u rad sustava i inovaciju sadržaja. 
 }
 
 
