@@ -346,7 +346,7 @@
 						
 						\item[] \begin{packed_item}
 	
-							\item[2.a] Sustav nije mogao poslati podsjetnik zbog greške u e-mail/sms sustavu
+							\item[3.a] Sustav nije mogao poslati podsjetnik zbog greške u e-mail/sms sustavu
 							\item[] \begin{packed_enum}
 								
 								\item Sustav šalje podsjetnik putem opcionalnog kanala komunikacije
@@ -672,16 +672,56 @@
 		            
 			\subsection{Sekvencijski dijagrami}
 				
-				\textbf{\textit{dio 1. revizije}}\\
+				\subsubsection{Obrazac uporabe UC4 - Zakazivanje termina kod liječnika}
+				Korisnik, prijavljen kao pacijent, želi vidjeti kalendar sa svojim terminima kako bi mogao zakazati sljedeći termin. Poslužitelj dohvaća trenutne termine i prikazuje ih. Korisnik želi zatražiti novi termin kod liječnika, međutim poslužitelj najprije mora provjeriti koji je status korisnika. Ako je sve u redu, pacijent je redovan, i poslužitelj dohvaća slobodne termine korisnikovog liječnika iz baze podataka i prikazuje ih korisniku. Korisnik bira željeni termin i dodatno naznačuje tip pregleda. Poslužitelj šalje nove podatke u bazu te obavještava korisnika te mu osvježava  kalendar. Ako je u korisnikovom statusu označeno da ima previše izostanaka sa zakazanih termina ili je zakazao previše termina, poslužitelj odbija zakazati novi termin i šalje odgovarajuću poruku korisniku.
 				
-				\textit{Nacrtati sekvencijske dijagrame koji modeliraju najvažnije dijelove sustava (max. 4 dijagrama). Ukoliko postoji nedoumica oko odabira, razjasniti s asistentom. Uz svaki dijagram napisati detaljni opis dijagrama.}
-				\eject
-	
+				
+				\begin{figure}[H]
+			            \includegraphics[width=\textwidth]{slike/sd_uc4.png} %veličina u odnosu na širinu linije
+			            \caption{Sekvencijski dijagram za UC4}
+			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+		            \end{figure}
+		            
+		        \eject
+				
+				\subsubsection{Obrazac uporabe UC6 - Otkazivanje termina}
+				
+				Korisnik, prijavljen kao pacijent, želi vidjeti kalendar sa svojim terminima kako bi mogao otkazati sljedeći termin. Poslužitelj dohvaća trenutne termine i prikazuje ih. Korisnik želi otkazati termin te na svom kalendaru pronalazi željeni termin i otkazuje ga. Poslužitelj tada najprije provjera koliko je vremena prošlo od rezervacije zadanog termina. Ako je prošlo više od 24 sata, tada poslužitelj odbija otkazati termin uz odgovarajuću poruku korisniku. Inače, poslužitelj šalje bazi podatak o terminu kojeg treba obrisati, te na potvrdu baze o uspješnom brisanju obavještava korisnika i osvježava mu kalendar.
+				
+				\begin{figure}[H]
+			            \includegraphics[width=\textwidth]{slike/sd_uc6.png} %veličina u odnosu na širinu linije
+			            \caption{Sekvencijski dijagram za UC6}
+			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+		        \end{figure}
+		            
+		        \eject
+		            
+		            
+				\subsubsection{Obrazac uporabe UC11 - Definiranje raspoloživosti termina}
+				
+				Korisnik, prijavljen kao liječnik, želi vidjeti kalendar kako bi imao uvid u svoje termine i mogao definirati njihovu raspoloživost. Poslužitelj dohvaća trenutne termine i prikazuje ih. Nakon što korisnik odluči definirati termine, poslužitelj mu vraća formu koja mu to omogućuje. Korisnik ima mogućnost definiranja termina sve dok ne potvrdi promjene. Nakon što korisnik potvrdi promjene, poslužitelj signalizira bazi da ih spremi. Poslije potvrde baze, poslužitelj osvježava korisnikov kalendar.
+				
+				\begin{figure}[H]
+			            \includegraphics[width=\textwidth]{slike/sd_uc11.png} %veličina u odnosu na širinu linije
+			            \caption{Sekvencijski dijagram za UC11}
+			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+		        \end{figure}
+		        
+		        \eject
+
 		\section{Ostali zahtjevi}
-		
-			\textbf{\textit{dio 1. revizije}}\\
-		 
-			 \textit{Nefunkcionalni zahtjevi i zahtjevi domene primjene dopunjuju funkcionalne zahtjeve. Oni opisuju \textbf{kako se sustav treba ponašati} i koja \textbf{ograničenja} treba poštivati (performanse, korisničko iskustvo, pouzdanost, standardi kvalitete, sigurnost...). Primjeri takvih zahtjeva u Vašem projektu mogu biti: podržani jezici korisničkog sučelja, vrijeme odziva, najveći mogući podržani broj korisnika, podržane web/mobilne platforme, razina zaštite (protokoli komunikacije, kriptiranje...)... Svaki takav zahtjev potrebno je navesti u jednoj ili dvije rečenice.}
+			
+			 \begin{packed_item}
+			     \item Sustav treba biti izveden kao web aplikacija kojoj će korisnici pristupati uz pomoć korisničkog imena i lozinke
+			     \item Oblikovanje aplikacije mora slijediti načela objektno-orijentiranog programiranja
+			     \item Aplikacija treba biti jednostavna za korištenje, a sučelje pregledno i intuitivno
+			     \item  Korisničko sučelje i sustav moraju podržavati hrvatsku abecedu (dijakritičke znakove) pri unosu i prikazu tekstualnog sadržaja
+			     \item Sustav treba podržavati rad više korisnika u stvarnom vremenu
+			     \item Neispravno korištenje korisničkog sučelja ne smije narušiti funkcionalnost i rad sustava
+			     \item Veza s bazom podataka mora biti kvalitetno zastičena, brza i otporna na vanjske greške
+			     \item Generirana dnevna i mjesečna izvješća o učinkovitosti šalju se u XML formatu
+			     
+			 \end{packed_item}
 			 
 			 
 			 
