@@ -103,12 +103,6 @@ export class RegisterComponent implements OnDestroy, OnInit {
     'Dr. Two',
     'Dr. Three',
     'Dr. Four',
-    'Franjo Tudman',
-    'Isus Krsit',
-    'Dr. Ante Pavlović',
-    'Siniša Vuco',
-    'Dr. Who',
-    'Dr. Doctor',
   ];
   filteredOptions!: Observable<string[]>;
 
