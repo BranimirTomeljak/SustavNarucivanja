@@ -19,7 +19,7 @@
 			
 			\textbf{\textit{dio 1. revizije}}\\
 			
-		\textit{Potrebno je opisati koju vrstu i implementaciju baze podataka ste odabrali, glavne komponente od kojih se sastoji i slično.}
+		{PostgresSQL baza podataka sastoji se od 7 tablica. Entitet users je supertip koji se disjointed grana na četiri tablice: admin, patient, doctor i nurse. Primarni ključ svih tih entiteta je ID koji se u tablici user automatski generira. Tablica patient također sadrži strani ključ doctorid, jer je pacijent pri registraciji obavezan izabrati svog liječnika. Tablica nurse ima strani ključ teamName, referencu na tablicu team, jer u jednom timu kojeg administrator određuje može raditi više medicinskih tehničara. Također ta vrijednost može biti null jer tehničar ne mora nužno biti dio tima. Osim tih tablica također baza podataka sadrži već prije spomenutu tablicu team te appointment. Primarni ključ teama je teamName, a također i sadrži strani ključ doctorid, referencu na tablicu doctor, u kojoj je naveden id liječnika dodjeljenog timu. Tablica appointment sadrži primarni ključ appointmentId koji se automatski generira te tri strana ključa. Patientid koji obavezno nije null, referenca na pacijenta koji dolazi na pregled. Druga dva strana ključa doctorId i nurseId su međusobno isključivi, odnosno ako jedan ima vrijednost, drugi mora biti null, jer pacijent dolazi na pregled ili kod liječnika ili kod tehničara. Pregled je također određen timestampom time, vremenom kad je ugovoren i intervalom duration.}
 		
 			\subsection{Opis tablica}
 			
@@ -35,18 +35,113 @@
 						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
 						rowhead = 1,
 					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
-					\hline \multicolumn{3}{|c|}{\textbf{korisnik - ime tablice}}	 \\ \hline[3pt]
-					\SetCell{LightGreen}IDKorisnik & INT	&  	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  	\\ \hline
-					korisnickoIme	& VARCHAR &   	\\ \hline 
-					email & VARCHAR &   \\ \hline 
-					ime & VARCHAR	&  		\\ \hline 
-					\SetCell{LightBlue} primjer	& VARCHAR &   	\\ \hline 
+					\hline \multicolumn{3}{|c|}{\textbf{users}}	 \\ \hline[3pt]
+					\SetCell{LightGreen} ID     &   INT     &  	Jedinstveni id svakog korisnika, generira se automatski, primarni ključ tablice korisnik \\ \hline
+					name	& VARCHAR &   Ime korisnika	\\ \hline 
+					surname & VARCHAR &  Prezime korisnika \\ \hline 
+					 phoneNumber & VARCHAR	&  	Telefonski broj korisnika, jedinstven ta svakog korisnika	\\ \hline 
+					 mail & VARCHAR	&  	Adresa elektroničke pošte korisnika, jedinstvena za svakog korisnika	\\ \hline 
+					password & VARCHAR	&  	Lozinka korisnika za prijavu u sustav	\\ \hline 
+					sex & VARCHAR	&  	spol korisnika	\\ \hline 
+					dateOdBirth & DATE	&  	Datum rođenja korisnika	\\ \hline 
 				\end{longtblr}
 				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \multicolumn{3}{|c|}{\textbf{admin}}	 \\ \hline[3pt]
+					\SetCell{LightGreen} adminid     &   INT     &  	Strani ključ, referenca na id u tablici users \\ \hline
+				\end{longtblr}
 				
+			\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[12,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \multicolumn{3}{|c|}{\textbf{patient}}	 \\ \hline[3pt]
+					numberOfMissedApp   &   INT & Broj ugovorenih pregleda koje je pacjent propustio \\ \hline
+					\SetCell{LightGreen} patientid     &   INT     &  	Strani ključ, referenca na id u tablici users \\ \hline
+					\SetCell{LightBlue} doctorid & INT & ID doktora kojeg je pacijent izabrao pri registraciji \\ \hline
+				\end{longtblr}
+			
+			
+			\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \multicolumn{3}{|c|}{\textbf{doctor}}	 \\ \hline[3pt]
+					\SetCell{LightGreen} doctorid      &   INT     &  	Strani ključ, referenca na id u tablici users \\ \hline
+				\end{longtblr}
+			
+			\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \multicolumn{3}{|c|}{\textbf{nurse}}	 \\ \hline[3pt]
+					\SetCell{LightGreen} nurseid     &   INT     &  	Strani ključ, referenca na id u tablici users \\ \hline
+					\SetCell{LightBlue}teamName & VARCHAR & Ime tima kojem je medicinska sestra dodjeljena, može biti null \\\hline
+				\end{longtblr}
+				
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \multicolumn{3}{|c|}{\textbf{team}}	 \\ \hline[3pt]
+					\SetCell{LightGreen} teamName      &   VARCHAR     &  	Ime tima \\ \hline
+					\SetCell{LightBlue}doctorid & INT & Strani ključ, ID doktora koji radi u timu \\\hline
+				\end{longtblr}
+			
+			\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[10,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \multicolumn{3}{|c|}{\textbf{appointment}}	 \\ \hline[3pt]
+					\SetCell{LightGreen} appointmentId       &   INT     &  	Jedinstveni ID pregleda, generira se automatski \\ \hline
+					\SetCell{LightBlue}patientid & INT & Strani ključ, ID pacijenta koji je zakazao pregled, ne može biti null \\\hline
+					\SetCell{LightBlue}doctorid & INT & Strani ključ, ID doktora koji koji vrši pregled\\\hline
+					\SetCell{LightBlue}nurseid & INT & Strani ključ, ID medicinskog tehničara koji vrši pregled \\\hline
+					time & TIMESTAMP & Vrijeme u koje je pregled ugovoren \\ \hline
+					duration & INTERVAL & Trajanje pregleda \\ \hline
+				\end{longtblr}
+			
 			
 			\subsection{Dijagram baze podataka}
-				\textit{ U ovom potpoglavlju potrebno je umetnuti dijagram baze podataka. Primarni i strani ključevi moraju biti označeni, a tablice povezane. Bazu podataka je potrebno normalizirati. Podsjetite se kolegija "Baze podataka".}
+				\begin{figure}[H]
+			            \includegraphics[width=\textwidth]{slike/BAZA_er.png} %veličina u odnosu na širinu linije
+			            \caption{ER dijagram baze podataka}
+			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+		            \end{figure}			
+			\subsection{Dijagram baze podataka}
+				\begin{figure}[H]
+			            \includegraphics[width=\textwidth]{slike/BAZA_racionalni.png} %veličina u odnosu na širinu linije
+			            \caption{Racionalni dijagram baze podataka}
+			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+		            \end{figure}
+		            
 			
 			\eject
 			
@@ -59,33 +154,33 @@
 			
 			\textit{Prilikom prve predaje projekta, potrebno je priložiti potpuno razrađen dijagram razreda vezan uz \textbf{generičku funkcionalnost} sustava. Ostale funkcionalnosti trebaju biti idejno razrađene u dijagramu sa sljedećim komponentama: nazivi razreda, nazivi metoda i vrste pristupa metodama (npr. javni, zaštićeni), nazivi atributa razreda, veze i odnosi između razreda.}\\
 			
-			\textbf{\textit{dio 2. revizije}}\\			
+		%	\textbf{\textit{dio 2. revizije}}\\			
 			
-			\textit{Prilikom druge predaje projekta dijagram razreda i opisi moraju odgovarati stvarnom stanju implementacije}
+		%	\textit{Prilikom druge predaje projekta dijagram razreda i opisi moraju odgovarati stvarnom stanju implementacije}
 			
 			
 			
-			\eject
+		%	\eject
 		
-		\section{Dijagram stanja}
+		%\section{Dijagram stanja}
 			
 			
-			\textbf{\textit{dio 2. revizije}}\\
+			%\textbf{\textit{dio 2. revizije}}\\
 			
-			\textit{Potrebno je priložiti dijagram stanja i opisati ga. Dovoljan je jedan dijagram stanja koji prikazuje \textbf{značajan dio funkcionalnosti} sustava. Na primjer, stanja korisničkog sučelja i tijek korištenja neke ključne funkcionalnosti jesu značajan dio sustava, a registracija i prijava nisu. }
+			%\textit{Potrebno je priložiti dijagram stanja i opisati ga. Dovoljan je jedan dijagram stanja koji prikazuje \textbf{značajan dio funkcionalnosti} sustava. Na primjer, stanja korisničkog sučelja i tijek korištenja neke ključne funkcionalnosti jesu značajan dio sustava, a registracija i prijava nisu. }
 			
 			
-			\eject 
+			%\eject 
 		
-		\section{Dijagram aktivnosti}
+		%\section{Dijagram aktivnosti}
 			
-			\textbf{\textit{dio 2. revizije}}\\
+			%\textbf{\textit{dio 2. revizije}}\\
 			
-			 \textit{Potrebno je priložiti dijagram aktivnosti s pripadajućim opisom. Dijagram aktivnosti treba prikazivati značajan dio sustava.}
+			 %\textit{Potrebno je priložiti dijagram aktivnosti s pripadajućim opisom. Dijagram aktivnosti treba prikazivati značajan dio sustava.}
 			
-			\eject
-		\section{Dijagram komponenti}
+			%\eject
+		%\section{Dijagram komponenti}
 		
-			\textbf{\textit{dio 2. revizije}}\\
+			%\textbf{\textit{dio 2. revizije}}\\
 		
-			 \textit{Potrebno je priložiti dijagram komponenti s pripadajućim opisom. Dijagram komponenti treba prikazivati strukturu cijele aplikacije.}
+			 %\textit{Potrebno je priložiti dijagram komponenti s pripadajućim opisom. Dijagram komponenti treba prikazivati strukturu cijele aplikacije.}
