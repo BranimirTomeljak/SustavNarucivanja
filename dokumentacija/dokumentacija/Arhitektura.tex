@@ -37,7 +37,7 @@
              \begin{figure}[H]
 			            \includegraphics[width=\textwidth]{slike/struktura.png} %veličina u odnosu na širinu linije
 			            \caption{Struktura implementacije aplikacije iz VSC.}
-			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+			            \label{fig:struktura} %label mora biti drugaciji za svaku sliku
 		            \end{figure}
 
               
@@ -174,13 +174,13 @@
 				\begin{figure}[H]
 			            \includegraphics[width=\textwidth]{slike/erplus.png} %veličina u odnosu na širinu linije
 			            \caption{ER dijagram baze podataka}
-			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+			            \label{fig:bp1} %label mora biti drugaciji za svaku sliku
 		            \end{figure}			
 			\subsection{Dijagram baze podataka}
 				\begin{figure}[H]
 			            \includegraphics[width=\textwidth]{slike/relacijski.png} %veličina u odnosu na širinu linije
 			            \caption{Relacijski dijagram baze podataka}
-			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+			            \label{fig:bp2} %label mora biti drugaciji za svaku sliku
 		            \end{figure}
 		            
 			
@@ -195,19 +195,27 @@
 			
 			%\textit{Prilikom prve predaje projekta, potrebno je priložiti potpuno razrađen dijagram razreda vezan uz \textbf{generičku funkcionalnost} sustava. Ostale funkcionalnosti trebaju biti idejno razrađene u dijagramu sa sljedećim komponentama: nazivi razreda, nazivi metoda i vrste pristupa metodama (npr. javni, zaštićeni), nazivi atributa razreda, veze i odnosi između razreda.}\\
 			
-			Na slici 4.3 prikazan je dijagram razreda koji pripada backend dijelu arhitekture. Razredi iz dijagrama predstavljaju strukturu baze podataka u aplikaciji te svaki razred predstavlja jedan entitet iz baze. Metode koje su implementirane komuniciraju s bazom podataka, ako je potrebno, upisuju odgovarajuće podatke u bazu ili ih vraćaju iz baze. Razred User predstavlja svakog korisnika aplikacije i koji može koristiti određene funkcionalnosti sustava. Međutim, prije toga se mora registrirati s osobnim podacima: ime, prezime, spol, broj telefona, e-mail, lozinka i datum rođenja. Razred Pacijent predstavlja korisnika koji je registriran kao pacijent i ima pristup svojim terminima uz funkcionalnosti zakazivanja i otkazivanja termina, kojeg predstavlja razred Appointment. Nešto veću ovlast ima medicinska sestra koju predstavlja razred Nurse, ona može i unaprijed definirati termine usluga. Razred Doctor predstavlja liječnika koji može definirati slobodne termine pregleda, ali i definirati pravila za naručivanje. Najvišu ovlast ima administrator, kojeg predstavlja razred Admin. On može stvarati timove, koje predstavlja razred Teams, te upisati nove liječnike i medicinske sestre u bazu.
+			Na slici 4.4 prikazan je dijagram razreda koji pripada backend dijelu arhitekture. Razredi iz dijagrama predstavljaju strukturu baze podataka u aplikaciji te svaki razred predstavlja jedan entitet iz baze. Metode koje su implementirane komuniciraju s bazom podataka, ako je potrebno, upisuju odgovarajuće podatke u bazu ili ih vraćaju iz baze. Razred User predstavlja svakog korisnika aplikacije i koji može koristiti određene funkcionalnosti sustava. Međutim, prije toga se mora registrirati s osobnim podacima: ime, prezime, spol, broj telefona, e-mail, lozinka i datum rođenja. Razred Pacijent predstavlja korisnika koji je registriran kao pacijent i ima pristup svojim terminima uz funkcionalnosti zakazivanja i otkazivanja termina, kojeg predstavlja razred Appointment. Nešto veću ovlast ima medicinska sestra koju predstavlja razred Nurse, ona može i unaprijed definirati termine usluga. Razred Doctor predstavlja liječnika koji može definirati slobodne termine pregleda, ali i definirati pravila za naručivanje. Najvišu ovlast ima administrator, kojeg predstavlja razred Admin. On može stvarati timove, koje predstavlja razred Teams, te upisati nove liječnike i medicinske sestre u bazu.
 			
 			\begin{figure}[H]
 			            \includegraphics[width=\textwidth]{slike/backend_class_diagram.png} %veličina u odnosu na širinu linije
 			            \caption{Dijagram razreda - Modeli}
-			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+			            \label{fig:class1} %label mora biti drugaciji za svaku sliku
 		      \end{figure}
+		      
+		      \eject
+		      
+		      
+		        Dijagram razreda na slici 4.5 generirali smo pomoću 'Classdiagram -ts' ekstenzije autora Alexa Shena u razvojnom okruženju Visual Studio Code. Dijagram prikazuje strukturu frontend dijela aplikacije. Angular je framework koji se bazira na komponentama, te svaka komponenta, koja je osnovni i gradivni dio, koristi neki od modula koji ih povezuju. Tako korijenski modul aplikacije, AppRoutingModule koristi svi nadređene module kao što su HomeModule, TeamModule, AdminModule, PatientModule, TechModule i DoctorModule, a svaka od njih koriste MainFooterModule i MainNavigationModule. Korištenjem komponenata smanjujemo redundanciju u kodu. Ovisno o tome koje ovlasti ima, bio on doktor, medicinska sestra pacijent ili administator, korisniku su prikazane različite komponente. Na primjer, pacijent ima pristup komponentama: KalendarComponent, MainNavigationComponent i MainFooterComponet.Za svaku komponentu korisniku su prikazani njihovi html predlošci, css oblikovanja i funkcionlanosti definirane u pojedinom dijelu komponente.
+                 
 		      
 		   \begin{figure}[H]
 			            \includegraphics[width=\textwidth]{slike/frontend_class_diagram.png} %veličina u odnosu na širinu linije
 			          \caption{Dijagram razreda - frontend}
-			            \label{fig:promjene2} %label mora biti drugaciji za svaku sliku
+			            \label{fig:class2} %label mora biti drugaciji za svaku sliku
 		      \end{figure}
+                 
+                
 			
 		%	\textbf{\textit{dio 2. revizije}}\\			
 			
