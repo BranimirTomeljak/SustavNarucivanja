@@ -135,10 +135,10 @@ class User {
 
 
 class Patient extends User{
-    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, doctorId, nFailedAppointments){
+    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, doctorid, nFailedAppointments){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
         this.nFailedAppointments = nFailedAppointments
-        this.doctorId = doctorId
+        this.doctorid = doctorid
         this.type = 'patient'
     }
 
@@ -148,8 +148,8 @@ class Patient extends User{
         else
             await this.saveUserToDb()
         
-        const sql = "INSERT INTO patient (id, doctorId, nFailedAppointments) VALUES (" +
-             [this.id, this.doctorId, this.nFailedAppointments].join(",") + " )";
+        const sql = "INSERT INTO patient (id, doctorid, nFailedAppointments) VALUES (" +
+             [this.id, this.doctorid, this.nFailedAppointments].join(",") + " )";
         await db.query(sql, [], true);
 
     }
@@ -163,9 +163,8 @@ class Patient extends User{
             throw 'user does not exist'
         return new Patient(
             user.id, user.name, user.surname, user.sex, user.phonenumber, user.mail, user.password, user.dateofbirth,
-            result[0].doctorId, result[0].nfailedappointments
+            result[0].doctorid, result[0].nfailedappointments
             )
-
     }
 }
 
@@ -218,6 +217,29 @@ class Nurse extends User{
             )
         return toreturn;
     }
+
+    static async getIdNameSurnameOfAll(){
+        const sql = 'SELECT id, name, surname FROM nurse Natural Join users';
+        const results = await db.query(sql, []);
+        if (results.length === 0)
+            throw 'user does not exist'
+        let toreturn = []
+        for (let result of results)
+            toreturn.push(
+                new Nurse(
+                    result.id, result.name, result.surname
+                )
+            )
+        return toreturn;
+    }
+
+    static async getNameSurnameById(id){
+        let users = await Nurse.dbGetUserBy('id', id, 'users')
+        let user = users[0]
+        return new Nurse(
+            user.id, user.name, user.surname
+            )
+    }
 }
 
 class Doctor extends Nurse{
@@ -268,7 +290,7 @@ class Doctor extends Nurse{
         return toreturn;
     }
 
-    static async getIdNameSurnameAll(){
+    static async getIdNameSurnameOfAll(){
         const sql = 'SELECT id, name, surname FROM doctor Natural Join users';
         const results = await db.query(sql, []);
         if (results.length === 0)
@@ -281,6 +303,14 @@ class Doctor extends Nurse{
                 )
             )
         return toreturn;
+    }
+
+    static async getNameSurnameById(id){
+        let users = await Doctor.dbGetUserBy('id', id, 'users')
+        let user = users[0]
+        return new Doctor(
+            user.id, user.name, user.surname
+            )
     }
 }
 
