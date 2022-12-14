@@ -3,7 +3,12 @@ var router = express.Router();
 const bcrypt = require("bcrypt");
 const { pool } = require("../db/dbConfig");
 const flash = require("express-flash");
-const { User, Patient } = require("../models/UserModel");
+const { User, Patient, Nurse, Doctor } = require("../models/UserModel");
+
+router.get("/", async function (req, res) {
+  let doctors = await Doctor.getIdNameSurnameAll();
+  res.json(doctors);
+});
 
 router.post("/", async (req, res) => {
   let {

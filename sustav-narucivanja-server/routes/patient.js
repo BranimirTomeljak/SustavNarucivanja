@@ -1,16 +1,22 @@
 var express = require('express');
-const { rawListeners } = require('../app');
+//const { rawListeners } = require('../app');
 var Appointment = require('../models/AppointmentModel');
-const { Patient } = require('../models/UserModel');
+const { Patient, Doctor } = require('../models/UserModel');
 
 var router = express.Router();
 
 // get all appointemnts from an `id` with `role`
 router.get('/', checkNotAuthenticated, async function(req, res, next) {
   if (req.session.user.type === 'patient'){
-    let patient = await Patient.getById(id)
-    patient.password = undefined
-    res.json(patient);
+    //let patient = await Patient.getById(req.session.user.id) //darijanovo
+    //patient.password = undefined //darijanovo
+    //res.json(patient); //darijanovo
+
+    console.log(req.session);
+    //let doctor = await Doctor.getById(req.session.user.doctorId);
+    //let appointments = Appointment.fetchBy("patientId", req.session.user.id);
+    //res.json(doctor);
+    //console.log(appointments);
   }
   else
     res.sendStatus(404);
@@ -35,7 +41,7 @@ router.post('/add', async function(req, res, next) {
     req.query.nFailedAppointments,
   )
   let other = await Patient.fetchBymail(req.query.mail)
-  if (other.id)
+  if (other.id === undefined)
     res.json({'error':'patient exists.'})
   else {
     patient.addToDb()

@@ -16,24 +16,22 @@ const { User, Patient, Doctor, Nurse, Admin } = require('../models/UserModel');
 router.post( "/",
   passport.authenticate("local", { failureFlash: true }),
   async function (req, res) {
-    console.log('hello')
-    console.log(req.body)
     let { mail } = req.body;
     let user = await User.fetchBymail(mail)
 
     let id = user.id
-    console.log(user)
+    //console.log(user)
     if (res.session === undefined)
       res.session = {}
     if (user.isPatient())
-      res.session.user = await Patient.getById(id)
+      req.session.user = await Patient.getById(id)
     else if (user.isDoctor())
-      res.session.user = await Doctor.getById(id)
+      req.session.user = await Doctor.getById(id)
     else if (user.isNurse())
-      res.session.user = await Nurse.getById(id)
+      req.session.user = await Nurse.getById(id)
     else if (user.isAdmin())
-      res.session.user = await Admin.getById(id)
-    res.json(res.session.user);
+      req.session.user = await Admin.getById(id)
+    res.json(req.session.user);
 
   }
 );

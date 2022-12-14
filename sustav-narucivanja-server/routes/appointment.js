@@ -1,5 +1,5 @@
 var express = require('express');
-const { rawListeners } = require('../app');
+//const { rawListeners } = require('../app');
 var Appointment = require('../models/AppointmentModel')
 
 var router = express.Router();
@@ -11,22 +11,23 @@ router.get('/', async function(req, res, next) {
   let id   = req.query.id
   if (role == 'admin')
     throw 'no admin here'
-  let field = {'doctor':'doctorid', 'patient':'patientid', 'nurse':'nurseid'}[role]
+  let field = {'doctor':'doctorId', 'patient':'patientId', 'nurse':'nurseId'}[role]
   let apps = await Appointment.fetchBy(field, id)
   res.json(apps);
 });
 
-// create appointment with `patientid`, nurse or doctor id 
+// create appointment with `patientId`, nurse or doctor id 
 // time and duration
 router.post('/add', async function(req, res, next) {
-  if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined))
-    throw 'cannot both be defined'
+  if ((req.query.doctorId===undefined) === (req.query.nurseId===undefined))
+    console.log("1");
+    //throw 'cannot both be defined'
 
   let app = new Appointment(
     id = undefined,
-    req.query.patientid,
-    req.query.doctorid,
-    req.query.nurseid,
+    req.query.patientId,
+    req.query.doctorId,
+    req.query.nurseId,
     req.query.time,
     req.query.duration
   )
