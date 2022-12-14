@@ -66,7 +66,7 @@ const sql_create_team = `CREATE TABLE team (
 
 const sql_create_appointment = `CREATE TABLE appointment (
     id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    patientid INT NOT NULL,
+    patientid INT,
     doctorid INT,
     nurseid INT,
     time TIMESTAMP,

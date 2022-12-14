@@ -30,7 +30,7 @@ class Appointment {
         return toreturn
     }
 
-    //da li je appointment pohranjen u bazu podataka?
+    // da li je appointment pohranjen u bazu podataka?
     async isSavedToDb() {
         if (this.id === undefined)
             return false
@@ -38,7 +38,7 @@ class Appointment {
         return apps.length == 1
     }
 
-    //dohvat korisnika iz baze podataka na osnovu `what` i `table` odakle uzimamo
+    // dohvat korisnika iz baze podataka na osnovu `what` i `table` odakle uzimamo
     // to moze biti doctor, nurse, admin, patient...
     static async dbGetBy(table, what, that){
         const sql = 'SELECT * FROM ' + table + ' WHERE ' + what + ' = ' + that;
@@ -82,12 +82,22 @@ class Appointment {
     async conflictsWithDb (){
         let beg = "('" + this.time + "'::timestamp)"
         let end = "(" + beg + "+ ('" + this.duration + "'::interval))"
+        let constraint_list = []
+
+        if (this.doctorid !== undefined)
+            constraint_list.push("doctorid = " + this.doctorid)
+        if (this.nurseid !== undefined)
+            constraint_list.push("nurseid = " + this.nurseid)
+        if (this.patientid !== undefined)
+            constraint_list.push("patientid = " + this.patientid)
+
+        let constraint_str = constraint_list.join(' or ')
 
         const sql = `
             SELECT * from appointment a
             where not (( a.time <= ` + beg + ` and a.time + a.duration <= `+beg+`) or
                        (`+beg+`<= a.time and `+ end + `<=a.time))
-                    and (patientid = `  + this.patientid + ` or doctorid = ` + this.doctorid +`) 
+                    and (` + constraint_str +`) 
         `
         const result = await db.query(sql, []);
         if (result.length){
@@ -98,6 +108,29 @@ class Appointment {
         if (this.id !== undefined)
             return result.length > 0
         return result.length > 1
+    }
+
+    // for example can fetch by patientid, doctorid
+    static async fetchBy2(propertya, ida, propertyb, idb) {
+        const sql = 'SELECT * FROM ' + table + ' WHERE ' + propertya + "=" + ida + " and " + propertyb + "=" + idb;
+        const appointments = await db.query(sql, []);
+        let toreturn = []
+        for (let app of appointments){
+            toreturn.push( new Appointment(app.id, app.patientid, app.doctorid, app.nurseid, app.time, app.duration))
+        }
+        return toreturn
+    }
+
+    // for example can fetch by patientid, doctorid
+    static async updateDb() {
+        const sql = `UPDATE appointment 
+                    SET patientid=` + this.patientid + 
+                    `, doctorid=` + this.doctorid + 
+                    `, nurseid=` + this.nurseid + 
+                    `time=` + this.time + 
+                    'duration=' + this.duration + 
+                    `WHERE id=` + this.id;
+        return await db.query(sql, []);
     }
 
 }
