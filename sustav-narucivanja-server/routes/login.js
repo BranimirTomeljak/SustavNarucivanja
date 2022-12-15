@@ -23,17 +23,17 @@ router.post( "/",
 
     let id = user.id
     console.log(user)
-    if (res.session === undefined)
-      res.session = {}
+    if (req.session === undefined)
+      req.session = {}
     if (user.isPatient())
-      res.session.user = await Patient.getById(id)
+      req.session.user = await Patient.getById(id)
     else if (user.isDoctor())
-      res.session.user = await Doctor.getById(id)
+      req.session.user = await Doctor.getById(id)
     else if (user.isNurse())
-      res.session.user = await Nurse.getById(id)
+      req.session.user = await Nurse.getById(id)
     else if (user.isAdmin())
-      res.session.user = await Admin.getById(id)
-    res.json(res.session.user);
+      req.session.user = await Admin.getById(id)
+    res.json(req.session.user);
 
   }
 );
