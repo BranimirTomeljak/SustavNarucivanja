@@ -75,7 +75,6 @@ router.post('/add_range', async function(req, res, next) {
   }
 
   const appointment_factory = (time) => {
-    console.log('factoruyuuu')
     return new Appointment(
       id = undefined,
       req.query.patientid,
@@ -153,10 +152,10 @@ router.post('/delete', async function(req, res, next) {
   )
   
   if (!app.isSavedToDb())
-    res.json({'error':'Does not exist in the database.'})
+    res.status(500).send('Does not exist in the database.')
   else{
     app.removeFromDb()
-    res.json({})
+    res.send("OK");
   }
 
 });
