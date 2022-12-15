@@ -1,4 +1,6 @@
 const db = require('../db')
+const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;} 
+
 
 class Appointment {
     //konstruktor korisnika
@@ -25,6 +27,7 @@ class Appointment {
         let appointments = await Appointment.dbGetBy('appointment', property, id)
         let toreturn = []
         for (let app of appointments){
+            app.time = add_hour(app.time)
             toreturn.push( new Appointment(app.id, app.patientid, app.doctorid, app.nurseid, app.time, app.duration))
         }
         return toreturn
@@ -79,6 +82,22 @@ class Appointment {
         return "'" + a + "'"
     }
 
+    static _stringify_all(a){
+        if (a === undefined || a === null)
+            return 'NULL'
+        if (a.toISOString !== undefined)
+            a = a.toISOString().slice(0, 19).replace('T', ' ');
+        
+        if (typeof a === "string")
+            if (a.indexOf("-") > -1)
+                return "'" + a + "'" + '::TIMESTAMP '
+            else if (a.indexOf("P0Y0") > -1){
+                a = a.split(' ')[1].replace(/[HM]/g, ":").replace('S', ''); 
+                return "'" + a + "'" + '::INTERVAL '
+            }
+        return a
+    }
+
     async conflictsWithDb (){
         let beg = "('" + this.time + "'::timestamp)"
         let end = "(" + beg + "+ ('" + this.duration + "'::interval))"
@@ -112,24 +131,30 @@ class Appointment {
 
     // for example can fetch by patientid, doctorid
     static async fetchBy2(propertya, ida, propertyb, idb) {
-        const sql = 'SELECT * FROM ' + table + ' WHERE ' + propertya + "=" + ida + " and " + propertyb + "=" + idb;
+        let f = Appointment._stringify_all
+        const sql = 'SELECT * FROM appointment WHERE ' + propertya + "=" + f(ida) + " and " + propertyb + "=" + f(idb);
         const appointments = await db.query(sql, []);
+        console.log(appointments)
         let toreturn = []
         for (let app of appointments){
+            app.time = add_hour(app.time)
             toreturn.push( new Appointment(app.id, app.patientid, app.doctorid, app.nurseid, app.time, app.duration))
         }
         return toreturn
     }
 
     // for example can fetch by patientid, doctorid
-    static async updateDb() {
+    async updateDb() {
+        let f = Appointment._stringify_all
+        console.log('updationg...')
+        console.log(this.time)
         const sql = `UPDATE appointment 
-                    SET patientid=` + this.patientid + 
-                    `, doctorid=` + this.doctorid + 
-                    `, nurseid=` + this.nurseid + 
-                    `time=` + this.time + 
-                    'duration=' + this.duration + 
-                    `WHERE id=` + this.id;
+                    SET patientid=` + f(this.patientid) + 
+                    `, doctorid=` + f(this.doctorid) + 
+                    `, nurseid=` + f(this.nurseid) + 
+                    `, time=` + f(this.time) + 
+                    ', duration=' + f(this.duration) + 
+                    ` WHERE id=` + f(this.id);
         return await db.query(sql, []);
     }
 

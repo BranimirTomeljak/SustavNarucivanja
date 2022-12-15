@@ -4,6 +4,7 @@ var Appointment = require('../models/AppointmentModel')
 
 var router = express.Router();
 const appointment_duration = 30;
+const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;} 
 
 
 // get all appointemnts from an `id` with `role`
@@ -33,12 +34,12 @@ router.post('/add', async function(req, res, next) {
   )
 
   if (await app.conflictsWithDb())
-    res.json({'error':'Appointment overlaps.'})
+    res.status(500).send('Appointment overlaps.')
   else if (await app.isSavedToDb())
-    res.json({'error':'Appointment exists.'})
+    res.status(500).send('Appointment exists.')
   else {
     app.saveToDb()
-    res.json({});
+    res.send("OK");
   }
 });
 
@@ -48,11 +49,13 @@ router.post('/add_range', async function(req, res, next) {
   
   if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined))
     throw 'cannot both be defined'
+
+  console.log('the date is ' + req.query.time_start )
   
   const loop_over_appointments = async (func) => {
     // Parse the start and end times as Date objects
-    const startTime = new Date(Date.parse(req.query.time_start));
-    const endTime   = new Date(Date.parse(req.query.time_end));
+    const startTime = add_hour(new Date(Date.parse(req.query.time_start)));
+    const endTime   = add_hour(new Date(Date.parse(req.query.time_end)));
 
     // Set the current time to the start time
     let currentTime = startTime;
@@ -60,7 +63,9 @@ router.post('/add_range', async function(req, res, next) {
     // Loop until the current time is past the end time
     while (currentTime.getTime() + appointment_duration * 60 * 1000 < endTime.getTime()) {
       console.log(currentTime.toISOString())
-      if (await func(currentTime.toISOString()))
+      let dateString = currentTime.toISOString().slice(0, 19).replace('T', ' ');
+      console.log(dateString)
+      if (await func(dateString))
         return false
 
       // Increment the current time by 30 minutes
@@ -85,12 +90,12 @@ router.post('/add_range', async function(req, res, next) {
     let app = appointment_factory(time)
   
     if (await app.conflictsWithDb()){
-      res.json({'error':'Appointment overlaps.'})
+      res.status(500).send('Appointment overlaps.')
       return true
     }
     else if (await app.isSavedToDb())
     {
-      res.json({'error':'Appointment exists.'})
+      res.status(500).send('Appointment exists.')
       return true
     }
     return false
@@ -107,6 +112,31 @@ router.post('/add_range', async function(req, res, next) {
     await loop_over_appointments(save_to_db)
     res.json({});
   }
+});
+
+// create appointment with `patientid`, nurse or doctor id 
+// time and duration
+router.post('/link_patient', async function(req, res, next) {
+  if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined)){
+      res.status(500).send('Only one of doctorid or nurseid can be defined')
+      return
+  }
+  
+  let app;
+  const time   = add_hour(new Date(Date.parse(req.query.time)));
+
+  if (req.query.doctorid !== undefined)
+    app = await Appointment.fetchBy2("doctorid", req.query.doctorid, "time", time)
+  else
+    app = await Appointment.fetchBy2("nurseid", req.query.doctorid, "time", time)
+  if (app.length === 0){
+    res.status(500).send('There is no specified appointment slot')
+    return
+  }
+  app = app[0]
+  app.patientid = req.query.patientid
+  await app.updateDb()
+  res.send("OK");
 });
 
 

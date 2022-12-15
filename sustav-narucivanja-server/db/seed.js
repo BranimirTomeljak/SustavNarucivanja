@@ -69,7 +69,7 @@ const sql_create_appointment = `CREATE TABLE appointment (
     patientid INT,
     doctorid INT,
     nurseid INT,
-    time TIMESTAMP,
+    time TIMESTAMP WITHOUT TIME ZONE,
     duration INTERVAL, 
     FOREIGN KEY (patientid) REFERENCES patient(id),
     FOREIGN KEY (doctorid) REFERENCES doctor(id),
