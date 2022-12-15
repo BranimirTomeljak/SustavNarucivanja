@@ -1,12 +1,14 @@
 var express = require('express');
 //const { rawListeners } = require('../app');
-var Appointment = require('../models/AppointmentModel')
+var Appointment = require('../models/AppointmentModel');
+var { Doctor } = require("../models/UserModel");
 
 var router = express.Router();
 
 
 // get all appointemnts from an `id` with `role`
 router.get('/', async function(req, res, next) {
+  sendAddAppointmentEmail(10);
   let role = req.query.role
   let id   = req.query.id
   if (role == 'admin')
@@ -20,8 +22,7 @@ router.get('/', async function(req, res, next) {
 // time and duration
 router.post('/add', async function(req, res, next) {
   if ((req.query.doctorId===undefined) === (req.query.nurseId===undefined))
-    console.log("1");
-    //throw 'cannot both be defined'
+    throw 'cannot both be defined'
 
   let app = new Appointment(
     id = undefined,
@@ -37,7 +38,8 @@ router.post('/add', async function(req, res, next) {
   else if (await app.isSavedToDb())
     res.json({'error':'Appointment exists.'})
   else {
-    app.saveToDb()
+    app.saveToDb();
+    sendAddAppointmentEmail(doctorId);
     res.json({});
   }
 });
@@ -62,5 +64,36 @@ router.post('/delete', async function(req, res, next) {
   }
 
 });
+
+async function sendAddAppointmentEmail(doctorId){
+  let doctor = await Doctor.getById(doctorId);
+
+  const transporter = nodemailer.createTransport({
+    service: "hotmail",
+    auth: {
+      user: "sustavzanarucivanje@outlook.com",
+      pass: "Narucivanje1950"
+    }
+  });
+
+  //todo napisat nesto posteno
+  var message = `<p>Po&scaron;tovani ${doctor.name} ${doctor.surname},<br /><br />Rezerviran Vam je termin u ${time} i traje ${duration}</p><p>Lijep pozdrav</p>`;
+
+  const options = {
+    from: "sustavzanarucivanje@outlook.com",
+    to: mail,
+    subject: "Potvrda registracije na Sustav za naručivanje",
+    //text: "bla bla tekst tekst",
+    html: message
+  };
+
+  transporter.sendMail(options, function(err, info){
+    if(err){
+      console.log(err);
+      return;
+    }
+    console.log("Send: " + info.response);
+  })
+}
 
 module.exports = router;
