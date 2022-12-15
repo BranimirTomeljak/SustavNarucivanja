@@ -8,7 +8,6 @@ var router = express.Router();
 
 // get all appointemnts from an `id` with `role`
 router.get('/', async function(req, res, next) {
-  sendAddAppointmentEmail(10);
   let role = req.query.role
   let id   = req.query.id
   if (role == 'admin')
