@@ -7,6 +7,9 @@ const appointment_duration = 30;
 const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;} 
 const curr_date_factory = ()=> {return add_hour(new Date())}
 
+// IMPORTANT!!!!
+// once we get the authentification and session working you will not need to send id and role
+
 
 // get all appointemnts from an `id` with `role`
 router.get('/', async function(req, res, next) {
@@ -21,6 +24,7 @@ router.get('/', async function(req, res, next) {
 
 // create appointment with `patientid`, nurse or doctor id 
 // time and duration
+// this creates only one appointment and it can have any length
 router.post('/add', async function(req, res, next) {
   if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined))
     throw 'cannot both be defined'
@@ -44,8 +48,24 @@ router.post('/add', async function(req, res, next) {
   }
 });
 
-// create appointment with `patientid`, nurse or doctor id 
-// time and duration
+
+/*
+Makes a block of appointments between `time_start` and `time_end` of
+length `appointment_duration`.
+
+So if time_start is "2022-12-12 10:00:00" and time_end is "2022-12-12 11:45:00"
+that would create the following appointments (times of start, appointment_duration===30):
+  - "2022-12-12 10:00:00"
+  - "2022-12-12 10:30:00"
+  - "2022-12-12 11:00:00"
+
+`appointment_duration` is set at the beginning of the file and is in minutes.
+
+needed in the query:
+    time_start: string ("YYYY-MM-DD HH:MM:SS")
+    time_end  : string ("YYYY-MM-DD HH:MM:SS")
+    nurseid or doctorid: int
+*/
 router.post('/add_range', async function(req, res, next) {
   
   if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined))
@@ -115,8 +135,17 @@ router.post('/add_range', async function(req, res, next) {
 });
 
 
-// create appointment with `patientid`, nurse or doctor id 
-// time and duration
+
+/* 
+these 6 are similar, they need identification information of an appointment in query
+  time: string ("YYYY-MM-DD HH:MM:SS")
+  doctorid or nurseid: int
+*/
+
+// when the patient chooses one of the available doctor or nurse appointments
+// this is used to reserve it
+// extra fields ->
+//  type: string (type of an appointment ('vadenje krvi', ...))
 router.post('/reserve', async function(req, res, next) {
   // TODO limit number of reserves
   update_app(req, res, (app)=>{
@@ -126,6 +155,8 @@ router.post('/reserve', async function(req, res, next) {
   })
 });
 
+// if somebody needs to cancel an appointment
+// the doctor or nurse slot is kept available, just the patient id is not linked to the appointment
 router.post('/cancel', async function(req, res, next) {
   update_app(req, res, (app) => {
     app.patientid = undefined
@@ -135,6 +166,7 @@ router.post('/cancel', async function(req, res, next) {
   })
 });
 
+// work in progress
 router.post('/change', async function(req, res, next) {
   update_app(req, res, (app)=>{
     app.pending_accept = false
@@ -142,6 +174,7 @@ router.post('/change', async function(req, res, next) {
   } )
 });
 
+// if the doctor moves the appointment the patient has to accept
 router.post('/accept_change', async function(req, res, next) {
   update_app(req, res, (app)=>{
     app.pending_accept = false
@@ -149,6 +182,7 @@ router.post('/accept_change', async function(req, res, next) {
   })
 });
 
+// if the doctor moves the appointment the patient can reject
 router.post('/reject_change', async function(req, res, next) {
   update_app(req, res, (app)=> {
     app.pending_accept = false
@@ -156,6 +190,10 @@ router.post('/reject_change', async function(req, res, next) {
   })
 });
 
+// at the end of the day nurse/doctor has to record did the patiend come
+// to the appointment
+// extra fields ->
+//  patient_came: boolean
 router.post('/record_attendance', async function(req, res, next) {
   update_app(req, res, (app)=>{
     app.patient_came = JSON.parse(req.query.patient_came)
