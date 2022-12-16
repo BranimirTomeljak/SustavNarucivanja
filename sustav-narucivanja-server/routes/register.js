@@ -5,6 +5,21 @@ const { pool } = require("../db/dbConfig");
 const flash = require("express-flash");
 const { User, Patient, Doctor, Nurse, Admin } = require("../models/UserModel");
 
+/*
+The following 4 endpoints are accesed in the same way.
+The body encoded in a x-www-form-urlencoded way has to have:
+  (key: value type):
+  name: string
+  surname: string
+  sex: 'M' or 'F'
+  phoneNumber: string (9 or 10 chars)
+  mail: string, *@*.* (has to be unique)
+  password: string
+  dateOfBirth: string (YYYY-MM-DD)
+  doctorId: int (only for patient ("/"))
+
+If everything is ok you get OK you get 200 else error msgs
+*/
 router.post("/", async (req, res) => {
   await check_and_put(req, res, Patient)
 });
@@ -103,7 +118,7 @@ const check_and_put = async (req, res, where) =>{
   hashedPassword = await bcrypt.hash(password, 10);
   console.log(hashedPassword);
 
-  let patient = new where(
+  let person = new where(
     undefined,
     name,
     surname,
@@ -116,12 +131,13 @@ const check_and_put = async (req, res, where) =>{
     0
   )
   try{
-    patient.addToDb()
-    res.json(patient);
+    person.addToDb()
+    res.json(person);
   }
   catch{
     res.sendStatus(400);
   }
+  return person
 }
 
 module.exports = router;
