@@ -3,9 +3,26 @@ var router = express.Router();
 const bcrypt = require("bcrypt");
 const { pool } = require("../db/dbConfig");
 const flash = require("express-flash");
-const { User, Patient } = require("../models/UserModel");
+const { User, Patient, Doctor, Nurse, Admin } = require("../models/UserModel");
 
 router.post("/", async (req, res) => {
+  await check_and_put(req, res, Patient)
+});
+
+router.post("/doctor", async (req, res) => {
+  await check_and_put(req, res, Doctor)
+});
+
+router.post("/nurse", async (req, res) => {
+  await check_and_put(req, res, Nurse)
+});
+
+router.post("/admin", async (req, res) => {
+  await check_and_put(req, res, Admin)
+});
+
+
+const check_and_put = async (req, res, where) =>{
   let {
     name,
     surname,
@@ -39,7 +56,7 @@ router.post("/", async (req, res) => {
     !mail ||
     !password ||
     !dateOfBirth ||
-    !doctorId
+    (!doctorId && where===Patient)
   ) {
     errors.push({ message: "Please enter all fields" });
     console.log('enter all fields')
@@ -86,7 +103,7 @@ router.post("/", async (req, res) => {
   hashedPassword = await bcrypt.hash(password, 10);
   console.log(hashedPassword);
 
-  let patient = new Patient(
+  let patient = new where(
     undefined,
     name,
     surname,
@@ -105,7 +122,6 @@ router.post("/", async (req, res) => {
   catch{
     res.sendStatus(400);
   }
-
-});
+}
 
 module.exports = router;
