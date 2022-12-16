@@ -2,6 +2,21 @@ const db = require('../db')
 const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;} 
 
 
+const app_factory = (obj) =>{
+    return new Appointment(
+        obj.id, 
+        obj.patientid, 
+        obj.doctorid, 
+        obj.nurseid, 
+        obj.time, 
+        obj.duration,
+        obj.created_on,
+        obj.pending_accept,
+        obj.type,
+        obj.patient_came,
+    )
+}
+
 class Appointment {
     //konstruktor korisnika
     constructor(
@@ -11,6 +26,10 @@ class Appointment {
         nurseid=undefined, 
         time,
         duration,
+        created_on=undefined,
+        pending_accept=undefined,
+        type=undefined,
+        patient_came=undefined,
     ) {
         this.id = id
         this.patientid = patientid, 
@@ -18,6 +37,10 @@ class Appointment {
         this.duration = duration
         this.doctorid = doctorid
         this.nurseid = nurseid
+        this.created_on = created_on
+        this.pending_accept = pending_accept
+        this.type = type
+        this.patient_came = patient_came
     }
 
 
@@ -28,7 +51,7 @@ class Appointment {
         let toreturn = []
         for (let app of appointments){
             app.time = add_hour(app.time)
-            toreturn.push( new Appointment(app.id, app.patientid, app.doctorid, app.nurseid, app.time, app.duration))
+            toreturn.push( app_factory(app))
         }
         return toreturn
     }
@@ -56,8 +79,18 @@ class Appointment {
 
         const f = this._stringify
 
-        const sql = "INSERT INTO appointment (patientid, doctorid, nurseid, time, duration) VALUES (" +
-            [f(this.patientid), f(this.doctorid), f(this.nurseid), f(this.time), f(this.duration)].join(" , ") + 
+        const sql = "INSERT INTO appointment (patientid, doctorid, nurseid, time, duration, created_on, pending_accept, type, patient_came) VALUES (" +
+            [
+                f(this.patientid), 
+                f(this.doctorid), 
+                f(this.nurseid), 
+                f(this.time), 
+                f(this.duration), 
+                f(this.created_on), 
+                f(this.pending_accept), 
+                f(this.type),
+                f(this.patient_came),
+            ].join(" , ") + 
             ") RETURNING id;"
 
         const result = await db.query(sql, []);
@@ -138,7 +171,7 @@ class Appointment {
         let toreturn = []
         for (let app of appointments){
             app.time = add_hour(app.time)
-            toreturn.push( new Appointment(app.id, app.patientid, app.doctorid, app.nurseid, app.time, app.duration))
+            toreturn.push( app_factory(app))
         }
         return toreturn
     }
@@ -154,6 +187,10 @@ class Appointment {
                     `, nurseid=` + f(this.nurseid) + 
                     `, time=` + f(this.time) + 
                     ', duration=' + f(this.duration) + 
+                    ', created_on=' + f(this.created_on) + 
+                    ', pending_accept=' + f(this.pending_accept) + 
+                    ', type=' + f(this.type) + 
+                    ', patient_came=' + f(this.patient_came) + 
                     ` WHERE id=` + f(this.id);
         return await db.query(sql, []);
     }

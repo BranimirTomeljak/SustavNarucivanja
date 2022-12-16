@@ -5,6 +5,7 @@ var Appointment = require('../models/AppointmentModel')
 var router = express.Router();
 const appointment_duration = 30;
 const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;} 
+const curr_date_factory = ()=> {add_hour(new Date())}
 
 
 // get all appointemnts from an `id` with `role`
@@ -113,29 +114,23 @@ router.post('/add_range', async function(req, res, next) {
   }
 });
 
+
 // create appointment with `patientid`, nurse or doctor id 
 // time and duration
-router.post('/link_patient', async function(req, res, next) {
-  if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined)){
-      res.status(500).send('Only one of doctorid or nurseid can be defined')
-      return
-  }
-  
-  let app;
-  const time   = add_hour(new Date(Date.parse(req.query.time)));
+router.post('/reserve', async function(req, res, next) {
+  await app_updater(req, res, "reserve")
+});
 
-  if (req.query.doctorid !== undefined)
-    app = await Appointment.fetchBy2("doctorid", req.query.doctorid, "time", time)
-  else
-    app = await Appointment.fetchBy2("nurseid", req.query.doctorid, "time", time)
-  if (app.length === 0){
-    res.status(500).send('There is no specified appointment slot')
-    return
-  }
-  app = app[0]
-  app.patientid = req.query.patientid
-  await app.updateDb()
-  res.send("OK");
+router.post('/cancel', async function(req, res, next) {
+  await app_updater(req, res, "cancel")
+});
+
+router.post('/accept_change', async function(req, res, next) {
+  await app_updater(req, res, "accept_change")
+});
+
+router.post('/reject_change', async function(req, res, next) {
+  await app_updater(req, res, "accept_change")
 });
 
 
@@ -159,5 +154,48 @@ router.post('/delete', async function(req, res, next) {
   }
 
 });
+
+
+
+const app_updater = async (req, res, what) => {
+  if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined)){
+    res.status(500).send('Only one of doctorid or nurseid can be defined')
+    return
+  }
+
+  let app;
+  const time   = add_hour(new Date(Date.parse(req.query.time)));
+
+  if (req.query.doctorid !== undefined)
+    app = await Appointment.fetchBy2("doctorid", req.query.doctorid, "time", time)
+  else
+    app = await Appointment.fetchBy2("nurseid", req.query.nurseid, "time", time)
+  if (app.length === 0){
+    res.status(500).send('There is no specified appointment slot')
+    return
+  }
+  app = app[0]
+  if (what === "reserve"){
+    app.patientid = req.query.patientid
+    app.created_on = curr_date_factory()
+    app.type = req.query.type
+  }
+  else if (what === "cancel"){
+    app.patientid = undefined
+  }
+  else if (what === "accept_change"){
+    app.pending_accept = false
+    app.created_on = curr_date_factory()
+  }
+  else if (what === "reject_change"){
+    app.pending_accept = false
+    app.patientid = undefined
+  }
+
+
+  await app.updateDb()
+  res.send("OK");
+}
+
 
 module.exports = router;
