@@ -128,6 +128,8 @@ class Appointment {
                 a = a.split(' ')[1].replace(/[HM]/g, ":").replace('S', ''); 
                 return "'" + a + "'" + '::INTERVAL '
             }
+            else
+                return "'" + a + "'"
         return a
     }
 

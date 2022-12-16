@@ -5,7 +5,7 @@ var Appointment = require('../models/AppointmentModel')
 var router = express.Router();
 const appointment_duration = 30;
 const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;} 
-const curr_date_factory = ()=> {add_hour(new Date())}
+const curr_date_factory = ()=> {return add_hour(new Date())}
 
 
 // get all appointemnts from an `id` with `role`
@@ -110,7 +110,7 @@ router.post('/add_range', async function(req, res, next) {
 
   if (await loop_over_appointments(check_errors)){
     await loop_over_appointments(save_to_db)
-    res.json({});
+    res.send("OK");
   }
 });
 
@@ -118,19 +118,48 @@ router.post('/add_range', async function(req, res, next) {
 // create appointment with `patientid`, nurse or doctor id 
 // time and duration
 router.post('/reserve', async function(req, res, next) {
-  await app_updater(req, res, "reserve")
+  // TODO limit number of reserves
+  update_app(req, res, (app)=>{
+    app.patientid = req.query.patientid
+    app.created_on = curr_date_factory()
+    app.type = req.query.type
+  })
 });
 
 router.post('/cancel', async function(req, res, next) {
-  await app_updater(req, res, "cancel")
+  update_app(req, res, (app) => {
+    app.patientid = undefined
+    app.created_on = undefined
+    app.pending_accept = undefined
+    app.type = undefined
+  })
+});
+
+router.post('/change', async function(req, res, next) {
+  update_app(req, res, (app)=>{
+    app.pending_accept = false
+    app.created_on = curr_date_factory()
+  } )
 });
 
 router.post('/accept_change', async function(req, res, next) {
-  await app_updater(req, res, "accept_change")
+  update_app(req, res, (app)=>{
+    app.pending_accept = false
+    app.created_on = curr_date_factory()
+  })
 });
 
 router.post('/reject_change', async function(req, res, next) {
-  await app_updater(req, res, "accept_change")
+  update_app(req, res, (app)=> {
+    app.pending_accept = false
+    app.patientid = undefined
+  })
+});
+
+router.post('/record_attendance', async function(req, res, next) {
+  update_app(req, res, (app)=>{
+    app.patient_came = JSON.parse(req.query.patient_came)
+  })
 });
 
 
@@ -155,14 +184,11 @@ router.post('/delete', async function(req, res, next) {
 
 });
 
-
-
-const app_updater = async (req, res, what) => {
+const update_app = async (req, res, func) => {
   if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined)){
     res.status(500).send('Only one of doctorid or nurseid can be defined')
-    return
+    return false
   }
-
   let app;
   const time   = add_hour(new Date(Date.parse(req.query.time)));
 
@@ -175,27 +201,15 @@ const app_updater = async (req, res, what) => {
     return
   }
   app = app[0]
-  if (what === "reserve"){
-    app.patientid = req.query.patientid
-    app.created_on = curr_date_factory()
-    app.type = req.query.type
-  }
-  else if (what === "cancel"){
-    app.patientid = undefined
-  }
-  else if (what === "accept_change"){
-    app.pending_accept = false
-    app.created_on = curr_date_factory()
-  }
-  else if (what === "reject_change"){
-    app.pending_accept = false
-    app.patientid = undefined
-  }
-
+  console.log('app')
+  console.log(app)
+  func(app)
 
   await app.updateDb()
   res.send("OK");
 }
+
+
 
 
 module.exports = router;
