@@ -186,4 +186,35 @@ router.post('/delete', async function(req, res, next) {
 
 });
 
+async function sendAddAppointmentEmail(doctorId){
+  let doctor = await Doctor.getById(doctorId);
+
+  const transporter = nodemailer.createTransport({
+    service: "hotmail",
+    auth: {
+      user: "sustavzanarucivanje@outlook.com",
+      pass: "Narucivanje1950"
+    }
+  });
+
+  //todo napisat nesto posteno
+  var message = `<p>Po&scaron;tovani ${doctor.name} ${doctor.surname},<br /><br />Rezerviran Vam je termin u ${time} i traje ${duration}</p><p>Lijep pozdrav</p>`;
+
+  const options = {
+    from: "sustavzanarucivanje@outlook.com",
+    to: mail,
+    subject: "Potvrda registracije na Sustav za naručivanje",
+    //text: "bla bla tekst tekst",
+    html: message
+  };
+
+  transporter.sendMail(options, function(err, info){
+    if(err){
+      console.log(err);
+      return;
+    }
+    console.log("Send: " + info.response);
+  })
+}
+
 module.exports = router;

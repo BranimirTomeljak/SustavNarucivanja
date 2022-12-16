@@ -76,7 +76,7 @@ const sql_create_appointment = `CREATE TABLE appointment (
     type TEXT,
     patient_came BOOLEAN,
     
-    FOREIGN KEY (patientid) REFERENCES patient(id),
+    FOREIGN KEY (patientid) REFERENCES patient(id), /*ovo maknit ako zelimo rucno dodat appointment na postojeceg patienta*/
     FOREIGN KEY (doctorid) REFERENCES doctor(id),
     FOREIGN KEY (nurseid) REFERENCES nurse(id)
 )`; // TODO fix duration
