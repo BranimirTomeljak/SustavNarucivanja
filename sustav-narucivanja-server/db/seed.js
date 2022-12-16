@@ -75,6 +75,7 @@ const sql_create_appointment = `CREATE TABLE appointment (
     pending_accept BOOLEAN,
     type TEXT,
     patient_came BOOLEAN,
+    
     FOREIGN KEY (patientid) REFERENCES patient(id),
     FOREIGN KEY (doctorid) REFERENCES doctor(id),
     FOREIGN KEY (nurseid) REFERENCES nurse(id)
