@@ -1,4 +1,21 @@
 const db = require('../db')
+const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;} 
+
+
+const app_factory = (obj) =>{
+    return new Appointment(
+        obj.id, 
+        obj.patientid, 
+        obj.doctorid, 
+        obj.nurseid, 
+        obj.time, 
+        obj.duration,
+        obj.created_on,
+        obj.pending_accept,
+        obj.type,
+        obj.patient_came,
+    )
+}
 
 class Appointment {
     //konstruktor korisnika
@@ -9,6 +26,10 @@ class Appointment {
         nurseid=undefined, 
         time,
         duration,
+        created_on=undefined,
+        pending_accept=undefined,
+        type=undefined,
+        patient_came=undefined,
     ) {
         this.id = id
         this.patientid = patientid, 
@@ -16,6 +37,10 @@ class Appointment {
         this.duration = duration
         this.doctorid = doctorid
         this.nurseid = nurseid
+        this.created_on = created_on
+        this.pending_accept = pending_accept
+        this.type = type
+        this.patient_came = patient_came
     }
 
 
@@ -25,12 +50,13 @@ class Appointment {
         let appointments = await Appointment.dbGetBy('appointment', property, id)
         let toreturn = []
         for (let app of appointments){
-            toreturn.push( new Appointment(app.id, app.patientid, app.doctorid, app.nurseid, app.time, app.duration))
+            app.time = add_hour(app.time)
+            toreturn.push( app_factory(app))
         }
         return toreturn
     }
 
-    //da li je appointment pohranjen u bazu podataka?
+    // da li je appointment pohranjen u bazu podataka?
     async isSavedToDb() {
         if (this.id === undefined)
             return false
@@ -38,7 +64,7 @@ class Appointment {
         return apps.length == 1
     }
 
-    //dohvat korisnika iz baze podataka na osnovu `what` i `table` odakle uzimamo
+    // dohvat korisnika iz baze podataka na osnovu `what` i `table` odakle uzimamo
     // to moze biti doctor, nurse, admin, patient...
     static async dbGetBy(table, what, that){
         const sql = 'SELECT * FROM ' + table + ' WHERE ' + what + ' = ' + that;
@@ -53,8 +79,18 @@ class Appointment {
 
         const f = this._stringify
 
-        const sql = "INSERT INTO appointment (patientid, doctorid, nurseid, time, duration) VALUES (" +
-            [f(this.patientid), f(this.doctorid), f(this.nurseid), f(this.time), f(this.duration)].join(" , ") + 
+        const sql = "INSERT INTO appointment (patientid, doctorid, nurseid, time, duration, created_on, pending_accept, type, patient_came) VALUES (" +
+            [
+                f(this.patientid), 
+                f(this.doctorid), 
+                f(this.nurseid), 
+                f(this.time), 
+                f(this.duration), 
+                f(this.created_on), 
+                f(this.pending_accept), 
+                f(this.type),
+                f(this.patient_came),
+            ].join(" , ") + 
             ") RETURNING id;"
 
         const result = await db.query(sql, []);
@@ -79,15 +115,43 @@ class Appointment {
         return "'" + a + "'"
     }
 
+    static _stringify_all(a){
+        if (a === undefined || a === null)
+            return 'NULL'
+        if (a.toISOString !== undefined)
+            a = a.toISOString().slice(0, 19).replace('T', ' ');
+        
+        if (typeof a === "string")
+            if (a.indexOf("-") > -1)
+                return "'" + a + "'" + '::TIMESTAMP '
+            else if (a.indexOf("P0Y0") > -1){
+                a = a.split(' ')[1].replace(/[HM]/g, ":").replace('S', ''); 
+                return "'" + a + "'" + '::INTERVAL '
+            }
+            else
+                return "'" + a + "'"
+        return a
+    }
+
     async conflictsWithDb (){
         let beg = "('" + this.time + "'::timestamp)"
         let end = "(" + beg + "+ ('" + this.duration + "'::interval))"
+        let constraint_list = []
+
+        if (this.doctorid !== undefined)
+            constraint_list.push("doctorid = " + this.doctorid)
+        if (this.nurseid !== undefined)
+            constraint_list.push("nurseid = " + this.nurseid)
+        if (this.patientid !== undefined)
+            constraint_list.push("patientid = " + this.patientid)
+
+        let constraint_str = constraint_list.join(' or ')
 
         const sql = `
             SELECT * from appointment a
             where not (( a.time <= ` + beg + ` and a.time + a.duration <= `+beg+`) or
                        (`+beg+`<= a.time and `+ end + `<=a.time))
-                    and (patientid = `  + this.patientid + ` or doctorid = ` + this.doctorid +`) 
+                    and (` + constraint_str +`) 
         `
         const result = await db.query(sql, []);
         if (result.length){
@@ -98,6 +162,39 @@ class Appointment {
         if (this.id !== undefined)
             return result.length > 0
         return result.length > 1
+    }
+
+    // for example can fetch by patientid, doctorid
+    static async fetchBy2(propertya, ida, propertyb, idb) {
+        let f = Appointment._stringify_all
+        const sql = 'SELECT * FROM appointment WHERE ' + propertya + "=" + f(ida) + " and " + propertyb + "=" + f(idb);
+        const appointments = await db.query(sql, []);
+        console.log(appointments)
+        let toreturn = []
+        for (let app of appointments){
+            app.time = add_hour(app.time)
+            toreturn.push( app_factory(app))
+        }
+        return toreturn
+    }
+
+    // for example can fetch by patientid, doctorid
+    async updateDb() {
+        let f = Appointment._stringify_all
+        console.log('updationg...')
+        console.log(this.time)
+        const sql = `UPDATE appointment 
+                    SET patientid=` + f(this.patientid) + 
+                    `, doctorid=` + f(this.doctorid) + 
+                    `, nurseid=` + f(this.nurseid) + 
+                    `, time=` + f(this.time) + 
+                    ', duration=' + f(this.duration) + 
+                    ', created_on=' + f(this.created_on) + 
+                    ', pending_accept=' + f(this.pending_accept) + 
+                    ', type=' + f(this.type) + 
+                    ', patient_came=' + f(this.patient_came) + 
+                    ` WHERE id=` + f(this.id);
+        return await db.query(sql, []);
     }
 
 }

@@ -20,9 +20,9 @@ router.post( "/",
     let user = await User.fetchBymail(mail)
 
     let id = user.id
-    //console.log(user)
-    if (res.session === undefined)
-      res.session = {}
+    console.log(user)
+    if (req.session === undefined)
+      req.session = {}
     if (user.isPatient())
       req.session.user = await Patient.getById(id)
     else if (user.isDoctor())
