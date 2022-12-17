@@ -237,7 +237,7 @@ async function sendAddAppointmentEmail(doctorId){
   });
 
   //todo napisat nesto posteno
-  var message = `<p>Po&scaron;tovani ${doctor.name} ${doctor.surname},<br /><br />Rezerviran Vam je termin u ${time} i traje ${duration}</p><p>Lijep pozdrav</p>`;
+  var message = `<p>Po&scaron;tovani ime prezime,<br /><br />Rezerviran Vam je termin u "vrijeme" i traje "minuta"</p><p>Lijep pozdrav</p>`;
 
   const options = {
     from: "sustavzanarucivanje@outlook.com",

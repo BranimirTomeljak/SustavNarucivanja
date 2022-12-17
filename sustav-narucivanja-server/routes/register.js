@@ -157,7 +157,7 @@ function sendRegisterEmail(mail){
   });
 
   //todo napisat nesto posteno
-  var message = `<p>Po&scaron;tovani ${name} ${surname},<br /><br />Uspje&scaron;no ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Va&scaron; Sustav za naručivanje<br /><br />P.S. krindžaraa te&scaron;ka</p>`;
+  var message = `<p>Po&scaron;tovani,<br /><br />Uspje&scaron;no ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Va&scaron; Sustav za naručivanje<br /><br />P.S. krindžaraa te&scaron;ka</p>`;
 
   const options = {
     from: "sustavzanarucivanje@outlook.com",

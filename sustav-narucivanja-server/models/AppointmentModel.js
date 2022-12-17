@@ -231,7 +231,7 @@ class Appointment {
         });
     
         //todo napisat nesto posteno
-        var message = `<p>Po&scaron;tovani ${this.name} ${this.surname},</p><p><br>Podsjećamo Vas da imate termin sutra: ${this.time}.<br><br>Lijep pozdrav, Va&scaron; Sustav za naručivanje</p>`;
+        var message = `<p>Po&scaron;tovani ime prezime,</p><p><br>Podsjećamo Vas da imate termin sutra: "vrijeme".<br><br>Lijep pozdrav, Va&scaron; Sustav za naručivanje</p>`;
     
         const options = {
           from: "sustavzanarucivanje@outlook.com",
