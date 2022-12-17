@@ -1,5 +1,11 @@
 const db = require('../db')
 
+function _stringify(a){
+    if (a === undefined)
+        return 'NULL'
+    return a
+}
+
 class User {
     //konstruktor korisnika
     constructor(
@@ -201,7 +207,7 @@ class Nurse extends User{
             await this.saveUserToDb()
         
         const sql = "INSERT INTO nurse (id, teamid) VALUES (" +
-            [this.id, this.teamid].join(",") + " )";
+            [this.id, _stringify(this.teamid)].join(",") + " )";
         await db.query(sql, []);
 
     }
@@ -269,10 +275,10 @@ class Doctor extends Nurse{
         if (await this.isUserInDb())
             console.log('already there')
         else
-            this.saveUserToDb()
+            await this.saveUserToDb()
 
         const sql = "INSERT INTO doctor (id, teamid) VALUES (" +
-            [this.id, this.teamid].join(",") + " )";
+            [this.id, _stringify(this.teamid)].join(",") + " )";
         await db.query(sql, []);
 
 
@@ -337,12 +343,12 @@ class Admin extends User{
         this.type = 'admin'
     }
     async addToDb(){
-        const sql = "INSERT INTO admin (id) VALUES (" + this.id + " )";
-        await db.query(sql, []);
         if (await this.isUserInDb())
             console.log('user already there')
         else
-            this.saveUserToDb()
+            await this.saveUserToDb()
+        const sql = "INSERT INTO admin (id) VALUES (" + this.id + " )";
+        await db.query(sql, []);
     }
 }
 

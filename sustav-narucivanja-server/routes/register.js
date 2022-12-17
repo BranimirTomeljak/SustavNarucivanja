@@ -4,14 +4,46 @@ const bcrypt = require("bcrypt");
 const { pool } = require("../db/dbConfig");
 const flash = require("express-flash");
 const nodemailer = require("nodemailer");
-const { User, Patient, Nurse, Doctor } = require("../models/UserModel");
+const { User, Patient, Doctor, Nurse, Admin } = require("../models/UserModel");
 
 router.get("/", async function (req, res) {
   let doctors = await Doctor.getIdNameSurnameOfAll();
   res.json(doctors);
 });
 
+/*
+The following 4 endpoints are accesed in the same way.
+The body encoded in a x-www-form-urlencoded way has to have:
+  (key: value type):
+  name: string
+  surname: string
+  sex: 'M' or 'F'
+  phoneNumber: string (9 or 10 chars)
+  mail: string, *@*.* (has to be unique)
+  password: string
+  dateOfBirth: string (YYYY-MM-DD)
+  doctorId: int (only for patient ("/"))
+
+If everything is ok you get OK you get 200 else error msgs
+*/
 router.post("/", async (req, res) => {
+  await check_and_put(req, res, Patient)
+});
+
+router.post("/doctor", async (req, res) => {
+  await check_and_put(req, res, Doctor)
+});
+
+router.post("/nurse", async (req, res) => {
+  await check_and_put(req, res, Nurse)
+});
+
+router.post("/admin", async (req, res) => {
+  await check_and_put(req, res, Admin)
+});
+
+
+const check_and_put = async (req, res, where) =>{
   let {
     name,
     surname,
@@ -45,7 +77,7 @@ router.post("/", async (req, res) => {
     !mail ||
     !password ||
     !dateOfBirth ||
-    !doctorId
+    (!doctorId && where===Patient)
   ) {
     errors.push({ message: "Please enter all fields" });
     console.log('enter all fields')
@@ -92,7 +124,7 @@ router.post("/", async (req, res) => {
   hashedPassword = await bcrypt.hash(password, 10);
   console.log(hashedPassword);
 
-  let patient = new Patient(
+  let person = new where(
     undefined,
     name,
     surname,
@@ -105,15 +137,15 @@ router.post("/", async (req, res) => {
     0
   )
   try{
-    patient.addToDb()
+    person.addToDb()
     sendRegisterEmail(mail);
-    res.json(patient);
+    res.json(person);
   }
   catch{
     res.sendStatus(400);
   }
-
-});
+  return person
+}
 
 function sendRegisterEmail(mail){
   const transporter = nodemailer.createTransport({
