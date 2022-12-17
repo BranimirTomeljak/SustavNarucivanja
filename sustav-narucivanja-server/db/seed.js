@@ -76,7 +76,7 @@ const sql_create_appointment = `CREATE TABLE appointment (
     type TEXT,
     patient_came BOOLEAN,
     
-    FOREIGN KEY (patientid) REFERENCES patient(id), /*ovo maknit ako zelimo rucno dodat appointment na postojeceg patienta*/
+    FOREIGN KEY (patientid) REFERENCES patient(id),
     FOREIGN KEY (doctorid) REFERENCES doctor(id),
     FOREIGN KEY (nurseid) REFERENCES nurse(id)
 )`; // TODO fix duration
@@ -1098,7 +1098,7 @@ const sql_insert_appointments = `INSERT INTO appointment (patientid, doctorid, n
     (100, 7, NULL, '2015-01-10 00:51:14', '00:20:00'),
     (101, 7, NULL, '2015-01-10 01:51:14', '00:20:00'),
     (101, 9, NULL, '2015-01-10 01:51:14', '00:20:00'),
-    /*(1001, 10, NULL, '2015-01-10 22:00:14', '02:20:00')*/
+    (101, 7, NULL, '2015-01-10 22:00:14', '02:20:00')
 `
 
 

@@ -1,4 +1,5 @@
 var express = require('express');
+const { notificationDayBefore } = require('../models/AppointmentModel');
 //const { rawListeners } = require('../app');
 var Appointment = require('../models/AppointmentModel');
 var { Doctor } = require("../models/UserModel");
@@ -41,7 +42,6 @@ router.post('/add', async function(req, res, next) {
     res.status(500).send('Appointment exists.')
   else {
     app.saveToDb();
-    sendAddAppointmentEmail(doctorId);
     res.send("OK");
   }
 });
@@ -126,6 +126,7 @@ router.post('/reserve', async function(req, res, next) {
     app.created_on = curr_date_factory()
     app.type = req.query.type
   })
+  sendAddAppointmentEmail(doctorId); //obavijesti doktora o rezervaciji termina
 });
 
 router.post('/cancel', async function(req, res, next) {
@@ -203,7 +204,7 @@ async function sendAddAppointmentEmail(doctorId){
   const options = {
     from: "sustavzanarucivanje@outlook.com",
     to: mail,
-    subject: "Potvrda registracije na Sustav za naručivanje",
+    subject: "Potvrda rezervacije termina na Sustav za naručivanje",
     //text: "bla bla tekst tekst",
     html: message
   };
@@ -216,5 +217,7 @@ async function sendAddAppointmentEmail(doctorId){
     console.log("Send: " + info.response);
   })
 }
+
+Appointment.notificationDayBefore();
 
 module.exports = router;

@@ -166,6 +166,23 @@ class Patient extends User{
             result[0].doctorid, result[0].nfailedappointments
             )
     }
+
+    static async getAll(){
+        //const sql = 'SELECT * FROM patient Natural Join users';  //zakomentirano dok se ne makne doctorid iz users tablice
+        const sql = 'SELECT users.id, users.name, users.surname, users.sex, users.phonenumber, users.mail, users.password, users.dateOfBirth, patient.doctorid, patient.nFailedAppointments FROM patient Join users on users.id = patient.id';
+        const results = await db.query(sql, []);
+        if (results.length === 0)
+            throw 'user does not exist'
+        let toreturn = []
+        for (let result of results)
+            toreturn.push(
+                new Patient(
+                    result.id, result.name, result.surname, result.sex, result.phonenumber, result.mail, result.password, result.dateofbirth,
+                    result.doctorid, result.nFailedAppointments
+                )
+            )
+        return toreturn;
+    }
 }
 
 

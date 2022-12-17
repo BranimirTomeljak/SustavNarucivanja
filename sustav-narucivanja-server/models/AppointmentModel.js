@@ -1,6 +1,8 @@
 const db = require('../db')
 const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;} 
 
+const nodemailer = require("nodemailer");
+const { Patient } = require("./UserModel");
 
 const app_factory = (obj) =>{
     return new Appointment(
@@ -196,6 +198,57 @@ class Appointment {
                     ` WHERE id=` + f(this.id);
         return await db.query(sql, []);
     }
+
+    static async notificationDayBefore() {
+        setInterval(async function(){
+            const sql = "SELECT * FROM appointment";
+            const appointments = await db.query(sql, []);
+
+            for (let app of appointments) {
+                const currentDate = new Date();                         //program cita ovo ka 2022-12-17 00:33:00 [sat unazad]
+                //const testDate = new Date("2022-12-18 10:04:00");     //program cita ovo ka 2022-12-17 00:20:00 [sat unazad]
+                //let difference = testDate.getTime() - currentDate.getTime();
+                let difference = app.time.getTime() - currentDate.getTime();
+                let daysDifference = Math.ceil(difference / (1000 * 3600 * 24));
+                let hoursDifference = difference / (1000*60*60) - 24;
+
+                if (daysDifference == 1 && hoursDifference > -1) {
+                    let patient = await Patient.getById(app.patientid);
+                    Appointment.sendNotificationMail(patient.email);
+                }
+            }
+        }, 60*60*1000); //update svakih sat vremena (da ne trosi resurse) (mozda smanjit interval, sta drugi misle?)
+      }
+    
+      static sendNotificationMail(mail) {
+    
+        const transporter = nodemailer.createTransport({
+          service: "hotmail",
+          auth: {
+            user: "sustavzanarucivanje@outlook.com",
+            pass: "Narucivanje1950",
+          },
+        });
+    
+        //todo napisat nesto posteno
+        var message = `<p>Po&scaron;tovani ${this.name} ${this.surname},</p><p><br>Podsjećamo Vas da imate termin sutra: ${this.time}.<br><br>Lijep pozdrav, Va&scaron; Sustav za naručivanje</p>`;
+    
+        const options = {
+          from: "sustavzanarucivanje@outlook.com",
+          to: mail,
+          subject: "Podsjetnik za termin kod doktora",
+          //text: "bla bla tekst tekst",
+          html: message,
+        };
+    
+        transporter.sendMail(options, function (err, info) {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          console.log("Send: " + info.response);
+        });
+      }
 
 }
 
