@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { ILoginData } from '../interfaces/login-data';
 import { IRegisterData } from '../interfaces/register-data';
+import { ITeamData } from '../interfaces/team-data';
 import { IUser } from '../interfaces/user';
 
 @Injectable({
@@ -35,6 +36,39 @@ export class AuthService {
       })
     );
   }
+
+
+  // TODO kad cemo imat api
+  /*
+  public createTeam(data : ITeamData) {
+    return this.http.post('/api/createTeam', data).pipe(
+      tap((resp) => {
+        localStorage.setItem('team', JSON.stringify(resp));
+        this._user$.next(resp);
+      })
+    );
+  }
+  
+
+  public createDoctor(data: ICreateDoctorData) {
+    return this.http.post('/api/createDoctor', data).pipe(
+      tap((resp) => {
+        localStorage.setItem('user', JSON.stringify(resp));
+        this._user$.next(resp);
+      })
+    );
+  }
+
+  public register(data: ICreateNurseData) {
+    return this.http.post('/api/createNurse', data).pipe(
+      tap((resp) => {
+        localStorage.setItem('user', JSON.stringify(resp));
+        this._user$.next(resp);
+      })
+    );
+  }
+
+  */
 
   public logout() {
     localStorage.removeItem('user');
