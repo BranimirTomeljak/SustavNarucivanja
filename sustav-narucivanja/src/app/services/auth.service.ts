@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { IDoctorNurseData } from '../interfaces/doctor_nurse-data';
 import { ILoginData } from '../interfaces/login-data';
 import { IRegisterData } from '../interfaces/register-data';
 import { ITeamData } from '../interfaces/team-data';
@@ -50,7 +51,7 @@ export class AuthService {
   }
   
 
-  public createDoctor(data: ICreateDoctorData) {
+  public createDoctor(data: IDoctorNurseData) {
     return this.http.post('/api/createDoctor', data).pipe(
       tap((resp) => {
         localStorage.setItem('user', JSON.stringify(resp));
@@ -59,7 +60,7 @@ export class AuthService {
     );
   }
 
-  public register(data: ICreateNurseData) {
+  public createNurse(data: IDoctorNurseData) {
     return this.http.post('/api/createNurse', data).pipe(
       tap((resp) => {
         localStorage.setItem('user', JSON.stringify(resp));

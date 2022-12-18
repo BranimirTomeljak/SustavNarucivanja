@@ -25,6 +25,16 @@
     </mat-form-field>
 
     <mat-form-field>
+      <mat-label>Ponovi lozinku</mat-label>
+      <input
+        matInput
+        type="password"
+        placeholder="Repeated Password"
+        formControlName="repeatedPassword"
+      />
+    </mat-form-field>
+
+    <mat-form-field>
       <mat-label>Ime</mat-label>
       <input matInput type="text" placeholder="Name" formControlName="name" />
     </mat-form-field>
@@ -45,6 +55,13 @@
         <mat-option value="musko">Muško</mat-option>
         <mat-option value="zensko">Žensko</mat-option>
       </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="toggle">
+      <mat-label>Datum rođenja</mat-label>
+      <input formControlName="dateOfBirth" placeholder="MM/DD/YYYY" matInput [matDatepicker]="dateOfBirth">
+      <mat-datepicker-toggle matSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
+      <mat-datepicker #dateOfBirth></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field>
