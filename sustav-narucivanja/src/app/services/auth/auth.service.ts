@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { ILoginData } from '../interfaces/login-data';
-import { IRegisterData } from '../interfaces/register-data';
-import { IUser } from '../interfaces/user';
+import { ILoginData } from '../../interfaces/login-data';
+import { IRegisterData } from '../../interfaces/register-data';
+import { IUser } from '../../interfaces/user';
 
 @Injectable({
   providedIn: 'root',
