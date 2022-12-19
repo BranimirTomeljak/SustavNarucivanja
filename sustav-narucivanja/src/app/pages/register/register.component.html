@@ -68,22 +68,11 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Vaš liječnik</mat-label>
-      <input
-        matInput
-        type="text"
-        placeholder="Your doctor"
-        formControlName="doctor"
-        [matAutocomplete]="auto"
-      />
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option
-          *ngFor="let option of filteredOptions | async"
-          [value]="option"
-        >
-          {{ option }}
+      <mat-select placeholder="Vaš liječnik" formControlName="doctor">
+        <mat-option *ngFor="let option of doctors$ | async" [value]="option.id">
+          {{ option.name + " " + option.surname }}
         </mat-option>
-      </mat-autocomplete>
+      </mat-select>
     </mat-form-field>
 
     <button type="submit" color="primary" mat-raised-button>Potvrdi</button>
@@ -93,3 +82,5 @@
     </div>
   </form>
 </div>
+
+<button (click)="test()">test</button>
