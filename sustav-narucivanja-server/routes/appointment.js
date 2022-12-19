@@ -228,6 +228,31 @@ router.post('/delete', async function(req, res, next) {
 
 });
 
+const update_app = async (req, res, func) => {
+  if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined)){
+    res.status(500).send('Only one of doctorid or nurseid can be defined')
+    return false
+  }
+  let app;
+  const time   = add_hour(new Date(Date.parse(req.query.time)));
+
+  if (req.query.doctorid !== undefined)
+    app = await Appointment.fetchBy2("doctorid", req.query.doctorid, "time", time)
+  else
+    app = await Appointment.fetchBy2("nurseid", req.query.nurseid, "time", time)
+  if (app.length === 0){
+    res.status(500).send('There is no specified appointment slot')
+    return
+  }
+  app = app[0]
+  console.log('app')
+  console.log(app)
+  func(app)
+
+  await app.updateDb()
+  res.send("OK");
+}
+
 notification.appointmentReminderEmail();
 
 module.exports = router;
