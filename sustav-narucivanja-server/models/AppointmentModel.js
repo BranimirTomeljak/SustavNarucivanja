@@ -1,7 +1,6 @@
 const db = require('../db')
 const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;} 
 
-
 const app_factory = (obj) =>{
     return new Appointment(
         obj.id, 
@@ -196,7 +195,6 @@ class Appointment {
                     ` WHERE id=` + f(this.id);
         return await db.query(sql, []);
     }
-
 }
 
 module.exports = Appointment

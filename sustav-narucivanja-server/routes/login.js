@@ -16,8 +16,6 @@ const { User, Patient, Doctor, Nurse, Admin } = require('../models/UserModel');
 router.post( "/",
   passport.authenticate("local", { failureFlash: true }),
   async function (req, res) {
-    console.log('hello')
-    console.log(req.body)
     let { mail } = req.body;
     let user = await User.fetchBymail(mail)
 
