@@ -78,7 +78,7 @@ export class RegisterComponent implements OnDestroy {
       sex: this.form.get('sex')?.value,
       phoneNumber: this.form.get('phoneNumber')?.value,
       dateOfBirth: new Date(),
-      doctorId: 1,
+      doctorId: this.form.get('doctor')?.value,
     };
 
     console.log(data);
