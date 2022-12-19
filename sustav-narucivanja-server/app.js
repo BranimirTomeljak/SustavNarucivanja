@@ -1,3 +1,8 @@
+process.on('uncaughtException', function (err) {
+  console.error(err);
+  console.log("Node NOT Exiting...");
+});
+
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -8,6 +13,7 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
+const cookieParser = require('cookie-parser')
 require("dotenv").config();
 
 var adminRouter = require('./routes/admin');
@@ -33,8 +39,6 @@ var logoutRouter = require("./routes/logout");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
-//app.use(logger('dev'));
-//app.use(cookieParser());
 
 app.use(
   session({
@@ -46,6 +50,7 @@ app.use(
 app.use(passport.initialize());         // Function inside passport which initializes passport
 app.use(passport.session());            // Store our variables to be persisted across the whole session. Works with app.use(Session) above
 app.use(flash());
+app.use(cookieParser());
 
 app.use("/api/admin", adminRouter);
 app.use("/api/patient", patientRouter);
@@ -90,6 +95,6 @@ export {checkAuthenticated, checkNotAuthenticated};*/
 
 module.exports = app;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', function() {
+    console.log('Listening to port:  ' + PORT);
 });

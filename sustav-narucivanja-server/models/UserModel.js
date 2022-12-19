@@ -1,5 +1,11 @@
 const db = require('../db')
 
+function _stringify(a){
+    if (a === undefined)
+        return 'NULL'
+    return a
+}
+
 class User {
     //konstruktor korisnika
     constructor(
@@ -26,7 +32,7 @@ class User {
     static async fetchBymail(mail) {
         mail = "'" + mail + "'"
         let results = await User.dbGetUserBy('mail', mail, 'users')
-        let newUser = new User()
+        let newUser = undefined
 
         if( results.length > 0 ) {
             newUser = new User(results[0].id, results[0].name, results[0].surname,
@@ -81,7 +87,7 @@ class User {
     async _checkIsIn(where){
         const sql = "SELECT * FROM " + where + " where id = " + this.id
         const result = await db.query(sql, []);
-        return result.rows.length > 0;
+        return result.length > 0;
     }
 
 
@@ -98,7 +104,7 @@ class User {
         if (this.id !== undefined)
             throw 'cannot have defined id and try to save the user'
 
-        const sql = "INSERT INTO users (name, surname, sex, phonenumber, mail, password, dateofbirth, doctorid) VALUES ('" +
+        const sql = "INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId) VALUES ('" +
             this.name + "', '" + this.surname + "', '" +
             this.sex + "', '" + this.phonenumber + "', '" + this.mail + "', '" +
             this.password + "', '" + this.dateofbirth + "' ,1) RETURNING id;" // TODO remove doctor id
@@ -139,6 +145,7 @@ class Patient extends User{
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
         this.nFailedAppointments = nFailedAppointments
         this.doctorid = doctorid
+        this.type = 'patient'
     }
 
     async addToDb(){
@@ -149,7 +156,7 @@ class Patient extends User{
         
         const sql = "INSERT INTO patient (id, doctorid, nFailedAppointments) VALUES (" +
              [this.id, this.doctorid, this.nFailedAppointments].join(",") + " )";
-        await db.query(sql, []);
+        await db.query(sql, [], true);
 
     }
 
@@ -174,6 +181,7 @@ class Nurse extends User{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, teamid){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
         this.teamid = teamid
+        this.type = 'nurse'
     }
 
     async addToDb(){
@@ -183,7 +191,7 @@ class Nurse extends User{
             await this.saveUserToDb()
         
         const sql = "INSERT INTO nurse (id, teamid) VALUES (" +
-            [this.id, this.teamid].join(",") + " )";
+            [this.id, _stringify(this.teamid)].join(",") + " )";
         await db.query(sql, []);
 
     }
@@ -220,16 +228,17 @@ class Nurse extends User{
 class Doctor extends Nurse{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
+        this.type = 'doctor'
     }
 
     async addToDb(){
         if (await this.isUserInDb())
             console.log('already there')
         else
-            this.saveUserToDb()
+            await this.saveUserToDb()
 
         const sql = "INSERT INTO doctor (id, teamid) VALUES (" +
-            [this.id, this.teamid].join(",") + " )";
+            [this.id, _stringify(this.teamid)].join(",") + " )";
         await db.query(sql, []);
 
 
@@ -268,14 +277,15 @@ class Doctor extends Nurse{
 class Admin extends User{
     constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
+        this.type = 'admin'
     }
     async addToDb(){
-        const sql = "INSERT INTO admin (id) VALUES (" + this.id + " )";
-        await db.query(sql, []);
         if (await this.isUserInDb())
             console.log('user already there')
         else
-            this.saveUserToDb()
+            await this.saveUserToDb()
+        const sql = "INSERT INTO admin (id) VALUES (" + this.id + " )";
+        await db.query(sql, []);
     }
 }
 

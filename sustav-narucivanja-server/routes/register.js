@@ -3,12 +3,41 @@ var router = express.Router();
 const bcrypt = require("bcrypt");
 const { pool } = require("../db/dbConfig");
 const flash = require("express-flash");
+const { User, Patient, Doctor, Nurse, Admin } = require("../models/UserModel");
 
-/*app.get("/users/register", checkAuthenticated, (req, res) => { //zasad nek stoji komentirano ali tribat ce nan posli (kad pokusavamo pristupit register pageu, a vec smo logirani)
-  res.render("register.ejs");
-});*/
+/*
+The following 4 endpoints are accesed in the same way.
+The body encoded in a x-www-form-urlencoded way has to have:
+  (key: value type):
+  name: string
+  surname: string
+  sex: 'M' or 'F'
+  phoneNumber: string (9 or 10 chars)
+  mail: string, *@*.* (has to be unique)
+  password: string
+  dateOfBirth: string (YYYY-MM-DD)
+  doctorId: int (only for patient ("/"))
 
+If everything is ok you get OK you get 200 else error msgs
+*/
 router.post("/", async (req, res) => {
+  await check_and_put(req, res, Patient)
+});
+
+router.post("/doctor", async (req, res) => {
+  await check_and_put(req, res, Doctor)
+});
+
+router.post("/nurse", async (req, res) => {
+  await check_and_put(req, res, Nurse)
+});
+
+router.post("/admin", async (req, res) => {
+  await check_and_put(req, res, Admin)
+});
+
+
+const check_and_put = async (req, res, where) =>{
   let {
     name,
     surname,
@@ -33,6 +62,7 @@ router.post("/", async (req, res) => {
     doctorId,
   });
 
+  // check for errors
   if (
     !name ||
     !surname ||
@@ -41,77 +71,73 @@ router.post("/", async (req, res) => {
     !mail ||
     !password ||
     !dateOfBirth ||
-    !doctorId
+    (!doctorId && where===Patient)
   ) {
     errors.push({ message: "Please enter all fields" });
+    console.log('enter all fields')
+    res.sendStatus(400);
+    return
   }
 
   if (password?.length < 6) {
     errors.push({ message: "Password must be a least 6 characters long" });
+    console.log('to short password')
+    res.sendStatus(400);
+    return
   }
 
   if(phoneNumber?.length !== 9 && phoneNumber?.length !== 10) {
     errors.push({ message: "Croatian phone number must have 9 or 10 digits" });
+    console.log('wrong phone num len')
+    console.log(phoneNumber?.length)
+    res.sendStatus(400);
+    return
   }
 
-  if (errors.length > 0) {
-    console.log(errors);
-    res.sendStatus(400); // dodat da se ispisu errori na frontendu
-  } else {
-    hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
-    // Validation passed
-    pool.query(
-      `SELECT * FROM users
-        WHERE mail = $1`,
-      [mail],
-      (err, results) => {
-        if (err) {
-          console.log(err);
-          res.sendStatus(404);
-        }
-        console.log(results.rows);
-
-        if (results.rows.length > 0) {
-          console.log("mail already registered");
-          res.sendStatus(400);
-        } else {
-          pool.query(
-            `INSERT INTO users (
-              name,
-              surname,
-              sex,
-              phoneNumber,
-              mail,
-              password,
-              dateOfBirth,
-              doctorId)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            RETURNING name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId`,
-            [
-              name,
-              surname,
-              sex,
-              phoneNumber,
-              mail,
-              hashedPassword,
-              dateOfBirth,
-              doctorId,
-            ],
-            (err, results) => {
-              if (err) {
-                res.sendStatus(404);
-                throw err;
-              }
-              console.log(results.rows[0]);
-              req.flash("success_msg", "You are now registered. Please log in");
-              res.json(results.rows[0]);
-            }
-          );
-        }
-      }
-    );
+  let user = await User.fetchBymail(mail)
+  console.log(user)
+  if (user !== undefined){
+    errors.push({ message: "Email already registered" });
+    console.log('email already registered')
+    res.sendStatus(400);
+    return
   }
-});
+
+  user = await User.dbGetUserBy('phoneNumber', "'"+phoneNumber+"'", 'users')
+  console.log(user)
+
+  if (user.length > 0){
+    errors.push({ message: "Phone number already registered." });
+    console.log('phone number already registered')
+    res.sendStatus(400);
+    return
+  }
+  
+  console.log('all passed going to register')
+  // actually add the person to the database
+  hashedPassword = await bcrypt.hash(password, 10);
+  console.log(hashedPassword);
+
+  let person = new where(
+    undefined,
+    name,
+    surname,
+    sex,
+    phoneNumber,
+    mail,
+    hashedPassword,
+    dateOfBirth,
+    doctorId,
+    0
+  )
+  try{
+    person.addToDb()
+    res.json(person);
+  }
+  catch{
+    res.sendStatus(400);
+  }
+  return person
+}
 
 module.exports = router;
