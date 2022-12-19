@@ -1,5 +1,4 @@
 var express = require('express');
-const { notificationDayBefore } = require('../models/AppointmentModel');
 //const { rawListeners } = require('../app');
 const notification = require("../models/NotificationModel");
 var Appointment = require('../models/AppointmentModel');
@@ -20,23 +19,23 @@ router.get('/', async function(req, res, next) {
   let id   = req.query.id
   if (role == 'admin')
     throw 'no admin here'
-  let field = {'doctor':'doctorId', 'patient':'patientId', 'nurse':'nurseId'}[role]
+  let field = {'doctor':'doctorid', 'patient':'patientid', 'nurse':'nurseid'}[role]
   let apps = await Appointment.fetchBy(field, id)
   res.json(apps);
 });
 
-// create appointment with `patientId`, nurse or doctor id 
+// create appointment with `patientid`, nurse or doctor id 
 // time and duration
 // this creates only one appointment and it can have any length
 router.post('/add', async function(req, res, next) {
-  if ((req.query.doctorId===undefined) === (req.query.nurseId===undefined))
+  if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined))
     throw 'cannot both be defined'
 
   let app = new Appointment(
     id = undefined,
-    req.query.patientId,
-    req.query.doctorId,
-    req.query.nurseId,
+    req.query.patientid,
+    req.query.doctorid,
+    req.query.nurseid,
     req.query.time,
     req.query.duration
   )
@@ -157,7 +156,7 @@ router.post('/reserve', async function(req, res, next) {
     app.type = req.query.type
   })
 
-  let doctor = await Doctor.getById(doctorId);
+  let doctor = await Doctor.getById(doctorid);
   notification.sendEmail("appointmentBooked", doctor.mail); //obavijesti doktora o rezervaciji termina
 });
 
