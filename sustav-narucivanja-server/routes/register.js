@@ -3,7 +3,7 @@ var router = express.Router();
 const bcrypt = require("bcrypt");
 const { pool } = require("../db/dbConfig");
 const flash = require("express-flash");
-const nodemailer = require("nodemailer");
+const notification = require("../models/NotificationModel");
 const { User, Patient, Doctor, Nurse, Admin } = require("../models/UserModel");
 
 router.get("/", async function (req, res) {
@@ -137,43 +137,14 @@ const check_and_put = async (req, res, where) =>{
     0
   )
   try{
-    person.addToDb()
-    sendRegisterEmail(mail);
+    person.addToDb();
+    notification.sendEmail("registration", mail);
     res.json(person);
   }
   catch{
     res.sendStatus(400);
   }
   return person
-}
-
-function sendRegisterEmail(mail){
-  const transporter = nodemailer.createTransport({
-    service: "hotmail",
-    auth: {
-      user: "sustavzanarucivanje@outlook.com",
-      pass: "Narucivanje1950"
-    }
-  });
-
-  //todo napisat nesto posteno
-  var message = `<p>Po&scaron;tovani,<br /><br />Uspje&scaron;no ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Va&scaron; Sustav za naručivanje<br /><br />P.S. krindžaraa te&scaron;ka</p>`;
-
-  const options = {
-    from: "sustavzanarucivanje@outlook.com",
-    to: mail,
-    subject: "Potvrda registracije na Sustav za naručivanje",
-    //text: "bla bla tekst tekst",
-    html: message
-  };
-
-  transporter.sendMail(options, function(err, info){
-    if(err){
-      console.log(err);
-      return;
-    }
-    console.log("Send: " + info.response);
-  })
 }
 
 module.exports = router;

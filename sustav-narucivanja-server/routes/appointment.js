@@ -1,6 +1,7 @@
 var express = require('express');
 const { notificationDayBefore } = require('../models/AppointmentModel');
 //const { rawListeners } = require('../app');
+const notification = require("../models/NotificationModel");
 var Appointment = require('../models/AppointmentModel');
 var { Doctor } = require("../models/UserModel");
 
@@ -155,7 +156,9 @@ router.post('/reserve', async function(req, res, next) {
     app.created_on = curr_date_factory()
     app.type = req.query.type
   })
-  sendAddAppointmentEmail(doctorId); //obavijesti doktora o rezervaciji termina
+
+  let doctor = await Doctor.getById(doctorId);
+  notification.sendEmail("appointmentBooked", doctor.mail); //obavijesti doktora o rezervaciji termina
 });
 
 // if somebody needs to cancel an appointment
@@ -183,6 +186,7 @@ router.post('/accept_change', async function(req, res, next) {
     app.pending_accept = false
     app.created_on = curr_date_factory()
   })
+  
 });
 
 // if the doctor moves the appointment the patient can reject
@@ -225,37 +229,6 @@ router.post('/delete', async function(req, res, next) {
 
 });
 
-async function sendAddAppointmentEmail(doctorId){
-  let doctor = await Doctor.getById(doctorId);
-
-  const transporter = nodemailer.createTransport({
-    service: "hotmail",
-    auth: {
-      user: "sustavzanarucivanje@outlook.com",
-      pass: "Narucivanje1950"
-    }
-  });
-
-  //todo napisat nesto posteno
-  var message = `<p>Po&scaron;tovani ime prezime,<br /><br />Rezerviran Vam je termin u "vrijeme" i traje "minuta"</p><p>Lijep pozdrav</p>`;
-
-  const options = {
-    from: "sustavzanarucivanje@outlook.com",
-    to: mail,
-    subject: "Potvrda rezervacije termina na Sustav za naručivanje",
-    //text: "bla bla tekst tekst",
-    html: message
-  };
-
-  transporter.sendMail(options, function(err, info){
-    if(err){
-      console.log(err);
-      return;
-    }
-    console.log("Send: " + info.response);
-  })
-}
-
-Appointment.notificationDayBefore();
+notification.appointmentReminderEmail();
 
 module.exports = router;
