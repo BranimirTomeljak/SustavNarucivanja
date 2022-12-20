@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { catchError, map, startWith } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { IRegisterData } from 'src/app/interfaces/register-data';
 
 @Component({
   selector: 'app-create-user',
@@ -73,7 +74,6 @@ export class CreateUserComponent {
       return;
     }
 
-   /* kada cemo imati api
    
     const createSubscription = 
     this.type == "doctor" ? this.authService
@@ -103,6 +103,6 @@ export class CreateUserComponent {
         this.router.navigate(['/admin']);
       });
     this.subscription.add(createSubscription);
-    */
+    
   }
 }

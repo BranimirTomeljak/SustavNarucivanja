@@ -39,7 +39,6 @@ export class AuthService {
   }
 
 
-  // TODO kad cemo imat api
   /*
   public createTeam(data : ITeamData) {
     return this.http.post('/api/createTeam', data).pipe(
@@ -49,10 +48,10 @@ export class AuthService {
       })
     );
   }
-  
+  */
 
   public createDoctor(data: IDoctorNurseData) {
-    return this.http.post('/api/createDoctor', data).pipe(
+    return this.http.post('/api/register/doctor', data).pipe(
       tap((resp) => {
         localStorage.setItem('user', JSON.stringify(resp));
         this._user$.next(resp);
@@ -61,7 +60,7 @@ export class AuthService {
   }
 
   public createNurse(data: IDoctorNurseData) {
-    return this.http.post('/api/createNurse', data).pipe(
+    return this.http.post('/api/register/nurse', data).pipe(
       tap((resp) => {
         localStorage.setItem('user', JSON.stringify(resp));
         this._user$.next(resp);
@@ -69,8 +68,7 @@ export class AuthService {
     );
   }
 
-  */
-
+  
   public logout() {
     localStorage.removeItem('user');
     this._user$.next(null);
