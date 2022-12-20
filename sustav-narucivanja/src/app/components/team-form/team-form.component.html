@@ -1,4 +1,8 @@
 <form [formGroup]="form">
+  <mat-form-field>
+    <mat-label>Ime tima</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
   <label>Doctor IDs:</label>
   <div formArrayName="doctorIds">
     <div *ngFor="let control of doctorIds.controls; index as i">
@@ -33,3 +37,5 @@
     <button mat-raised-button (click)="addNurseId()">Add a nurse</button>
   </div>
 </form>
+
+<button mat-raised-button (click)="onSubmit()">Submit</button>

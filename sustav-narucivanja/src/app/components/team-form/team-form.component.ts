@@ -27,6 +27,7 @@ export class TeamFormComponent {
   }
 
   public form = new FormGroup({
+    name: new FormControl(''),
     doctorIds: new FormArray([]),
     nurseIds: new FormArray([]),
   });
@@ -45,5 +46,11 @@ export class TeamFormComponent {
 
   addNurseId(): void {
     this.nurseIds.push(new FormControl(''));
+  }
+
+  public onSubmit(): void {
+    console.log(this.form.get('name')?.value);
+    console.log(this.form.get('doctorIds')?.value);
+    console.log(this.form.get('nurseIds')?.value);
   }
 }
