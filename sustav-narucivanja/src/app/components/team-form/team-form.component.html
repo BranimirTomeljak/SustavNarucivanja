@@ -1,4 +1,4 @@
-<form [formGroup]="form">
+<form class="container" [formGroup]="form" (submit)="onSubmit()">
   <mat-form-field>
     <mat-label>Ime tima</mat-label>
     <input matInput formControlName="name" />
@@ -17,7 +17,13 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <button mat-raised-button (click)="addDoctorId()">Add a doctor</button>
+    <button
+      mat-raised-button
+      (click)="addDoctorId()"
+      [disabled]="!form.get('doctorIds')?.valid"
+    >
+      Add a doctor
+    </button>
   </div>
   <br />
   <label>Nurse IDs:</label>
@@ -34,8 +40,23 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <button mat-raised-button (click)="addNurseId()">Add a nurse</button>
+    <button
+      mat-raised-button
+      (click)="addNurseId()"
+      [disabled]="!form.get('nurseIds')?.valid"
+    >
+      Add a nurse
+    </button>
   </div>
+  <button
+    mat-raised-button
+    type="submit"
+    [disabled]="
+      !form.valid ||
+      (form.get('doctorIds')?.value?.length === 0 &&
+        form.get('nurseIds')?.value?.length === 0)
+    "
+  >
+    Submit
+  </button>
 </form>
-
-<button mat-raised-button (click)="onSubmit()">Submit</button>

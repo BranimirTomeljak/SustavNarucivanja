@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, Observable, Subscription, switchMap } from 'rxjs';
 import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
@@ -27,7 +27,7 @@ export class TeamFormComponent {
   }
 
   public form = new FormGroup({
-    name: new FormControl(''),
+    name: new FormControl('', [Validators.required]),
     doctorIds: new FormArray([]),
     nurseIds: new FormArray([]),
   });
@@ -41,16 +41,18 @@ export class TeamFormComponent {
   }
 
   addDoctorId(): void {
-    this.doctorIds.push(new FormControl(''));
+    this.doctorIds.push(new FormControl(null, [Validators.required]));
   }
 
   addNurseId(): void {
-    this.nurseIds.push(new FormControl(''));
+    this.nurseIds.push(new FormControl(null, [Validators.required]));
   }
 
   public onSubmit(): void {
     console.log(this.form.get('name')?.value);
     console.log(this.form.get('doctorIds')?.value);
     console.log(this.form.get('nurseIds')?.value);
+
+    // TODO: implementiraj kreiranje timova
   }
 }
