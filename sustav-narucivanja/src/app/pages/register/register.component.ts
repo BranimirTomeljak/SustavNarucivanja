@@ -35,6 +35,7 @@ export class RegisterComponent implements OnDestroy, OnInit {
     name: new FormControl('', [Validators.required]),
     surname: new FormControl('', [Validators.required]),
     sex: new FormControl('', [Validators.required]),
+    dateOfBirth: new FormControl('', [Validators.required]),
     phoneNumber: new FormControl('', [
       Validators.required,
       Validators.minLength(9),
@@ -68,7 +69,7 @@ export class RegisterComponent implements OnDestroy, OnInit {
       surname: this.form.get('surname')?.value,
       sex: this.form.get('sex')?.value,
       phoneNumber: this.form.get('phoneNumber')?.value,
-      dateOfBirth: new Date(),
+      dateOfBirth: this.form.get('dateOfBirth')?.value,
       doctorId: 1,
     };
 

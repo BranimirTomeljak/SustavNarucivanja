@@ -1,7 +1,7 @@
 <app-main-navigation></app-main-navigation>
 
 <div class="container">
-  <h1>Create a {{ type }}</h1>
+  <h1>Novi {{ type == "doctor" ? "liječnik" : "medicinski tehničar" }}</h1>
 
   <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
     <mat-form-field>
@@ -19,14 +19,26 @@
       <input
         matInput
         type="password"
-        placeholder="Password"
+        placeholder="Lozinka"
         formControlName="password"
       />
     </mat-form-field>
 
     <mat-form-field>
+      <mat-label>Ponovi lozinku</mat-label>
+      <input
+        matInput
+        type="password"
+        placeholder="Ponovi lozinku"
+        formControlName="repeatedPassword"
+      />
+    </mat-form-field>
+
+    <mat-form-field>
       <mat-label>Ime</mat-label>
-      <input matInput type="text" placeholder="Name" formControlName="name" />
+      <input matInput type="text"
+      placeholder="Ime"
+      formControlName="name" />
     </mat-form-field>
 
     <mat-form-field>
@@ -34,7 +46,7 @@
       <input
         matInput
         type="text"
-        placeholder="Surname"
+        placeholder="Prezime"
         formControlName="surname"
       />
     </mat-form-field>
@@ -47,12 +59,19 @@
       </mat-select>
     </mat-form-field>
 
+    <mat-form-field class="toggle">
+      <mat-label>Datum rođenja</mat-label>
+      <input formControlName="dateOfBirth" placeholder="MM/DD/YYYY" matInput [matDatepicker]="dateOfBirth">
+      <mat-datepicker-toggle matSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
+      <mat-datepicker #dateOfBirth></mat-datepicker>
+    </mat-form-field>
+
     <mat-form-field>
-      <mat-label>Broj mobitela</mat-label>
+      <mat-label>Broj telefona</mat-label>
       <input
         matInput
         type="text"
-        placeholder="Phone number"
+        placeholder="Broj telefona"
         formControlName="phoneNumber"
       />
     </mat-form-field>
