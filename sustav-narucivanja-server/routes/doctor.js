@@ -8,4 +8,9 @@ router.get("/all", async function (req, res) {
     res.json(doctors);
 });
 
+router.get("/:id", async function (req, res) {
+    let doctor = await Doctor.getById(req.params.id);
+    res.json(doctor);
+});
+
 module.exports = router;
