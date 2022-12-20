@@ -9,7 +9,7 @@ export class DoctorsService {
   constructor(private http: HttpClient) {}
 
   public getAllDoctors() {
-    return this.http.get('/api/register/doctors');
+    return this.http.get('/api/doctor/all');
   }
 
   public getAllNurses() {
