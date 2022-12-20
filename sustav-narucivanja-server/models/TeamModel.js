@@ -60,7 +60,7 @@ class Team {
 
         const sql2 = "UPDATE FROM doctor SET teamId = NULL WHERE teamId = " + this.teamId
         const result2 = await db.query(sql2, []);
-        const sql3 = "UPDATE FROM doctor SET teamId = NULL WHERE teamId = " + this.teamId
+        const sql3 = "UPDATE FROM nurse SET teamId = NULL WHERE teamId = " + this.teamId
         const result3 = await db.query(sql3, []);
 
         const sql = "DELETE FROM team where teamId = " + this.teamId
