@@ -35,6 +35,7 @@ var createRouter = require("./routes/create");
 var loginRouter = require("./routes/login");
 var registerRouter = require("./routes/register");
 var logoutRouter = require("./routes/logout");
+var doctorRouter = require("./routes/doctor");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -60,6 +61,7 @@ app.use("/api/register", registerRouter);
 app.use("/api/logout", logoutRouter);
 app.use('/api/appointment', appointmentRouter);
 app.use('/api/patient', patientRouter);
+app.use("/api/doctor", doctorRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
