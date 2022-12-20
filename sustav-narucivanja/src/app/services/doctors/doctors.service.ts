@@ -12,7 +12,15 @@ export class DoctorsService {
     return this.http.get('/api/doctor/all');
   }
 
+  public getDoctorById(id: number) {
+    return this.http.get(`/api/doctor/${id}`);
+  }
+
   public getAllNurses() {
-    return this.http.get('/api/register/nurses');
+    return this.http.get('/api/nurse/all');
+  }
+
+  public getNurseById(id: number) {
+    return this.http.get(`/api/nurse/${id}`);
   }
 }
