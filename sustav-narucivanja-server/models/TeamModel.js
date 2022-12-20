@@ -45,6 +45,8 @@ class Team {
         return result;
     }
 
+    static async
+
     //umetanje zapisa o timu u bazu podataka
     async _saveTeamIdToDb(table){
         if (this.teamId !== undefined)
