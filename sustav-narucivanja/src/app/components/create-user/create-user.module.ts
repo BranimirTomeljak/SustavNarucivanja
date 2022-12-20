@@ -7,6 +7,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MainNavigationModule } from '../main-navigation/main-navigation.module';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [CreateUserComponent],
@@ -18,6 +20,8 @@ import { MainNavigationModule } from '../main-navigation/main-navigation.module'
     MatSelectModule,
     MatButtonModule,
     MainNavigationModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   exports: [CreateUserComponent],
 })

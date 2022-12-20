@@ -1,1 +1,50 @@
-<app-team-form></app-team-form>
+<app-main-navigation></app-main-navigation>
+
+<div class="container">
+  <h1>Stori medicinski tim</h1>
+
+  <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
+
+     <mat-form-field>
+      <mat-label>Liječnik</mat-label>
+      <input
+        matInput
+        type="text"
+        placeholder="Liječnik"
+        formControlName="doctor"
+        [matAutocomplete]="doctorAutocomplete"
+      />
+      <mat-autocomplete #doctorAutocomplete="matAutocomplete">
+        <mat-option
+          *ngFor="let doctorOption of doctorOptions | async"
+          [value]="doctorOption"
+        >
+          {{ doctorOption }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Medicinski tehničar</mat-label>
+        <input
+          matInput
+          type="text"
+          placeholder="Medicinski tehničar"
+          formControlName="tech"
+          [matAutocomplete]="techAutocomplete"
+        />
+        <mat-autocomplete #techAutocomplete="matAutocomplete">
+          <mat-option
+            *ngFor="let techOption of techOptions | async"
+            [value]="techOption"
+          >
+            {{ techOption }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+
+    <button type="submit" color="primary" mat-raised-button>Potvrdi odabir</button>
+
+  </form>
+</div>
