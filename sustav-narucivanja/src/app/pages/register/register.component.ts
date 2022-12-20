@@ -1,26 +1,35 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { EMPTY, Subscription } from 'rxjs';
-import { IRegisterData } from 'src/app/interfaces/register-data';
-import { AuthService } from 'src/app/services/auth.service';
-import { Observable } from 'rxjs';
-import { catchError, map, startWith } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { BehaviorSubject, EMPTY, Observable, Subscription } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+import { IRegisterData } from 'src/app/interfaces/register-data';
+import { AuthService } from 'src/app/services/auth/auth.service';
+import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
-export class RegisterComponent implements OnDestroy, OnInit {
+export class RegisterComponent implements OnDestroy {
   private readonly subscription = new Subscription();
+  private readonly trigger$ = new BehaviorSubject<any>(null);
+  public doctors$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.doctorsService.getAllDoctors();
+    })
+  );
 
   constructor(
     private readonly authService: AuthService,
     private readonly snackBar: MatSnackBar,
-    private readonly router: Router
-  ) {}
+    private readonly router: Router,
+    private readonly doctorsService: DoctorsService
+  ) {
+    this.trigger$.next(null);
+  }
 
   public form: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -69,8 +78,8 @@ export class RegisterComponent implements OnDestroy, OnInit {
       surname: this.form.get('surname')?.value,
       sex: this.form.get('sex')?.value,
       phoneNumber: this.form.get('phoneNumber')?.value,
+      doctorId: this.form.get('doctor')?.value,
       dateOfBirth: this.form.get('dateOfBirth')?.value,
-      doctorId: 1,
     };
 
     console.log(data);
@@ -95,36 +104,7 @@ export class RegisterComponent implements OnDestroy, OnInit {
     this.subscription.unsubscribe();
   }
 
-  myControl = new FormControl('');
-
-  // TO DO
-  // napuniti options imenima doktora iz baze
-  options: string[] = [
-    'Dr. One',
-    'Dr. Two',
-    'Dr. Three',
-    'Dr. Four',
-    'Franjo Tudman',
-    'Isus Krsit',
-    'Dr. Ante Pavlović',
-    'Siniša Vuco',
-    'Dr. Who',
-    'Dr. Doctor',
-  ];
-  filteredOptions!: Observable<string[]>;
-
-  ngOnInit() {
-    this.filteredOptions = this.myControl.valueChanges.pipe(
-      startWith(''),
-      map((value) => this._filter(value || ''))
-    );
-  }
-
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-
-    return this.options.filter((option) =>
-      option.toLowerCase().includes(filterValue)
-    );
+  public test() {
+    console.log(this.form.value);
   }
 }

@@ -44,7 +44,7 @@ router.post('/add', async function(req, res, next) {
     req.query.nFailedAppointments,
   )
   let other = await Patient.fetchBymail(req.query.mail)
-  if (other.id === undefined)
+  if (other.id)
     res.json({'error':'patient exists.'})
   else {
     patient.addToDb()

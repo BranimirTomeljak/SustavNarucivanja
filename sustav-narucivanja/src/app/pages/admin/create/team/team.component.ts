@@ -1,24 +1,36 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { EMPTY, Subscription, Observable } from 'rxjs';
+import { EMPTY, Subscription, Observable, BehaviorSubject } from 'rxjs';
 import { ITeamData } from 'src/app/interfaces/team-data';
-import { AuthService } from 'src/app/services/auth.service';
-import { catchError, map, startWith } from 'rxjs/operators';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth/auth.service';
+import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
 @Component({
   selector: 'app-team',
   templateUrl: './team.component.html',
   styleUrls: ['./team.component.scss'],
 })
-export class TeamComponent implements OnDestroy, OnInit{
+export class TeamComponent implements OnDestroy, OnInit {
   private readonly subscription = new Subscription();
+  private readonly trigger$ = new BehaviorSubject<any>(null);
+  public doctors$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.doctorsService.getAllDoctors();
+    })
+  );
+  public nurses$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.doctorsService.getAllNurses();
+    })
+  );
 
   constructor(
-    private readonly authService: AuthService,
     private readonly snackBar: MatSnackBar,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly doctorsService: DoctorsService
   ) {}
 
   public form: FormGroup = new FormGroup({
@@ -36,7 +48,7 @@ export class TeamComponent implements OnDestroy, OnInit{
 
     const data: ITeamData = {
       doctorId: 1,
-      nurseId: 1
+      nurseId: 1,
     };
 
     console.log(data);
@@ -66,32 +78,29 @@ export class TeamComponent implements OnDestroy, OnInit{
 
   myControl = new FormControl('');
 
-
   // TODO napuniti polja pravim doktorima/tehnicarima
   // dohvatit (id) ime + prezime => tkda biramo imena, a vracamo id
 
-  doctors : string[] = [
+  doctors: string[] = [
     'Dr. One',
     'Dr. Two',
     'Dr. Three',
     'Dr. Four',
-    'Dr. Five', 
-    'Dr. Six'
-  ]
+    'Dr. Five',
+    'Dr. Six',
+  ];
 
-  techs : string[] = [
+  techs: string[] = [
     'Tech One',
     'Tech Two',
     'Tech Three',
     'Tech Four',
     'Tech Five',
-    'Tech Six'
-  ]
+    'Tech Six',
+  ];
 
   techOptions!: Observable<string[]>;
   doctorOptions!: Observable<string[]>;
-  
- 
 
   ngOnInit() {
     this.techOptions = this.myControl.valueChanges.pipe(
@@ -103,7 +112,6 @@ export class TeamComponent implements OnDestroy, OnInit{
       startWith(''),
       map((value) => this._filterDoctors(value || ''))
     );
-
   }
 
   private _filterTechs(value: string): string[] {
@@ -121,5 +129,4 @@ export class TeamComponent implements OnDestroy, OnInit{
       option.toLowerCase().includes(filterValue)
     );
   }
-
 }

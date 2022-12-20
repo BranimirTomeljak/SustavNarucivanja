@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { IDoctorNurseData } from '../interfaces/doctor_nurse-data';
-import { ILoginData } from '../interfaces/login-data';
-import { IRegisterData } from '../interfaces/register-data';
-import { ITeamData } from '../interfaces/team-data';
-import { IUser } from '../interfaces/user';
+import { IDoctorNurseData } from 'src/app/interfaces/doctor_nurse-data';
+import { ILoginData } from 'src/app/interfaces/login-data';
+import { IRegisterData } from 'src/app/interfaces/register-data';
+import { IUser } from 'src/app/interfaces/user';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +37,6 @@ export class AuthService {
     );
   }
 
-
   /*
   public createTeam(data : ITeamData) {
     return this.http.post('/api/createTeam', data).pipe(
@@ -68,7 +66,6 @@ export class AuthService {
     );
   }
 
-  
   public logout() {
     localStorage.removeItem('user');
     this._user$.next(null);

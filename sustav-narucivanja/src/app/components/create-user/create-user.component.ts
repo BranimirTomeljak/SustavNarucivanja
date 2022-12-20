@@ -2,11 +2,11 @@ import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { EMPTY, Subscription } from 'rxjs';
 import { IDoctorNurseData } from 'src/app/interfaces/doctor_nurse-data';
-import { AuthService } from 'src/app/services/auth.service';
 import { catchError, map, startWith } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { IRegisterData } from 'src/app/interfaces/register-data';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-create-user',
@@ -46,7 +46,7 @@ export class CreateUserComponent {
   });
 
   public onFormSubmit(): void {
-    const data : IDoctorNurseData = {
+    const data: IDoctorNurseData = {
       mail: this.form.get('email')?.value,
       password: this.form.get('password')?.value,
       name: this.form.get('name')?.value,
@@ -74,35 +74,34 @@ export class CreateUserComponent {
       return;
     }
 
-   
-    const createSubscription = 
-    this.type == "doctor" ? this.authService
-      .createDoctor(data)
-      .pipe(
-        catchError(() => {
-          this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {
-            duration: 2000,
-          });
-          return EMPTY;
-        })
-      )
-      .subscribe(() => {
-        this.router.navigate(['/admin']);
-      })
-      : this.authService
-      .createNurse(data)
-      .pipe(
-        catchError(() => {
-          this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {
-            duration: 2000,
-          });
-          return EMPTY;
-        })
-      )
-      .subscribe(() => {
-        this.router.navigate(['/admin']);
-      });
+    const createSubscription =
+      this.type == 'doctor'
+        ? this.authService
+            .createDoctor(data)
+            .pipe(
+              catchError(() => {
+                this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {
+                  duration: 2000,
+                });
+                return EMPTY;
+              })
+            )
+            .subscribe(() => {
+              this.router.navigate(['/admin']);
+            })
+        : this.authService
+            .createNurse(data)
+            .pipe(
+              catchError(() => {
+                this.snackBar.open('Unesite sve potrbene podatke', 'Zatvori', {
+                  duration: 2000,
+                });
+                return EMPTY;
+              })
+            )
+            .subscribe(() => {
+              this.router.navigate(['/admin']);
+            });
     this.subscription.add(createSubscription);
-    
   }
 }

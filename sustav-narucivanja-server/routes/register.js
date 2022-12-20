@@ -6,9 +6,13 @@ const flash = require("express-flash");
 const notification = require("../models/NotificationModel");
 const { User, Patient, Doctor, Nurse, Admin } = require("../models/UserModel");
 
-router.get("/", async function (req, res) {
+router.get("/doctors", async function (req, res) {
   let doctors = await Doctor.getIdNameSurnameOfAll();
   res.json(doctors);
+});
+router.get("/nurses", async function (req, res) {
+  let nurses = await Nurse.getIdNameSurnameOfAll();
+  res.json(nurses);
 });
 
 /*
