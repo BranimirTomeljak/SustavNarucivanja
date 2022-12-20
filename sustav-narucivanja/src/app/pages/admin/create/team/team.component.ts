@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { EMPTY, Subscription, Observable } from 'rxjs';
+import { EMPTY, Subscription, Observable, BehaviorSubject } from 'rxjs';
 import { ITeamData } from 'src/app/interfaces/team-data';
-import { catchError, map, startWith } from 'rxjs/operators';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
 @Component({
   selector: 'app-team',
@@ -14,11 +15,22 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 })
 export class TeamComponent implements OnDestroy, OnInit {
   private readonly subscription = new Subscription();
+  private readonly trigger$ = new BehaviorSubject<any>(null);
+  public doctors$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.doctorsService.getAllDoctors();
+    })
+  );
+  public nurses$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.doctorsService.getAllNurses();
+    })
+  );
 
   constructor(
-    private readonly authService: AuthService,
     private readonly snackBar: MatSnackBar,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly doctorsService: DoctorsService
   ) {}
 
   public form: FormGroup = new FormGroup({
