@@ -3,25 +3,5 @@
 <div class="container">
   <h1>Stori medicinski tim</h1>
 
-  <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
-    <mat-form-field>
-      <mat-select placeholder="Liječnik" formControlName="doctor">
-        <mat-option *ngFor="let option of doctors$ | async" [value]="option.id">
-          {{ option.name + " " + option.surname }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-select placeholder="Tehnicar" formControlName="doctor">
-        <mat-option *ngFor="let option of nurses$ | async" [value]="option.id">
-          {{ option.name + " " + option.surname }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <button type="submit" color="primary" mat-raised-button>
-      Potvrdi odabir
-    </button>
-  </form>
+  <app-team-form></app-team-form>
 </div>

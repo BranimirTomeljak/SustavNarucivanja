@@ -1,1 +1,35 @@
-<p>team-form works!</p>
+<form [formGroup]="form">
+  <label>Doctor IDs:</label>
+  <div formArrayName="doctorIds">
+    <div *ngFor="let control of doctorIds.controls; index as i">
+      <mat-form-field>
+        <mat-select placeholder="Liječnik" [formControlName]="i">
+          <mat-option
+            *ngFor="let option of doctors$ | async"
+            [value]="option.id"
+          >
+            {{ option.name + " " + option.surname }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <button mat-raised-button (click)="addDoctorId()">Add a doctor</button>
+  </div>
+  <br />
+  <label>Nurse IDs:</label>
+  <div formArrayName="nurseIds">
+    <div *ngFor="let control of nurseIds.controls; index as i">
+      <mat-form-field>
+        <mat-select placeholder="Tehničar" [formControlName]="i">
+          <mat-option
+            *ngFor="let option of nurses$ | async"
+            [value]="option.id"
+          >
+            {{ option.name + " " + option.surname }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <button mat-raised-button (click)="addNurseId()">Add a nurse</button>
+  </div>
+</form>

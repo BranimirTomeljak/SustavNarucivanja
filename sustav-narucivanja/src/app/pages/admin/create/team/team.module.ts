@@ -26,9 +26,9 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     RouterModule,
     MatSelectModule,
-    MatSnackBarModule
-    ],
+    MatSnackBarModule,
+    TeamFormModule,
+  ],
   exports: [TeamComponent],
 })
-export class TeamModule {
-}
+export class TeamModule {}

@@ -1,8 +1,49 @@
 import { Component } from '@angular/core';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { BehaviorSubject, Observable, Subscription, switchMap } from 'rxjs';
+import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
 @Component({
   selector: 'app-team-form',
   templateUrl: './team-form.component.html',
   styleUrls: ['./team-form.component.scss'],
 })
-export class TeamFormComponent {}
+export class TeamFormComponent {
+  private readonly subscription = new Subscription();
+  private readonly trigger$ = new BehaviorSubject<any>(null);
+  public doctors$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.doctorsService.getAllDoctors();
+    })
+  );
+  public nurses$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.doctorsService.getAllNurses();
+    })
+  );
+
+  constructor(private readonly doctorsService: DoctorsService) {
+    this.trigger$.next(null);
+  }
+
+  public form = new FormGroup({
+    doctorIds: new FormArray([]),
+    nurseIds: new FormArray([]),
+  });
+
+  get doctorIds(): FormArray {
+    return this.form.get('doctorIds') as FormArray;
+  }
+
+  get nurseIds(): FormArray {
+    return this.form.get('nurseIds') as FormArray;
+  }
+
+  addDoctorId(): void {
+    this.doctorIds.push(new FormControl(''));
+  }
+
+  addNurseId(): void {
+    this.nurseIds.push(new FormControl(''));
+  }
+}
