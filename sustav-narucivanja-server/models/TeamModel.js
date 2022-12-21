@@ -3,9 +3,11 @@ const db = require('../db')
 class Team {
     //konstruktor tima
     constructor(
-        teamId = undefined
+        teamId = undefined,
+        name = undefined
     ) {
         this.teamId = teamId
+        this.name = name
     }
 
     //dohvat tim na osnovu imena
@@ -20,6 +22,35 @@ class Team {
         return newTeam
     }
 
+    static async createTeam(name) {
+        const sql = `INSERT INTO team (name) VALUES (${name}) RETURNING id`;
+        const result = await db.query(sql, []);
+        this.id = result[0].id
+        return result;
+    }
+
+
+    static async fetchAllTeams() {
+
+        const sql = 'SELECT * FROM team';
+        const result = await db.query(sql, []);
+        console.log('result is', result)
+        return result;
+    }
+
+    static async fetchAllDoctorsFromTeam(team) {
+        const sql = 'SELECT * FROM doctor WHERE teamId = ' + team;
+        const result = await db.query(sql, []);
+        console.log('result is', result)
+        return result;
+    }
+
+    static async fetchAllNursesFromTeam(team) {
+        const sql = 'SELECT * FROM nurse WHERE teamId = ' + team;
+        const result = await db.query(sql, []);
+        console.log('result is', result)
+        return result;
+    }
 
     //je li je tim pohranjen u bazu podataka?
     isPersisted() {
@@ -75,13 +106,13 @@ class Team {
     async addDoctorToTeam(doctor) {
         if (this.teamId === undefined)
             throw 'cannot have undefined teamId and try to add the doctor to the team'
-        const sql = "INSERT INTO doctor(teamId) VALUES("+this.teamId +") WHERE doctorid = " + doctor;
+        const sql = `UPDATE doctor SET teamid = ${this.teamId} WHERE id = ${doctor}`;
         const result = await db.query(sql, []);
     }
     async addNurseToTeam(nurse) {
         if (this.teamId === undefined)
             throw 'cannot have undefined teamId and try to add the nurse to the team'
-        const sql = "INSERT INTO nurse(teamId) VALUES(" + this.teamId + ") WHERE nurseId = " + nurse;
+        const sql = `UPDATE nurse SET teamid = ${this.teamId} WHERE id = ${nurse}`;
         const result = await db.query(sql, []);
     }
 
@@ -89,21 +120,29 @@ class Team {
         if (this.teamId === undefined)
             throw 'cannot have undefined teamId and try to remove the doctor to the team'
             
-        const sql = "UPDATE doctor SET teamId = NULL WHERE doctorId = " + doctor
+        const sql = "UPDATE doctor SET teamId = NULL WHERE id = " + doctor
         const result = await db.query(sql, []);
     
         return result
         }
 
-        async removeNurseFromTeam(nurse) {
-            if (this.teamId === undefined)
-                throw 'cannot have undefined teamId and try to remove the nurse to the team'
+    async removeNurseFromTeam(nurse) {
+        if (this.teamId === undefined)
+            throw 'cannot have undefined teamId and try to remove the nurse to the team'
                 
-            const sql = "UPDATE nurse SET teamId = NULL WHERE nurseId = " + nurse
-            const result = await db.query(sql, []);
+        const sql = "UPDATE nurse SET teamId = NULL WHERE id = " + nurse
+        const result = await db.query(sql, []);
         
-            return result
-            }
+        return result
+    }
+
+    async changeTeamName(newName) {
+        if (this.teamId === undefined) 
+            throw 'can not change team name if team does not exist'
+        const sql = `UPDATE team SET name = ${newName} WHERE id = ${this.teamId}}`
+        const result = await db.query(sql, []);
+        return
+    }
 }
 
 

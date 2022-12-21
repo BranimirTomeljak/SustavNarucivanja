@@ -60,8 +60,8 @@ const sql_create_nurse = `CREATE TABLE nurse (
 )`;
 
 const sql_create_team = `CREATE TABLE team (
-    id INT NOT NULL,
-    PRIMARY KEY (id)
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL
 )`;
 
 const sql_create_appointment = `CREATE TABLE appointment (
