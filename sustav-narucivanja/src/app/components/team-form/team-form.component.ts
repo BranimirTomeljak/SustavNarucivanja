@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, Observable, Subscription, switchMap } from 'rxjs';
+import { ITeamCreateData } from 'src/app/interfaces/team-create-data';
 import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
 @Component({
@@ -8,7 +9,7 @@ import { DoctorsService } from 'src/app/services/doctors/doctors.service';
   templateUrl: './team-form.component.html',
   styleUrls: ['./team-form.component.scss'],
 })
-export class TeamFormComponent {
+export class TeamFormComponent implements OnDestroy {
   private readonly subscription = new Subscription();
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public doctors$: Observable<any> = this.trigger$.pipe(
@@ -49,10 +50,17 @@ export class TeamFormComponent {
   }
 
   public onSubmit(): void {
-    console.log(this.form.get('name')?.value);
-    console.log(this.form.get('doctorIds')?.value);
-    console.log(this.form.get('nurseIds')?.value);
+    const data: ITeamCreateData = {
+      name: this.form.get('name')?.value as string,
+      doctorIds: this.form.get('doctorIds')?.value as Array<number>,
+      nurseIds: this.form.get('nurseIds')?.value as Array<number>,
+    };
 
-    // TODO: implementiraj kreiranje timova
+    const teamSubscription = this.doctorsService.createTeam(data).subscribe();
+    this.subscription.add(teamSubscription);
+  }
+
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }
