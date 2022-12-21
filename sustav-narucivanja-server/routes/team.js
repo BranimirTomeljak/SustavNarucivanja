@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const {Team} = require('../model/TeamModel');
+const {Team} = require('../models/TeamModel');
 
 /* GET users listing. */
 router.get('/all', async function(req, res, next) {
@@ -10,7 +10,7 @@ router.get('/all', async function(req, res, next) {
 });
 
 router.post('/create', async function(req, res, next) {
-    let team = await Team.createTeam(req.body.name);
+    let team = await Team.createTeam(undefined, req.body.name);
 
     for (let doctorId in req.body.doctorIds) {
         team.addDoctorToTeam(doctorId);

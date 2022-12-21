@@ -23,7 +23,7 @@ class Team {
     }
 
     static async createTeam(name) {
-        const sql = `INSERT INTO team (name) VALUES (${name}) RETURNING id`;
+        const sql = `INSERT INTO team (name) VALUES ('${name}') RETURNING id`;
         const result = await db.query(sql, []);
         this.id = result[0].id
         return result;
@@ -139,7 +139,7 @@ class Team {
     async changeTeamName(newName) {
         if (this.teamId === undefined) 
             throw 'can not change team name if team does not exist'
-        const sql = `UPDATE team SET name = ${newName} WHERE id = ${this.teamId}}`
+        const sql = `UPDATE team SET name = '${newName}' WHERE id = ${this.teamId}}`
         const result = await db.query(sql, []);
         return
     }
