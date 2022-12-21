@@ -10,18 +10,13 @@ router.get('/all', async function(req, res, next) {
 });
 
 router.post('/create', async function(req, res, next) {
-    let team = await Team.createTeam(undefined, req.body.name);
-
-    for (let doctorId in req.body.doctorIds) {
-        team.addDoctorToTeam(doctorId);
-    }
-    for(let nurseId in req.body.nurseIds) {
-        team.addNurseToTeam(nurseId);
-    }
+    await Team.createTeam(req.body.name, req.body.doctorIds, req.body.nurseIds)
+    res.json("Successfully created team")
 });
 
 router.post('/delete', function(req, res, next) {
     let team = new Team(req.body.teamId);
+    console.log(team);
     team.removeTeamFromDb();
 });
 
@@ -30,17 +25,17 @@ router.post('/edit', function(req, res, next) {
     let doctors = fetchAllDoctorsFromTeam(team);
     let nurses = fetchAllNursesFromTeam(team);
 
-    for (let doctorId in doctors) {
+    for (let doctorId of doctors) {
         team.removeDoctorFromTeam(doctorId);
     }
-    for(let nurseId in nurses) {
+    for(let nurseId of nurses) {
         team.removeNurseFromTeam(nurseId);
     }
 
-    for (let doctorId in req.body.doctorIds) {
+    for (let doctorId of req.body.doctorIds) {
         team.addDoctorToTeam(doctorId);
     }
-    for(let nurseId in req.body.nurseIds) {
+    for(let nurseId of req.body.nurseIds) {
         team.addNurseToTeam(nurseId);
     }
     

@@ -48,7 +48,7 @@ const sql_create_doctor = `CREATE TABLE doctor (
     teamid INT,
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES users(id),
-    FOREIGN KEY (teamid) REFERENCES team(id)
+    FOREIGN KEY (teamid) REFERENCES team(teamid)
 )`;
 
 const sql_create_nurse = `CREATE TABLE nurse (
@@ -56,11 +56,11 @@ const sql_create_nurse = `CREATE TABLE nurse (
     teamid INT,
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES users(id),
-    FOREIGN KEY (teamid) REFERENCES team(id)
+    FOREIGN KEY (teamid) REFERENCES team(teamid)
 )`;
 
 const sql_create_team = `CREATE TABLE team (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    teamid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL
 )`;
 

@@ -13,20 +13,27 @@ class Team {
     //dohvat tim na osnovu imena
     static async fetchByTeamId(teamId) {
 
-        let results = await Team.dbGetTeamBy('teamId', teamId, 'team')
-        let newTeam = new Team()
+        let result = await Team.dbGetTeamBy('teamid', teamId, 'team')
+        console.log(result);
 
-        if( results.length > 0 ) {
-            newTeam = new Team(results[0].teamId)
+        if( result.length > 0 ) {
+            return new Team(result[0].teamid, result[0].name)
         }
-        return newTeam
+        return undefined;
     }
 
-    static async createTeam(name) {
-        const sql = `INSERT INTO team (name) VALUES ('${name}') RETURNING id`;
+    static async createTeam(name, doctorIds, nurseIds)  {
+        const sql = `INSERT INTO team (name) VALUES ('${name}') RETURNING teamid`;
         const result = await db.query(sql, []);
-        this.id = result[0].id
-        return result;
+        let broj = result[0].teamid
+        let team = await this.fetchByTeamId(broj)
+        for (let doctorId of doctorIds) {
+            team.addDoctorToTeam(doctorId);
+        }
+        for(let nurseId of nurseIds) {
+            team.addNurseToTeam(nurseId);
+        }
+        return team;
     }
 
 
