@@ -23,6 +23,7 @@ var loginRouter = require('./routes/login');
 var registerRouter = require('./routes/register');
 var appointmentRouter = require('./routes/appointment');
 var patientRouter = require('./routes/patient');
+var teamRouter = require('./routes/team');
 
 const PORT = process.env.PORT || 3000;
 
@@ -62,6 +63,7 @@ app.use("/api/register", registerRouter);
 app.use("/api/logout", logoutRouter);
 app.use('/api/appointment', appointmentRouter);
 app.use('/api/patient', patientRouter);
+app.use('/api/team', teamRouter);
 app.use("/api/doctor", doctorRouter);
 app.use("/api/nurse", nurseRouter);
 
