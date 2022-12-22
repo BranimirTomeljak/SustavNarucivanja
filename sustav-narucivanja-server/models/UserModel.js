@@ -242,16 +242,14 @@ class Nurse extends User{
     }
 
     static async getIdNameSurnameOfAll(){
-        const sql = 'SELECT id, name, surname FROM nurse NATURAL JOIN users ORDER BY name, surname';
+        const sql = 'SELECT id, name, surname, teamid FROM nurse NATURAL JOIN users ORDER BY name, surname';
         const results = await db.query(sql, []);
         if (results.length === 0)
             throw 'user does not exist'
         let toreturn = []
         for (let result of results)
             toreturn.push(
-                new Nurse(
-                    result.id, result.name, result.surname
-                )
+                {id: result.id, name: result.name, surname: result.surname, teamid: result.teamid}
             )
         return toreturn;
     }
@@ -314,16 +312,14 @@ class Doctor extends Nurse{
     }
 
     static async getIdNameSurnameOfAll(){
-        const sql = 'SELECT id, name, surname FROM doctor NATURAL JOIN users ORDER BY name, surname';
+        const sql = 'SELECT id, name, surname, teamid FROM doctor NATURAL JOIN users ORDER BY name, surname';
         const results = await db.query(sql, []);
         if (results.length === 0)
             throw 'user does not exist'
         let toreturn = []
         for (let result of results)
             toreturn.push(
-                new Doctor(
-                    result.id, result.name, result.surname
-                )
+                {id: result.id, name: result.name, surname: result.surname, teamid: result.teamid}
             )
         return toreturn;
     }
