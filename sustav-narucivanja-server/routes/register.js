@@ -3,7 +3,17 @@ var router = express.Router();
 const bcrypt = require("bcrypt");
 const { pool } = require("../db/dbConfig");
 const flash = require("express-flash");
+const notification = require("../models/NotificationModel");
 const { User, Patient, Doctor, Nurse, Admin } = require("../models/UserModel");
+
+router.get("/doctors", async function (req, res) {
+  let doctors = await Doctor.getIdNameSurnameOfAll();
+  res.json(doctors);
+});
+router.get("/nurses", async function (req, res) {
+  let nurses = await Nurse.getIdNameSurnameOfAll();
+  res.json(nurses);
+});
 
 /*
 The following 4 endpoints are accesed in the same way.
@@ -131,7 +141,8 @@ const check_and_put = async (req, res, where) =>{
     0
   )
   try{
-    person.addToDb()
+    person.addToDb();
+    notification.sendEmail("registration", mail);
     res.json(person);
   }
   catch{

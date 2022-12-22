@@ -1,1 +1,62 @@
-<p>team-form works!</p>
+<form class="container" [formGroup]="form" (submit)="onSubmit()">
+  <mat-form-field>
+    <mat-label>Ime tima</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
+  <label>Doctor IDs:</label>
+  <div formArrayName="doctorIds">
+    <div *ngFor="let control of doctorIds.controls; index as i">
+      <mat-form-field>
+        <mat-select placeholder="Liječnik" [formControlName]="i">
+          <mat-option
+            *ngFor="let option of doctors$ | async"
+            [value]="option.id"
+          >
+            {{ option.name + " " + option.surname }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <button
+      mat-raised-button
+      (click)="addDoctorId()"
+      [disabled]="!form.get('doctorIds')?.valid"
+    >
+      Add a doctor
+    </button>
+  </div>
+  <br />
+  <label>Nurse IDs:</label>
+  <div formArrayName="nurseIds">
+    <div *ngFor="let control of nurseIds.controls; index as i">
+      <mat-form-field>
+        <mat-select placeholder="Tehničar" [formControlName]="i">
+          <mat-option
+            *ngFor="let option of nurses$ | async"
+            [value]="option.id"
+          >
+            {{ option.name + " " + option.surname }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <button
+      mat-raised-button
+      (click)="addNurseId()"
+      [disabled]="!form.get('nurseIds')?.valid"
+    >
+      Add a nurse
+    </button>
+  </div>
+  <button
+    mat-raised-button
+    type="submit"
+    [disabled]="
+      !form.valid ||
+      (form.get('doctorIds')?.value?.length === 0 &&
+        form.get('nurseIds')?.value?.length === 0)
+    "
+  >
+    Submit
+  </button>
+</form>

@@ -1,6 +1,8 @@
 var express = require('express');
-const { rawListeners } = require('../app');
-var Appointment = require('../models/AppointmentModel')
+//const { rawListeners } = require('../app');
+const notification = require("../models/NotificationModel");
+var Appointment = require('../models/AppointmentModel');
+var { Doctor } = require("../models/UserModel");
 
 var router = express.Router();
 const appointment_duration = 30;
@@ -43,7 +45,7 @@ router.post('/add', async function(req, res, next) {
   else if (await app.isSavedToDb())
     res.status(500).send('Appointment exists.')
   else {
-    app.saveToDb()
+    app.saveToDb();
     res.send("OK");
   }
 });
@@ -153,6 +155,9 @@ router.post('/reserve', async function(req, res, next) {
     app.created_on = curr_date_factory()
     app.type = req.query.type
   })
+
+  let doctor = await Doctor.getById(doctorid);
+  notification.sendEmail("appointmentBooked", doctor.mail); //obavijesti doktora o rezervaciji termina
 });
 
 // if somebody needs to cancel an appointment
@@ -180,6 +185,7 @@ router.post('/accept_change', async function(req, res, next) {
     app.pending_accept = false
     app.created_on = curr_date_factory()
   })
+  
 });
 
 // if the doctor moves the appointment the patient can reject
@@ -247,7 +253,6 @@ const update_app = async (req, res, func) => {
   res.send("OK");
 }
 
-
-
+notification.appointmentReminderEmail();
 
 module.exports = router;

@@ -19,7 +19,7 @@ async function query(text, params, throwerr=false){
     try {
         console.log(text)
         const result = await dangerous_query(text, params);
-        console.log(result.rows)
+        //console.log(result.rows)
         return result.rows;
     } catch (err) {
         console.error("Error while querying the database:")
