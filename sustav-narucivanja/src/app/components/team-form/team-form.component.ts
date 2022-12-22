@@ -1,6 +1,16 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, Observable, Subscription, switchMap } from 'rxjs';
+import { Router } from '@angular/router';
+import {
+  BehaviorSubject,
+  EMPTY,
+  filter,
+  Observable,
+  of,
+  Subscription,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { ITeamCreateData } from 'src/app/interfaces/team-create-data';
 import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
@@ -14,16 +24,39 @@ export class TeamFormComponent implements OnDestroy {
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public doctors$: Observable<any> = this.trigger$.pipe(
     switchMap(() => {
-      return this.doctorsService.getAllDoctors();
+      return this.doctorsService.getAllDoctors().pipe(
+        switchMap((result) => {
+          let doctors: Array<any> = [];
+          result.forEach((doctor: any) => {
+            if (!doctor.teamid) {
+              doctors.push(doctor);
+            }
+          });
+          return of(doctors);
+        })
+      );
     })
   );
   public nurses$: Observable<any> = this.trigger$.pipe(
     switchMap(() => {
-      return this.doctorsService.getAllNurses();
+      return this.doctorsService.getAllNurses().pipe(
+        switchMap((result) => {
+          let nurses: Array<any> = [];
+          result.forEach((doctor: any) => {
+            if (!doctor.teamid) {
+              nurses.push(doctor);
+            }
+          });
+          return of(nurses);
+        })
+      );
     })
   );
 
-  constructor(private readonly doctorsService: DoctorsService) {
+  constructor(
+    private readonly doctorsService: DoctorsService,
+    private readonly router: Router
+  ) {
     this.trigger$.next(null);
   }
 
@@ -58,6 +91,7 @@ export class TeamFormComponent implements OnDestroy {
 
     const teamSubscription = this.doctorsService.createTeam(data).subscribe();
     this.subscription.add(teamSubscription);
+    this.router.navigate(['/admin']);
   }
 
   public ngOnDestroy(): void {
