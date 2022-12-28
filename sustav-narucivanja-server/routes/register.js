@@ -27,6 +27,7 @@ The body encoded in a x-www-form-urlencoded way has to have:
   password: string
   dateOfBirth: string (YYYY-MM-DD)
   doctorId: int (only for patient ("/"))
+  notificationMethod: string (only for patient ("/"))
 
 If everything is ok you get OK you get 200 else error msgs
 */
