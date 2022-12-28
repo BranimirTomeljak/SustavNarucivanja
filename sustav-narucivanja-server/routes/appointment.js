@@ -156,7 +156,7 @@ router.post('/reserve', async function(req, res, next) {
     app.type = req.query.type
   })
 
-  let doctor = await Doctor.getById(doctorid);
+  let doctor = await Doctor.getById(doctorid);  //dobavit pravi doctor id TODO Darijan
   notification.sendEmail("appointmentBooked", doctor.mail); //obavijesti doktora o rezervaciji termina
 });
 

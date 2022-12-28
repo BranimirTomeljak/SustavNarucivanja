@@ -57,6 +57,7 @@ const check_and_put = async (req, res, where) =>{
     password,
     dateOfBirth,
     doctorId,
+    notificationMethod
   } = req.body;
 
   let errors = [];
@@ -70,6 +71,7 @@ const check_and_put = async (req, res, where) =>{
     password,
     dateOfBirth,
     doctorId,
+    notificationMethod
   });
 
   // check for errors
@@ -81,7 +83,8 @@ const check_and_put = async (req, res, where) =>{
     !mail ||
     !password ||
     !dateOfBirth ||
-    (!doctorId && where===Patient)
+    (!doctorId && where===Patient) ||
+    (!notificationMethod && where===Patient)
   ) {
     errors.push({ message: "Please enter all fields" });
     console.log('enter all fields')
@@ -138,11 +141,13 @@ const check_and_put = async (req, res, where) =>{
     hashedPassword,
     dateOfBirth,
     doctorId,
+    notificationMethod,
     0
   )
   try{
     person.addToDb();
-    notification.sendEmail("registration", mail);
+    notification.sendNotification("mail", "registration", mail, phoneNumber); //(notificationMethod, purpose, mail, phoneNumber)
+    //notification.sendNotification(notificationMethod, "registration", mail, phoneNumber); //kad dobijemo notificationMethod u body-u
     res.json(person);
   }
   catch{
