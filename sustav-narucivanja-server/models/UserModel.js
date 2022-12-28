@@ -141,10 +141,11 @@ class User {
 
 
 class Patient extends User{
-    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, doctorid, nFailedAppointments){
+    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, doctorid, nFailedAppointments, notificationMethod){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
         this.nFailedAppointments = nFailedAppointments
         this.doctorid = doctorid
+        this.notificationMethod = notificationMethod
         this.type = 'patient'
     }
 
@@ -154,8 +155,8 @@ class Patient extends User{
         else
             await this.saveUserToDb()
         
-        const sql = "INSERT INTO patient (id, doctorid, nFailedAppointments) VALUES (" +
-             [this.id, this.doctorid, this.nFailedAppointments].join(",") + " )";
+        const sql = "INSERT INTO patient (id, doctorid, nFailedAppointments, notificationMethod) VALUES (" +
+             [this.id, this.doctorid, this.nFailedAppointments, this.notificationMethod].join(",") + " )";
         await db.query(sql, [], true);
 
     }
@@ -169,13 +170,13 @@ class Patient extends User{
             throw 'user does not exist'
         return new Patient(
             user.id, user.name, user.surname, user.sex, user.phonenumber, user.mail, user.password, user.dateofbirth,
-            result[0].doctorid, result[0].nfailedappointments
+            result[0].doctorid, result[0].nfailedappointments, result[0].notificationMethod
             )
     }
 
     static async getAll(){
         //const sql = 'SELECT * FROM patient Natural Join users';  //zakomentirano dok se ne makne doctorid iz users tablice
-        const sql = 'SELECT users.id, users.name, users.surname, users.sex, users.phonenumber, users.mail, users.password, users.dateOfBirth, patient.doctorid, patient.nFailedAppointments FROM patient Join users on users.id = patient.id';
+        const sql = 'SELECT users.id, users.name, users.surname, users.sex, users.phonenumber, users.mail, users.password, users.dateOfBirth, patient.doctorid, patient.nFailedAppointments, patient.notificationMethod FROM patient Join users on users.id = patient.id';
         const results = await db.query(sql, []);
         if (results.length === 0)
             throw 'user does not exist'
@@ -184,7 +185,7 @@ class Patient extends User{
             toreturn.push(
                 new Patient(
                     result.id, result.name, result.surname, result.sex, result.phonenumber, result.mail, result.password, result.dateofbirth,
-                    result.doctorid, result.nFailedAppointments
+                    result.doctorid, result.nFailedAppointments, result.notificationMethod
                 )
             )
         return toreturn;
