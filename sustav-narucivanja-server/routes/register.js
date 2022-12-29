@@ -142,7 +142,7 @@ const check_and_put = async (req, res, where) =>{
   )
   try{
     person.addToDb();
-    notification.sendEmail("registration", mail);
+    //notification.sendEmail("registration", mail);
     res.json(person);
   }
   catch{

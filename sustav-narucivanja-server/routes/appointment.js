@@ -10,16 +10,16 @@ const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;}
 const curr_date_factory = ()=> {return add_hour(new Date())}
 
 // IMPORTANT!!!!
-// once we get the authentification and session working you will not need to send id and role
+// once we get the authentification and session working you will not need to send id and type
 
 
-// get all appointemnts from an `id` with `role`
+// get all appointemnts from an `id` with `type`
 router.get('/', async function(req, res, next) {
-  let role = req.query.role
-  let id   = req.query.id
-  if (role == 'admin')
+  let type = req.session.user.type
+  let id   = req.session.user.id
+  if (type == 'admin')
     throw 'no admin here'
-  let field = {'doctor':'doctorid', 'patient':'patientid', 'nurse':'nurseid'}[role]
+  let field = {'doctor':'doctorid', 'patient':'patientid', 'nurse':'nurseid'}[type]
   let apps = await Appointment.fetchBy(field, id)
   res.json(apps);
 });
@@ -27,18 +27,19 @@ router.get('/', async function(req, res, next) {
 // create appointment with `patientid`, nurse or doctor id 
 // time and duration
 // this creates only one appointment and it can have any length
-router.post('/add', async function(req, res, next) {
-  if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined))
-    throw 'cannot both be defined'
-
+router.post('/add', async function(req, res, next) {  
   let app = new Appointment(
     id = undefined,
-    req.query.patientid,
-    req.query.doctorid,
-    req.query.nurseid,
-    req.query.time,
-    req.query.duration
+    req.body.patientid,
+    req.body.doctorid,
+    req.body.nurseid,
+    req.body.time,
+    req.body.duration
   )
+
+  if ((req.body.doctorid===undefined) === (req.body.nurseid===undefined))
+    //throw 'cannot both be defined'
+    res.status(500).send('doctorId and nurseId cannot both be defined')
 
   if (await app.conflictsWithDb())
     res.status(500).send('Appointment overlaps.')
