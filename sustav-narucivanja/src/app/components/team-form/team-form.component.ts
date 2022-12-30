@@ -13,7 +13,7 @@ import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 })
 export class TeamFormComponent implements OnDestroy {
   @Input() public editMode: boolean = false;
-  @Input() public teamId: string = '';
+  @Input() public teamId = null;
 
   private readonly subscription = new Subscription();
   private readonly trigger$ = new BehaviorSubject<any>(null);
