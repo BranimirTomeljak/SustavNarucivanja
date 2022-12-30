@@ -12,12 +12,12 @@ class Team {
 
     //dohvat tim na osnovu imena
     static async fetchByTeamId(teamId) {
-
         let result = await Team.dbGetTeamBy('teamid', teamId, 'team');
         const doctors = await Team.dbGetDoctorsByTeamId(teamId);
         const nurses = await Team.dbGetNursesByTeamId(teamId);
 
         let data = {
+            teamId: teamId,
             name: result[0].name,
             doctors: [],
             nurses: []

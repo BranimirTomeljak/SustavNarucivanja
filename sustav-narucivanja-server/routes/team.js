@@ -13,9 +13,9 @@ router.post('/create', async function(req, res, next) {
     res.json("Successfully created team")
 });
 
-router.post('/delete', function(req, res, next) {
+router.delete('/delete/:id', function(req, res, next) {
     try{
-        let team = new Team(req.body.teamId);
+        let team = new Team(req.params.id);
         console.log(team);
         team.removeTeamFromDb();
         res.status(200).json("Successfully deleted team");

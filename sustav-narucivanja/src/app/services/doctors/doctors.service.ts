@@ -38,4 +38,8 @@ export class DoctorsService {
   public getAllTeams(): Observable<Array<ITeamData>> {
     return this.http.get<Array<ITeamData>>('/api/team/all');
   }
+
+  public deleteTeam(id: number) {
+    return this.http.delete(`/api/team/delete/${id}`);
+  }
 }

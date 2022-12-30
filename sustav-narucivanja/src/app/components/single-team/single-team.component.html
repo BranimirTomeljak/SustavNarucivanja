@@ -12,5 +12,7 @@
     {{ nurse.name + " " + nurse.surname }}
   </p>
 
-  <button mat-raised-button class="delete-button">Izbrišite tim</button>
+  <button mat-raised-button class="delete-button" (click)="onDeleteClick()">
+    Izbrišite tim
+  </button>
 </div>
