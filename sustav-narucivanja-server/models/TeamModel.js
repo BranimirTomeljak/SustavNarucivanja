@@ -134,12 +134,7 @@ class Team {
         if (this.teamId === undefined)
             throw 'cannot have defined teamId and try to save the team'
 
-        const sql2 = "UPDATE FROM doctor SET teamId = NULL WHERE teamId = " + this.teamId
-        const result2 = await db.query(sql2, []);
-        const sql3 = "UPDATE FROM nurse SET teamId = NULL WHERE teamId = " + this.teamId
-        const result3 = await db.query(sql3, []);
-
-        const sql = "DELETE FROM team where teamId = " + this.teamId
+        const sql = `UPDATE doctor SET teamId = NULL WHERE teamId = ${this.teamId};UPDATE nurse SET teamId = NULL WHERE teamId = ${this.teamId};DELETE FROM team where teamId = ${this.teamId}`
         const result = await db.query(sql, []);
 
         this.teamId = undefined

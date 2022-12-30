@@ -6,7 +6,6 @@ const {Team} = require('../models/TeamModel');
 router.get('/all', async function(req, res, next) {
     let teams = await Team.fetchAllTeams();
     res.json(teams);
-    
 });
 
 router.post('/create', async function(req, res, next) {
@@ -15,9 +14,15 @@ router.post('/create', async function(req, res, next) {
 });
 
 router.post('/delete', function(req, res, next) {
-    let team = new Team(req.body.teamId);
-    console.log(team);
-    team.removeTeamFromDb();
+    try{
+        let team = new Team(req.body.teamId);
+        console.log(team);
+        team.removeTeamFromDb();
+        res.status(200).json("Successfully deleted team");
+    }
+    catch{
+        res.status(500).json("Error deleting team");
+    }
 });
 
 router.post('/edit', function(req, res, next) {
