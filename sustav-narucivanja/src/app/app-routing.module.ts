@@ -38,10 +38,7 @@ const routes: Routes = [
               { path: 'team', component: TeamComponent },
             ],
           },
-          {
-            path: 'edit',
-            children: [{ path: 'team/:id', component: TeamViewComponent }],
-          },
+          { path: 'team/:id', component: TeamViewComponent },
         ],
       },
       { path: 'patient', component: PatientComponent },

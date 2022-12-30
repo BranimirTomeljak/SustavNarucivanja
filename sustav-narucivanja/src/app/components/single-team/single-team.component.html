@@ -1,9 +1,14 @@
 <app-main-navigation></app-main-navigation>
-<h1>{{ data?.name }}</h1>
+<div class="container">
+  <h1>Ime tima: {{ data?.name }}</h1>
 
-<p *ngFor="let doctor of data?.doctors">
-  {{ doctor.name + " " + doctor.surname }}
-</p>
-<p *ngFor="let nurse of data?.nurses">
-  {{ nurse.name + " " + nurse.surname }}
-</p>
+  <h2>Doktori:</h2>
+  <p *ngFor="let doctor of data?.doctors">
+    {{ doctor.name + " " + doctor.surname }}
+  </p>
+
+  <h2>Tehničari:</h2>
+  <p *ngFor="let nurse of data?.nurses">
+    {{ nurse.name + " " + nurse.surname }}
+  </p>
+</div>
