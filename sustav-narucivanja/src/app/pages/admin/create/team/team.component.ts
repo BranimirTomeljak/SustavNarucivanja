@@ -1,11 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { EMPTY, Subscription, Observable, BehaviorSubject } from 'rxjs';
-import { ITeamData } from 'src/app/interfaces/team-data';
-import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/services/auth/auth.service';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { map, startWith, switchMap } from 'rxjs/operators';
 import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
 @Component({
@@ -45,13 +43,6 @@ export class TeamComponent implements OnDestroy, OnInit {
       });
       return;
     }
-
-    const data: ITeamData = {
-      doctorId: 1,
-      nurseId: 1,
-    };
-
-    console.log(data);
 
     // TODO kad cemo imat api za timove
     /*

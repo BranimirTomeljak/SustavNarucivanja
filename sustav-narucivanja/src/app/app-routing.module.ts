@@ -4,6 +4,8 @@ import { AnonGuard } from './guards/anon/anon.guard';
 import { AuthGuard } from './guards/auth/auth.guard';
 import { AdminComponent } from './pages/admin/admin.component';
 import { AdminModule } from './pages/admin/admin.module';
+import { AllTeamsComponent } from './pages/admin/all-teams/all-teams.component';
+import { AllTeamsModule } from './pages/admin/all-teams/all-teams.module';
 import { DoctorComponent } from './pages/admin/create/doctor/doctor.component';
 import { DoctorModule } from './pages/admin/create/doctor/doctor.module';
 import { TeamComponent } from './pages/admin/create/team/team.component';
@@ -38,6 +40,7 @@ const routes: Routes = [
               { path: 'team', component: TeamComponent },
             ],
           },
+          { path: 'teams', component: AllTeamsComponent },
           { path: 'team/:id', component: TeamViewComponent },
         ],
       },
@@ -68,6 +71,7 @@ const routes: Routes = [
     TeamModule,
     PatientModule,
     TeamViewModule,
+    AllTeamsModule,
   ],
   exports: [RouterModule],
 })
