@@ -12,21 +12,57 @@ class Team {
 
     //dohvat tim na osnovu imena
     static async fetchByTeamId(teamId) {
+        let result = await Team.dbGetTeamBy('teamid', teamId, 'team');
+        const doctors = await Team.dbGetDoctorsByTeamId(teamId);
+        const nurses = await Team.dbGetNursesByTeamId(teamId);
 
-        let result = await Team.dbGetTeamBy('teamid', teamId, 'team')
-        console.log(result);
+        let data = {
+            teamId: teamId,
+            name: result[0].name,
+            doctors: [],
+            nurses: []
+        };
+
+        for (let doctor of doctors) {
+            data.doctors.push({
+                id: doctor.id,
+                name: doctor.name,
+                surname: doctor.surname
+            });
+        }
+
+        for (let nurse of nurses) {
+            data.nurses.push({
+                id: nurse.id,
+                name: nurse.name,
+                surname: nurse.surname
+            });
+        }
 
         if( result.length > 0 ) {
-            return new Team(result[0].teamid, result[0].name)
+            return data;
         }
         return undefined;
+    }
+
+    static async dbGetDoctorsByTeamId(teamId) {
+        const sqlDoctors = `SELECT id, name, surname FROM doctor NATURAL JOIN users WHERE teamId = ${teamId}`;
+        const doctors = await db.query(sqlDoctors, []);
+        console.log('doctors', doctors)
+        return doctors;
+    }
+
+    static async dbGetNursesByTeamId(teamId) {
+        const sqlNurses = `SELECT id, name, surname FROM nurse NATURAL JOIN users WHERE teamId = ${teamId}`;
+        const nurses = await db.query(sqlNurses, []);
+        return nurses;
     }
 
     static async createTeam(name, doctorIds, nurseIds)  {
         const sql = `INSERT INTO team (name) VALUES ('${name}') RETURNING teamid`;
         const result = await db.query(sql, []);
         let broj = result[0].teamid
-        let team = await this.fetchByTeamId(broj)
+        let team = new Team(broj, name);
         for (let doctorId of doctorIds) {
             team.addDoctorToTeam(doctorId);
         }
@@ -98,12 +134,7 @@ class Team {
         if (this.teamId === undefined)
             throw 'cannot have defined teamId and try to save the team'
 
-        const sql2 = "UPDATE FROM doctor SET teamId = NULL WHERE teamId = " + this.teamId
-        const result2 = await db.query(sql2, []);
-        const sql3 = "UPDATE FROM nurse SET teamId = NULL WHERE teamId = " + this.teamId
-        const result3 = await db.query(sql3, []);
-
-        const sql = "DELETE FROM team where teamId = " + this.teamId
+        const sql = `UPDATE doctor SET teamId = NULL WHERE teamId = ${this.teamId};UPDATE nurse SET teamId = NULL WHERE teamId = ${this.teamId};DELETE FROM team where teamId = ${this.teamId}`
         const result = await db.query(sql, []);
 
         this.teamId = undefined

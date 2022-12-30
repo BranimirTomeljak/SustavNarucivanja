@@ -6,7 +6,6 @@ const {Team} = require('../models/TeamModel');
 router.get('/all', async function(req, res, next) {
     let teams = await Team.fetchAllTeams();
     res.json(teams);
-    
 });
 
 router.post('/create', async function(req, res, next) {
@@ -14,10 +13,16 @@ router.post('/create', async function(req, res, next) {
     res.json("Successfully created team")
 });
 
-router.post('/delete', function(req, res, next) {
-    let team = new Team(req.body.teamId);
-    console.log(team);
-    team.removeTeamFromDb();
+router.delete('/delete/:id', function(req, res, next) {
+    try{
+        let team = new Team(req.params.id);
+        console.log(team);
+        team.removeTeamFromDb();
+        res.status(200).json("Successfully deleted team");
+    }
+    catch{
+        res.status(500).json("Error deleting team");
+    }
 });
 
 router.post('/edit', function(req, res, next) {
@@ -38,7 +43,11 @@ router.post('/edit', function(req, res, next) {
     for(let nurseId of req.body.nurseIds) {
         team.addNurseToTeam(nurseId);
     }
-    
+});
+
+router.get('/:id', async function(req, res, next) {
+    let team = await Team.fetchByTeamId(req.params.id);
+    res.json(team);
 });
 
 module.exports = router;
