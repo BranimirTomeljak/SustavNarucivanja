@@ -1,16 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  BehaviorSubject,
-  EMPTY,
-  filter,
-  Observable,
-  of,
-  Subscription,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, Observable, of, Subscription, switchMap } from 'rxjs';
 import { ITeamCreateData } from 'src/app/interfaces/team-create-data';
 import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
@@ -20,6 +11,8 @@ import { DoctorsService } from 'src/app/services/doctors/doctors.service';
   styleUrls: ['./team-form.component.scss'],
 })
 export class TeamFormComponent implements OnDestroy {
+  @Input() public editMode: boolean = false;
+
   private readonly subscription = new Subscription();
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public doctors$: Observable<any> = this.trigger$.pipe(
