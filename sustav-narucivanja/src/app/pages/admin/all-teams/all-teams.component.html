@@ -1,0 +1,3 @@
+<div *ngIf="teams$ | async as teams">
+  <p *ngFor="let team of teams">{{ team }}</p>
+</div>
