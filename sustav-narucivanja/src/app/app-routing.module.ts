@@ -18,25 +18,44 @@ import { PatientComponent } from './pages/patient/patient.component';
 import { PatientModule } from './pages/patient/patient.module';
 import { RegisterComponent } from './pages/register/register.component';
 import { RegisterModule } from './pages/register/register.module';
+import { TeamsComponent } from './pages/teams/teams.component';
+import { TeamsModule } from './pages/teams/teams.module';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   {
     path: '',
     children: [
-      { path: 'admin', component: AdminComponent },
+      {
+        path: 'admin',
+        children: [
+          { path: '', component: AdminComponent },
+          {
+            path: 'create',
+            children: [
+              { path: 'doctor', component: DoctorComponent },
+              { path: 'tech', component: TechComponent },
+              { path: 'team', component: TeamComponent },
+            ],
+          },
+          {
+            path: 'edit',
+            children: [{ path: 'team/:id', component: TeamsComponent }],
+          },
+        ],
+      },
       { path: 'patient', component: PatientComponent },
     ],
     canActivate: [AuthGuard],
   },
-  {
-    path: 'create',
-    children: [
-      { path: 'doctor', component: DoctorComponent },
-      { path: 'tech', component: TechComponent },
-      { path: 'team', component: TeamComponent },
-    ],
-  },
+  // {
+  //   path: 'create',
+  //   children: [
+  //     { path: 'doctor', component: DoctorComponent },
+  //     { path: 'tech', component: TechComponent },
+  //     { path: 'team', component: TeamComponent },
+  //   ],
+  // },
   {
     path: '',
     children: [
@@ -59,6 +78,7 @@ const routes: Routes = [
     TechModule,
     TeamModule,
     PatientModule,
+    TeamsModule,
   ],
   exports: [RouterModule],
 })

@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { params } from '@datx/jsonapi';
 import { BehaviorSubject, Observable, of, Subscription, switchMap } from 'rxjs';
 import { ITeamCreateData } from 'src/app/interfaces/team-create-data';
 import { DoctorsService } from 'src/app/services/doctors/doctors.service';
@@ -12,6 +13,7 @@ import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 })
 export class TeamFormComponent implements OnDestroy {
   @Input() public editMode: boolean = false;
+  @Input() public teamId: string = '';
 
   private readonly subscription = new Subscription();
   private readonly trigger$ = new BehaviorSubject<any>(null);
@@ -85,6 +87,10 @@ export class TeamFormComponent implements OnDestroy {
     const teamSubscription = this.doctorsService.createTeam(data).subscribe();
     this.subscription.add(teamSubscription);
     this.router.navigate(['/admin']);
+  }
+
+  public test(): void {
+    console.log(this.teamId);
   }
 
   public ngOnDestroy(): void {
