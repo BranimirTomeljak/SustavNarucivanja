@@ -23,8 +23,9 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
       return this.doctorsService.getAllDoctors().pipe(
         switchMap((result) => {
           let doctors: Array<any> = [];
+          const doctorIds = this.form.get('doctorIds')?.value as Array<number>;
           result.forEach((doctor: any) => {
-            if (!doctor.teamid) {
+            if (!doctor.teamid && !doctorIds.includes(doctor.id)) {
               doctors.push(doctor);
             }
           });
@@ -38,9 +39,10 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
       return this.doctorsService.getAllNurses().pipe(
         switchMap((result) => {
           let nurses: Array<any> = [];
-          result.forEach((doctor: any) => {
-            if (!doctor.teamid) {
-              nurses.push(doctor);
+          const nurseIds = this.form.get('doctorIds')?.value as Array<number>;
+          result.forEach((nurse: any) => {
+            if (!nurse.teamid && !nurseIds.includes(nurse.id)) {
+              nurses.push(nurse);
             }
           });
           return of(nurses);
@@ -58,6 +60,7 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
 
   public ngOnChanges(): void {
     this.setFormValues();
+    this.trigger$.next(null);
   }
 
   public form = new FormGroup({
