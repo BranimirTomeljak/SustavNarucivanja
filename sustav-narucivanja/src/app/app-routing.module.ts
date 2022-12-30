@@ -10,6 +10,8 @@ import { TeamComponent } from './pages/admin/create/team/team.component';
 import { TeamModule } from './pages/admin/create/team/team.module';
 import { TechComponent } from './pages/admin/create/tech/tech.component';
 import { TechModule } from './pages/admin/create/tech/tech.module';
+import { TeamViewComponent } from './pages/admin/team-view/team-view.component';
+import { TeamViewModule } from './pages/admin/team-view/team-view.module';
 import { HomeComponent } from './pages/home/home.component';
 import { HomeModule } from './pages/home/home.module';
 import { LoginComponent } from './pages/login/login.component';
@@ -18,8 +20,6 @@ import { PatientComponent } from './pages/patient/patient.component';
 import { PatientModule } from './pages/patient/patient.module';
 import { RegisterComponent } from './pages/register/register.component';
 import { RegisterModule } from './pages/register/register.module';
-import { TeamsComponent } from './pages/teams/teams.component';
-import { TeamsModule } from './pages/teams/teams.module';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -40,7 +40,7 @@ const routes: Routes = [
           },
           {
             path: 'edit',
-            children: [{ path: 'team/:id', component: TeamsComponent }],
+            children: [{ path: 'team/:id', component: TeamViewComponent }],
           },
         ],
       },
@@ -48,14 +48,6 @@ const routes: Routes = [
     ],
     canActivate: [AuthGuard],
   },
-  // {
-  //   path: 'create',
-  //   children: [
-  //     { path: 'doctor', component: DoctorComponent },
-  //     { path: 'tech', component: TechComponent },
-  //     { path: 'team', component: TeamComponent },
-  //   ],
-  // },
   {
     path: '',
     children: [
@@ -78,7 +70,7 @@ const routes: Routes = [
     TechModule,
     TeamModule,
     PatientModule,
-    TeamsModule,
+    TeamViewModule,
   ],
   exports: [RouterModule],
 })

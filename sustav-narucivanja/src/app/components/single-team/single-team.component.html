@@ -1,0 +1,9 @@
+<app-main-navigation></app-main-navigation>
+<h1>{{ data?.name }}</h1>
+
+<p *ngFor="let doctor of data?.doctors">
+  {{ doctor.name + " " + doctor.surname }}
+</p>
+<p *ngFor="let nurse of data?.nurses">
+  {{ nurse.name + " " + nurse.surname }}
+</p>

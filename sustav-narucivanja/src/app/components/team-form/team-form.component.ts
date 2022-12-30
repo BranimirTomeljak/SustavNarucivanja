@@ -1,14 +1,6 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { params } from '@datx/jsonapi';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subscription, switchMap } from 'rxjs';
 import { ISingleTeam } from 'src/app/interfaces/single-team';
 import { ITeamCreateData } from 'src/app/interfaces/team-create-data';
@@ -19,11 +11,10 @@ import { DoctorsService } from 'src/app/services/doctors/doctors.service';
   templateUrl: './team-form.component.html',
   styleUrls: ['./team-form.component.scss'],
 })
-export class TeamFormComponent implements OnDestroy {
+export class TeamFormComponent implements OnDestroy, OnChanges {
   @Input() public editMode: boolean = false;
-  @Input() public teamId = null;
-
-  public data: ISingleTeam = {} as ISingleTeam;
+  @Input() public teamId?: number;
+  @Input() public data?: ISingleTeam;
 
   private readonly subscription = new Subscription();
   private readonly trigger$ = new BehaviorSubject<any>(null);
@@ -60,17 +51,13 @@ export class TeamFormComponent implements OnDestroy {
 
   constructor(
     private readonly doctorsService: DoctorsService,
-    private readonly router: Router,
-    private readonly route: ActivatedRoute
+    private readonly router: Router
   ) {
     this.trigger$.next(null);
-    this.route.params.subscribe((params) => {
-      this.teamId = params['id'];
-      const teamSubscription = this.doctorsService
-        .getTeamById(this.teamId || 0)
-        .subscribe((result) => (this.data = result));
-      this.subscription.add(teamSubscription);
-    });
+  }
+
+  public ngOnChanges(): void {
+    this.setFormValues();
   }
 
   public form = new FormGroup({
@@ -87,11 +74,24 @@ export class TeamFormComponent implements OnDestroy {
     return this.form.get('nurseIds') as FormArray;
   }
 
-  addDoctorId(): void {
+  private setFormValues(): void {
+    if (this.data) {
+      console.log('data', this.data);
+      this.form.get('name')?.setValue(this.data.name);
+      this.data.doctors.forEach((doctor) => {
+        this.doctorIds.push(new FormControl(doctor.id, [Validators.required]));
+      });
+      this.data.nurses.forEach((nurse) => {
+        this.nurseIds.push(new FormControl(nurse.id, [Validators.required]));
+      });
+    }
+  }
+
+  public addDoctorId(): void {
     this.doctorIds.push(new FormControl(null, [Validators.required]));
   }
 
-  addNurseId(): void {
+  public addNurseId(): void {
     this.nurseIds.push(new FormControl(null, [Validators.required]));
   }
 
