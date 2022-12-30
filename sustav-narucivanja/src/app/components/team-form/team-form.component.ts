@@ -1,8 +1,16 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { params } from '@datx/jsonapi';
 import { BehaviorSubject, Observable, of, Subscription, switchMap } from 'rxjs';
+import { ISingleTeam } from 'src/app/interfaces/single-team';
 import { ITeamCreateData } from 'src/app/interfaces/team-create-data';
 import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
@@ -14,6 +22,8 @@ import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 export class TeamFormComponent implements OnDestroy {
   @Input() public editMode: boolean = false;
   @Input() public teamId = null;
+
+  public data: ISingleTeam = {} as ISingleTeam;
 
   private readonly subscription = new Subscription();
   private readonly trigger$ = new BehaviorSubject<any>(null);
@@ -50,9 +60,17 @@ export class TeamFormComponent implements OnDestroy {
 
   constructor(
     private readonly doctorsService: DoctorsService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {
     this.trigger$.next(null);
+    this.route.params.subscribe((params) => {
+      this.teamId = params['id'];
+      const teamSubscription = this.doctorsService
+        .getTeamById(this.teamId || 0)
+        .subscribe((result) => (this.data = result));
+      this.subscription.add(teamSubscription);
+    });
   }
 
   public form = new FormGroup({
@@ -90,7 +108,7 @@ export class TeamFormComponent implements OnDestroy {
   }
 
   public test(): void {
-    console.log(this.teamId);
+    console.log(this.data);
   }
 
   public ngOnDestroy(): void {

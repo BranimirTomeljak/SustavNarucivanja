@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ISingleTeam } from 'src/app/interfaces/single-team';
 import { ITeamCreateData } from 'src/app/interfaces/team-create-data';
 
 @Injectable({
@@ -27,5 +28,9 @@ export class DoctorsService {
 
   public createTeam(data: ITeamCreateData) {
     return this.http.post('/api/team/create', data);
+  }
+
+  public getTeamById(id: number): Observable<ISingleTeam> {
+    return this.http.get<ISingleTeam>(`/api/team/${id}`);
   }
 }
