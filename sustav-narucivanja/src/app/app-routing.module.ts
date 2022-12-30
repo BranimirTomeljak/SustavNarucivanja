@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminGuard } from './guards/admin/admin.guard';
 import { AnonGuard } from './guards/anon/anon.guard';
 import { AuthGuard } from './guards/auth/auth.guard';
 import { AdminComponent } from './pages/admin/admin.component';
@@ -43,6 +44,7 @@ const routes: Routes = [
           { path: 'teams', component: AllTeamsComponent },
           { path: 'team/:id', component: TeamViewComponent },
         ],
+        canActivate: [AdminGuard],
       },
       { path: 'patient', component: PatientComponent },
     ],
