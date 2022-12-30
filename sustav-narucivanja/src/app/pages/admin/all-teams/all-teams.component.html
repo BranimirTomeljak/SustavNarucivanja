@@ -1,3 +1,4 @@
-<div *ngIf="teams$ | async as teams">
-  <p *ngFor="let team of teams">{{ team }}</p>
+<app-main-navigation></app-main-navigation>
+<div *ngIf="teams$ | async as teams" class="container">
+  <p *ngFor="let team of teams">{{ team.name }}</p>
 </div>
