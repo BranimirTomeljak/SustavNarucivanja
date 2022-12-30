@@ -1,4 +1,4 @@
 export interface ITeamData {
-  teamId: number;
+  teamid: number;
   name: number;
 }
