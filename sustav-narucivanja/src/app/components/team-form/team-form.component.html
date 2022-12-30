@@ -3,6 +3,7 @@
     <mat-label>Ime tima</mat-label>
     <input matInput formControlName="name" />
   </mat-form-field>
+
   <label>Doktori:</label>
   <div formArrayName="doctorIds">
     <div *ngFor="let control of doctorIds.controls; index as i">
@@ -34,6 +35,7 @@
     </button>
   </div>
   <br />
+
   <label>Tehničari:</label>
   <div formArrayName="nurseIds">
     <div *ngFor="let control of nurseIds.controls; index as i">
@@ -64,6 +66,7 @@
       Dodaj tehničara
     </button>
   </div>
+
   <button
     mat-raised-button
     *ngIf="!editMode; else editButton"
@@ -76,6 +79,7 @@
   >
     Stvori tim
   </button>
+
   <ng-template #editButton>
     <button
       mat-raised-button

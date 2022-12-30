@@ -25,7 +25,10 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
           let doctors: Array<any> = [];
           const doctorIds = this.form.get('doctorIds')?.value as Array<number>;
           result.forEach((doctor: any) => {
-            if (!doctor.teamid && !doctorIds.includes(doctor.id)) {
+            if (
+              (!doctor.teamid || this.dataDoctors.includes(doctor.id)) &&
+              !doctorIds.includes(doctor.id)
+            ) {
               doctors.push(doctor);
             }
           });
@@ -41,7 +44,10 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
           let nurses: Array<any> = [];
           const nurseIds = this.form.get('doctorIds')?.value as Array<number>;
           result.forEach((nurse: any) => {
-            if (!nurse.teamid && !nurseIds.includes(nurse.id)) {
+            if (
+              (!nurse.teamid || this.dataNurses.includes(nurse.id)) &&
+              !nurseIds.includes(nurse.id)
+            ) {
               nurses.push(nurse);
             }
           });
@@ -77,9 +83,24 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
     return this.form.get('nurseIds') as FormArray;
   }
 
+  get dataDoctors(): Array<any> {
+    const doctors: Array<any> = [];
+    this.data?.doctors.forEach((doctor) => {
+      doctors.push(doctor.id);
+    });
+    return doctors;
+  }
+
+  get dataNurses(): Array<any> {
+    const nurses: Array<any> = [];
+    this.data?.nurses.forEach((nurse) => {
+      nurses.push(nurse.id);
+    });
+    return nurses;
+  }
+
   private setFormValues(): void {
     if (this.data) {
-      console.log('data', this.data);
       this.form.get('name')?.setValue(this.data.name);
       this.data.doctors.forEach((doctor) => {
         this.doctorIds.push(new FormControl(doctor.id, [Validators.required]));
