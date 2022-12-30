@@ -38,7 +38,11 @@ router.post('/edit', function(req, res, next) {
     for(let nurseId of req.body.nurseIds) {
         team.addNurseToTeam(nurseId);
     }
-    
+});
+
+router.get('/:id', async function(req, res, next) {
+    let team = await Team.fetchByTeamId(req.params.id);
+    res.json(team);
 });
 
 module.exports = router;
