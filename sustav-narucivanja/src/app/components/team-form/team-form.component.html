@@ -16,6 +16,14 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <button
+        mat-icon-button
+        type="button"
+        id="delete-button"
+        (click)="onDoctorRemoveClick(i)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
     </div>
     <button
       mat-raised-button
@@ -39,6 +47,14 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <button
+        mat-icon-button
+        type="button"
+        id="delete-button"
+        (click)="onNurseRemoveClick(i)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
     </div>
     <button
       mat-raised-button
@@ -74,5 +90,3 @@
     </button>
   </ng-template>
 </form>
-
-<button (click)="test()">test</button>

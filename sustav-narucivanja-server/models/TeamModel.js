@@ -62,7 +62,7 @@ class Team {
         const sql = `INSERT INTO team (name) VALUES ('${name}') RETURNING teamid`;
         const result = await db.query(sql, []);
         let broj = result[0].teamid
-        let team = await this.fetchByTeamId(broj)
+        let team = new Team(broj, name);
         for (let doctorId of doctorIds) {
             team.addDoctorToTeam(doctorId);
         }

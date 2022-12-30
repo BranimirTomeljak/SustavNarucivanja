@@ -95,6 +95,16 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
     this.nurseIds.push(new FormControl(null, [Validators.required]));
   }
 
+  public onDoctorRemoveClick(index: number): void {
+    const doctors = this.form.get('doctorIds') as FormArray;
+    doctors.removeAt(index);
+  }
+
+  public onNurseRemoveClick(index: number): void {
+    const nurses = this.form.get('nurseIds') as FormArray;
+    nurses.removeAt(index);
+  }
+
   public onSubmit(): void {
     const data: ITeamCreateData = {
       name: this.form.get('name')?.value as string,
