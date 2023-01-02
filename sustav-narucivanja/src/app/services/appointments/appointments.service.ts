@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 //import { IObservable } from 'mobx';
 import { Observable, tap, BehaviorSubject } from 'rxjs';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
+import { IRangeData } from 'src/app/interfaces/range-data';
 import { IRegisterData } from 'src/app/interfaces/register-data';
 import { IUser } from 'src/app/interfaces/user';
 
@@ -22,15 +23,36 @@ export class AppointmentsService {
     return this.http.post('/api/appointment/add', data);
   }
 
-  /*
   public addRangeAppointment(data : IRangeData) {
     return this.http.post('/api/appointment/add_range', data);
   }
-  */
+  
+  public reserveAppointment(data : IAppointmentData) {
+    return this.http.post('/api/appointment/reserve', data);
+  }
 
+  public cancelAppointment(data : IAppointmentData) {
+    return this.http.post('/api/appointment/cancel', data);
+  }
 
-// TO DO bot ce ih jos....
+  public changeAppointment(data : IAppointmentData) {
+    return this.http.post('/api/appointment/change', data);
+  }
 
+  public acceptChangeAppointment(data : IAppointmentData) {
+    return this.http.post('/api/appointment/accept_change', data);
+  }
 
+  public rejectChangeAppointment(data : IAppointmentData) {
+    return this.http.post('/api/appointment/reject_change', data);
+  }
+
+  public recordAttendance(data : IAppointmentData) {
+    return this.http.post('/api/appointment/record_attendance', data);
+  }
+
+  public deleteAppointment(data : IAppointmentData) {
+    return this.http.post('/api/appointment/delete', data);
+  }
 
 }
