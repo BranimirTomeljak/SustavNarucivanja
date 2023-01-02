@@ -19,6 +19,10 @@ export class AppointmentsService {
     return this.http.get<Array<any>>('/api/appointment?role=patient&id=1001');
   }
 
+  public getAllDoctorApointments(): Observable<Array<any>> {
+    return this.http.get<Array<any>>('/api/appointment?role=doctor&id=10');
+  }
+
   public addAppointment(data : IAppointmentData) {
     return this.http.post('/api/appointment/add', data);
   }
@@ -28,7 +32,7 @@ export class AppointmentsService {
   }
   
   public reserveAppointment(data : IAppointmentData) {
-    return this.http.post('/api/appointment/reserve', data);
+    return this.http.post('/api/appointment/reserve?type=pregled&patientid=1001&doctorid=10', data);
   }
 
   public cancelAppointment(data : IAppointmentData) {

@@ -95,12 +95,17 @@
 <br /><br /><br />
 
 <h3>
-  Edit events
-  <button class="btn btn-primary float-end" (click)="addEvent()">
-    Add new
+  Rezerviraj termin
+  
+  <button class="btn btn-primary float-end" (click)="reserveAppointment()">
+    Rezerviraj liječnički pregled
   </button>
+  <!--<button class="btn btn-primary float-end" (click)="addEvent()">
+    Add new
+  </button>-->
   <div class="clearfix"></div>
 </h3>
+
 
 <div class="table-responsive">
   <table class="table table-bordered">
@@ -108,7 +113,7 @@
       <tr>
         <th>Title</th>
         <th>Primary color</th>
-        <th>Secondary + text color</th>
+        <!--<th>Secondary + text color</th>-->
         <th>Starts at</th>
         <th>Ends at</th>
         <th>Remove</th>
@@ -132,7 +137,7 @@
             (change)="refresh.next()"
           />
         </td>
-        <td>
+        <!--<td>
           <input
             type="color"
             [(ngModel)]="event.color!.secondary"
@@ -144,7 +149,7 @@
             (ngModelChange)="event.color!.secondaryText = $event"
             (change)="refresh.next()"
           />
-        </td>
+        </td>-->
         <td>
           <input
             class="form-control"

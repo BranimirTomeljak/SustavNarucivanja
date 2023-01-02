@@ -4,6 +4,7 @@ import {
   ViewChild,
   TemplateRef,
   OnInit,
+  OnDestroy
 } from '@angular/core';
 import {
   startOfDay,
@@ -53,12 +54,19 @@ const colors: Record<string, EventColor> = {
   templateUrl: './kalendar.component.html',
   styleUrls: ['./kalendar.component.scss']
 })
-export class KalendarComponent implements OnInit {
+export class KalendarComponent implements OnInit, OnDestroy {
+  private rezervacija : boolean = false;
+  private readonly subscription = new Subscription();
   // dohvacanje appointmenta
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public appointments$: Observable<any> = this.trigger$.pipe(
     switchMap(() => {
       return this.appointmentsService.getAllApointments();
+    })
+  );
+  public doctorAppointments$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.appointmentsService.getAllDoctorApointments();
     })
   );
 
@@ -124,10 +132,23 @@ export class KalendarComponent implements OnInit {
     return result;
   };
 
+  private getDuration = (start: Date, end?: Date) : string => {
+    var endDefined = new Date(0);
+    if(end !== undefined){
+      endDefined = end;
+    }
+    var diff = endDefined.getTime() - start.getTime() - 3600000; // hardkodirano jer mi ispada 1h previse idk ¯\_(ツ)_/¯
+    return new Date(diff).toLocaleTimeString();
+  }
+
   
 
   public ngOnInit() : void {
     this.fetchAppointments();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   fetchAppointments() : void {
@@ -136,13 +157,14 @@ export class KalendarComponent implements OnInit {
         console.log(modelData);
         modelData.forEach((app) => {
           this.events.push({
+            id: app.id,
             start: new Date(app.time),
             end: this.addDuration(new Date(app.time), app.duration),
             title: app.doctorid === null 
-              ? 'Usluga kod medicinske sestre ' +  new Date(app.time).toLocaleTimeString() + ' - ' 
-                  + this.addDuration(new Date(app.time), app.duration).toLocaleTimeString()
-              : 'Liječnički pregled ' +  new Date(app.time).toLocaleTimeString() + ' - ' 
-                + this.addDuration(new Date(app.time), app.duration).toLocaleTimeString(),
+              ? 'Usluga kod medicinske sestre ' +  new Date(app.time).toLocaleTimeString().slice(0, -3) + ' - ' 
+                  + this.addDuration(new Date(app.time), app.duration).toLocaleTimeString().slice(0, -3)
+              : 'Liječnički pregled ' +  new Date(app.time).toLocaleTimeString().slice(0, -3) + ' - ' 
+                + this.addDuration(new Date(app.time), app.duration).toLocaleTimeString().slice(0, -3),
             color: app.doctorid === null ? { ...colors['red'] } : { ...colors['blue'] },
             actions: this.actions
           })
@@ -211,7 +233,7 @@ export class KalendarComponent implements OnInit {
     */
   ];
 
-  activeDayIsOpen: boolean = true;
+  activeDayIsOpen: boolean = false;
 
   constructor(
     private modal: NgbModal,
@@ -254,6 +276,34 @@ export class KalendarComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
+    if(this.rezervacija){
+      const data : IAppointmentData = {
+        id: event.id,
+        patientid : 1001,
+        doctorid : 10,
+        nurseid : undefined,
+        time : event.start,
+        duration : this.getDuration(event.start, event.end),
+        created_on : new Date(),
+        pending_accept : false,
+        type : null,
+        patient_came : false,
+      }
+      console.log(data);
+
+
+      
+      // ako baci konflikt napisati neku poruku
+      const appointmentSubscription = this.appointmentsService
+        .addAppointment(data)
+        .subscribe(() => {
+          //this.router.navigate(['/patient'])
+          this.refresh.next()
+        });
+        this.subscription.add(appointmentSubscription);
+      this.rezervacija = false;
+      
+    }
     this.modalData = { event, action };
     this.modal.open(this.modalContent, { size: 'lg' });
   }
@@ -285,5 +335,27 @@ export class KalendarComponent implements OnInit {
 
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
+  }
+
+  public reserveAppointment() : void{
+    this.rezervacija = true;
+    this.doctorAppointments$.subscribe(
+      (modelData : IAppointmentData[]) => {
+        //console.log(modelData);
+        modelData.filter((app) => app.patientid === null).forEach((app) => {
+          this.events.push({
+            id: app.id,
+            start: new Date(app.time),
+            end: this.addDuration(new Date(app.time), app.duration),
+            title: 'Slobodan termin ' + new Date(app.time).toLocaleTimeString().slice(0, -3) + ' - ' 
+            + this.addDuration(new Date(app.time), app.duration).toLocaleTimeString().slice(0, -3),
+            color: { ...colors['yellow'] },
+            actions: this.actions
+          })
+        });
+        //this.viewDate = new Date();
+        this.refresh.next();
+      },
+    )
   }
 }
