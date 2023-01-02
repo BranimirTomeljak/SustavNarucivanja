@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ViewChild,
   TemplateRef,
+  OnInit,
 } from '@angular/core';
 import {
   startOfDay,
@@ -13,6 +14,7 @@ import {
   isSameDay,
   isSameMonth,
   addHours,
+  parseISO
 } from 'date-fns';
 import { Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -23,6 +25,11 @@ import {
   CalendarView,
 } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
+import { BehaviorSubject, EMPTY, Observable, Subscription } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
+import { Router } from '@angular/router';
+import { IAppointmentData } from 'src/app/interfaces/appointment-data';
 
 
 const colors: Record<string, EventColor> = {
@@ -46,7 +53,16 @@ const colors: Record<string, EventColor> = {
   templateUrl: './kalendar.component.html',
   styleUrls: ['./kalendar.component.scss']
 })
-export class KalendarComponent {
+export class KalendarComponent implements OnInit {
+  // dohvacanje appointmenta
+  private readonly trigger$ = new BehaviorSubject<any>(null);
+  public appointments$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.appointmentsService.getAllApointments();
+    })
+  );
+
+  
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
@@ -60,6 +76,7 @@ export class KalendarComponent {
     event: CalendarEvent;
   };
 
+  
   actions: CalendarEventAction[] = [
     {
       label: '<i class="fas fa-fw fa-pencil-alt"></i>',
@@ -80,13 +97,81 @@ export class KalendarComponent {
 
   refresh = new Subject<void>();
 
+  public starts: Date[] = [];
+  private durations: object[] = [];
+  private ends: Date[] = [];
+
+  
+  private addDuration = (date: Date, obj: object): Date => {
+    const result = new Date(date);
+    let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
+
+    Object.entries(obj).find(([key, value]) => {
+      if(key === 'hours') {
+        hours = value;
+      } else if (key === 'minutes') {
+        minutes = value;
+      } else if (key === 'seconds') {
+        seconds = value;
+      }
+    })
+
+    result.setHours(result.getHours() + hours);
+    result.setMinutes(result.getMinutes() + minutes);
+    result.setSeconds(result.getSeconds() + seconds);
+    return result;
+  };
+
+  
+
+  public ngOnInit() : void {
+    this.fetchAppointments();
+  }
+
+  fetchAppointments() : void {
+    this.appointments$.subscribe(
+      (modelData : IAppointmentData[]) => {
+        console.log(modelData);
+        modelData.forEach((app) => {
+          this.events.push({
+            start: new Date(app.time),
+            end: this.addDuration(new Date(app.time), app.duration),
+            title: app.doctorid === null 
+              ? 'Usluga kod medicinske sestre ' +  new Date(app.time).toLocaleTimeString() + ' - ' 
+                  + this.addDuration(new Date(app.time), app.duration).toLocaleTimeString()
+              : 'Liječnički pregled ' +  new Date(app.time).toLocaleTimeString() + ' - ' 
+                + this.addDuration(new Date(app.time), app.duration).toLocaleTimeString(),
+            color: app.doctorid === null ? { ...colors['red'] } : { ...colors['blue'] },
+            actions: this.actions
+          })
+        });
+        //this.viewDate = new Date();
+        this.refresh.next();
+      },
+      // za error
+      /*
+      error => {
+            const res = this.dialogService.ErrorDialog('Server Error', 'Sorry, the system is unavailable at the moment.', 'Close', 'Try again');
+            res.afterClosed().subscribe(dialogResult => {
+              if (dialogResult) {
+                //this.callNext(200);
+              }
+            });
+          }
+      */
+    );
+  }
+
   events: CalendarEvent[] = [
+    /*
     {
       start: subDays(startOfDay(new Date()), 1),
       end: addDays(new Date(), 1),
       title: 'A 3 day event',
       color: { ...colors['red'] },
-      actions: this.actions,
+      //actions: this.actions,
       allDay: true,
       resizable: {
         beforeStart: true,
@@ -95,10 +180,14 @@ export class KalendarComponent {
       draggable: true,
     },
     {
-      start: startOfDay(new Date()),
+      //start: startOfDay(new Date()),
+      //start: new Date(this.starts[1]),
+      //start : new Date('2023-01-10T22:00:14.000Z'),
+      start: new Date(this.starts[0]),
+      end : new Date(this.ends[0]),
       title: 'An event with no end date',
       color: { ...colors['yellow'] },
-      actions: this.actions,
+      //actions: this.actions,
     },
     {
       start: subDays(endOfMonth(new Date()), 3),
@@ -112,18 +201,25 @@ export class KalendarComponent {
       end: addHours(new Date(), 2),
       title: 'A draggable and resizable event',
       color: { ...colors['yellow'] },
-      actions: this.actions,
+      //actions: this.actions,
       resizable: {
         beforeStart: true,
         afterEnd: true,
       },
       draggable: true,
     },
+    */
   ];
 
   activeDayIsOpen: boolean = true;
 
-  constructor(private modal: NgbModal) {}
+  constructor(
+    private modal: NgbModal,
+    private readonly appointmentsService: AppointmentsService,
+    private readonly router: Router
+    ) {
+    this.trigger$.next(null);
+  }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
