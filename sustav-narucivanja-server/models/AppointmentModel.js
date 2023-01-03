@@ -10,7 +10,7 @@ const app_factory = (obj) =>{
         obj.time, 
         obj.duration,
         obj.created_on,
-        obj.pending_accept,
+        obj.changes_from,
         obj.type,
         obj.patient_came,
     )
@@ -26,7 +26,7 @@ class Appointment {
         time,
         duration,
         created_on=undefined,
-        pending_accept=undefined,
+        changes_from=undefined,
         type=undefined,
         patient_came=undefined,
     ) {
@@ -37,7 +37,7 @@ class Appointment {
         this.doctorid = doctorid
         this.nurseid = nurseid
         this.created_on = created_on
-        this.pending_accept = pending_accept
+        this.changes_from = changes_from
         this.type = type
         this.patient_came = patient_came
     }
@@ -78,7 +78,7 @@ class Appointment {
 
         const f = this._stringify
 
-        const sql = "INSERT INTO appointment (patientid, doctorid, nurseid, time, duration, created_on, pending_accept, type, patient_came) VALUES (" +
+        const sql = "INSERT INTO appointment (patientid, doctorid, nurseid, time, duration, created_on, changes_from, type, patient_came) VALUES (" +
             [
                 f(this.patientid), 
                 f(this.doctorid), 
@@ -86,13 +86,15 @@ class Appointment {
                 f(this.time), 
                 f(this.duration), 
                 f(this.created_on), 
-                f(this.pending_accept), 
+                f(this.changes_from), 
                 f(this.type),
                 f(this.patient_came),
             ].join(" , ") + 
             ") RETURNING id;"
 
+        console.log(sql)
         const result = await db.query(sql, []);
+        console.log(result)
         this.id = result[0].id
         return result
     }
@@ -158,7 +160,7 @@ class Appointment {
             console.log(result, this.id, result.length, result.length>0)
         }
 
-        if (this.id !== undefined)
+        if (this.id === undefined)
             return result.length > 0
         return result.length > 1
     }
@@ -189,7 +191,7 @@ class Appointment {
                     `, time=` + f(this.time) + 
                     ', duration=' + f(this.duration) + 
                     ', created_on=' + f(this.created_on) + 
-                    ', pending_accept=' + f(this.pending_accept) + 
+                    ', changes_from=' + f(this.changes_from) + 
                     ', type=' + f(this.type) + 
                     ', patient_came=' + f(this.patient_came) + 
                     ` WHERE id=` + f(this.id);
