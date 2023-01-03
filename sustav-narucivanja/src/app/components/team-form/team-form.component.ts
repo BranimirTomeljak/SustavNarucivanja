@@ -105,14 +105,13 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
     if (this.editMode) {
       const teamSubscription = this.doctorsService
         .editTeam(this.teamId as number, data)
-        .subscribe();
+        .subscribe(() => this.router.navigate(['/admin/teams']));
       this.subscription.add(teamSubscription);
-      this.router.navigate(['/admin/teams']);
-      return;
     } else {
-      const teamSubscription = this.doctorsService.createTeam(data).subscribe();
+      const teamSubscription = this.doctorsService
+        .createTeam(data)
+        .subscribe(() => this.router.navigate(['/admin']));
       this.subscription.add(teamSubscription);
-      this.router.navigate(['/admin']);
     }
   }
 

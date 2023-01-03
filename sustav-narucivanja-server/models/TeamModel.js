@@ -178,7 +178,7 @@ class Team {
     async changeTeamName(newName) {
         if (this.teamId === undefined) 
             throw 'can not change team name if team does not exist'
-        const sql = `UPDATE team SET name = '${newName}' WHERE id = ${this.teamId}}`
+        const sql = `UPDATE team SET name = '${newName}' WHERE teamid = ${this.teamId}`
         const result = await db.query(sql, []);
         return
     }

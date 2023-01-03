@@ -26,23 +26,33 @@ router.delete('/delete/:id', function(req, res, next) {
 });
 
 router.post('/edit/:id', async function(req, res, next) {
-    let team = new Team(req.params.id);
-    console.log(team.teamId);
-    let doctors = await Team.fetchAllDoctorsFromTeam(team.teamId);
-    let nurses = await Team.fetchAllNursesFromTeam(team.teamId);
+    try{
+        let team = new Team(req.params.id);
+        console.log(team.teamId);
+        let doctors = await Team.fetchAllDoctorsFromTeam(team.teamId);
+        let nurses = await Team.fetchAllNursesFromTeam(team.teamId);
+    
+        for (let doctor of doctors) {
+            await team.removeDoctorFromTeam(doctor.id);
+        }
+        for(let nurse of nurses) {
+            await team.removeNurseFromTeam(nurse.id);
+        }
+        console.log("removed");
+    
+        await team.changeTeamName(req.body.name);
+    
+        for (let doctorId of req.body.doctorIds) {
+            await team.addDoctorToTeam(doctorId);
+        }
+        for(let nurseId of req.body.nurseIds) {
+            await team.addNurseToTeam(nurseId);
+        }
 
-    for (let doctor of doctors) {
-        await team.removeDoctorFromTeam(doctor.id);
+        res.status(200).json("Successfully edited team");
     }
-    for(let nurse of nurses) {
-        await team.removeNurseFromTeam(nurse.id);
-    }
-    console.log("removed");
-    for (let doctorId of req.body.doctorIds) {
-        await team.addDoctorToTeam(doctorId);
-    }
-    for(let nurseId of req.body.nurseIds) {
-        await team.addNurseToTeam(nurseId);
+    catch{
+        res.status(500).json("Error editing team");
     }
 });
 
