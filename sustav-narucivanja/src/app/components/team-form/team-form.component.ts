@@ -23,7 +23,7 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
       return this.doctorsService.getAllDoctors().pipe(
         switchMap((result) => {
           let doctors: Array<any> = [];
-          const doctorIds = this.form.get('doctorIds')?.value as Array<number>;
+          const doctorIds: number[] = [];
           result.forEach((doctor: any) => {
             if (
               (!doctor.teamid || this.dataDoctors.includes(doctor.id)) &&
@@ -42,7 +42,7 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
       return this.doctorsService.getAllNurses().pipe(
         switchMap((result) => {
           let nurses: Array<any> = [];
-          const nurseIds = this.form.get('doctorIds')?.value as Array<number>;
+          const nurseIds: number[] = [];
           result.forEach((nurse: any) => {
             if (
               (!nurse.teamid || this.dataNurses.includes(nurse.id)) &&
@@ -65,23 +65,23 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
   }
 
   public ngOnChanges(): void {
-    this.setFormValues();
+    // this.setFormValues();
     this.trigger$.next(null);
   }
 
   public form = new FormGroup({
     name: new FormControl('', [Validators.required]),
-    doctorIds: new FormArray([]),
-    nurseIds: new FormArray([]),
+    doctorId: new FormControl(this.data?.doctors[0].id, [Validators.required]),
+    nurseId: new FormControl(this.data?.nurses[0].id, [Validators.required]),
   });
 
-  get doctorIds(): FormArray {
-    return this.form.get('doctorIds') as FormArray;
-  }
+  // get doctorIds(): FormArray {
+  //   return this.form.get('doctorIds') as FormArray;
+  // }
 
-  get nurseIds(): FormArray {
-    return this.form.get('nurseIds') as FormArray;
-  }
+  // get nurseIds(): FormArray {
+  //   return this.form.get('nurseIds') as FormArray;
+  // }
 
   get dataDoctors(): Array<any> {
     const doctors: Array<any> = [];
@@ -99,41 +99,41 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
     return nurses;
   }
 
-  private setFormValues(): void {
-    if (this.data) {
-      this.form.get('name')?.setValue(this.data.name);
-      this.data.doctors.forEach((doctor) => {
-        this.doctorIds.push(new FormControl(doctor.id, [Validators.required]));
-      });
-      this.data.nurses.forEach((nurse) => {
-        this.nurseIds.push(new FormControl(nurse.id, [Validators.required]));
-      });
-    }
-  }
+  // private setFormValues(): void {
+  //   if (this.data) {
+  //     this.form.get('name')?.setValue(this.data.name);
+  //     this.data.doctors.forEach((doctor) => {
+  //       this.doctorIds.push(new FormControl(doctor.id, [Validators.required]));
+  //     });
+  //     this.data.nurses.forEach((nurse) => {
+  //       this.nurseIds.push(new FormControl(nurse.id, [Validators.required]));
+  //     });
+  //   }
+  // }
 
-  public addDoctorId(): void {
-    this.doctorIds.push(new FormControl(null, [Validators.required]));
-  }
+  // public addDoctorId(): void {
+  //   this.doctorIds.push(new FormControl(null, [Validators.required]));
+  // }
 
-  public addNurseId(): void {
-    this.nurseIds.push(new FormControl(null, [Validators.required]));
-  }
+  // public addNurseId(): void {
+  //   this.nurseIds.push(new FormControl(null, [Validators.required]));
+  // }
 
-  public onDoctorRemoveClick(index: number): void {
-    const doctors = this.form.get('doctorIds') as FormArray;
-    doctors.removeAt(index);
-  }
+  // public onDoctorRemoveClick(index: number): void {
+  //   const doctors = this.form.get('doctorIds') as FormArray;
+  //   doctors.removeAt(index);
+  // }
 
-  public onNurseRemoveClick(index: number): void {
-    const nurses = this.form.get('nurseIds') as FormArray;
-    nurses.removeAt(index);
-  }
+  // public onNurseRemoveClick(index: number): void {
+  //   const nurses = this.form.get('nurseIds') as FormArray;
+  //   nurses.removeAt(index);
+  // }
 
   public onSubmit(): void {
     const data: ITeamCreateData = {
       name: this.form.get('name')?.value as string,
-      doctorIds: this.form.get('doctorIds')?.value as Array<number>,
-      nurseIds: this.form.get('nurseIds')?.value as Array<number>,
+      doctorIds: [this.form.get('doctorId')?.value as number],
+      nurseIds: [this.form.get('nurseId')?.value as number],
     };
 
     const teamSubscription = this.doctorsService.createTeam(data).subscribe();

@@ -4,92 +4,66 @@
     <input matInput formControlName="name" />
   </mat-form-field>
 
-  <label>Doktori:</label>
-  <div formArrayName="doctorIds">
-    <div *ngFor="let control of doctorIds.controls; index as i">
-      <mat-form-field>
-        <mat-select placeholder="Liječnik" [formControlName]="i">
-          <mat-option
-            *ngFor="let option of doctors$ | async"
-            [value]="option.id"
-          >
-            {{ option.name + " " + option.surname }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <button
+  <label>Doktor:</label>
+  <mat-form-field>
+    <mat-select placeholder="Liječnik" formControlName="doctorId">
+      <mat-option *ngFor="let option of doctors$ | async" [value]="option.id">
+        {{ option.name + " " + option.surname }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <!-- <button
         mat-icon-button
         type="button"
         id="delete-button"
         (click)="onDoctorRemoveClick(i)"
       >
         <mat-icon>delete</mat-icon>
-      </button>
-    </div>
-    <button
+      </button> -->
+  <!-- <button
       mat-raised-button
       (click)="addDoctorId()"
       [disabled]="!form.get('doctorIds')?.valid"
     >
       Dodaj doktora
-    </button>
-  </div>
+    </button> -->
   <br />
 
-  <label>Tehničari:</label>
-  <div formArrayName="nurseIds">
-    <div *ngFor="let control of nurseIds.controls; index as i">
-      <mat-form-field>
-        <mat-select placeholder="Tehničar" [formControlName]="i">
-          <mat-option
-            *ngFor="let option of nurses$ | async"
-            [value]="option.id"
-          >
-            {{ option.name + " " + option.surname }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <button
+  <label>Tehničar:</label>
+  <mat-form-field>
+    <mat-select placeholder="Tehničar" formControlName="nurseId">
+      <mat-option *ngFor="let option of nurses$ | async" [value]="option.id">
+        {{ option.name + " " + option.surname }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <!-- <button
         mat-icon-button
         type="button"
         id="delete-button"
         (click)="onNurseRemoveClick(i)"
       >
         <mat-icon>delete</mat-icon>
-      </button>
-    </div>
-    <button
+      </button> -->
+  <!-- <button
       mat-raised-button
       (click)="addNurseId()"
       [disabled]="!form.get('nurseIds')?.valid"
     >
       Dodaj tehničara
-    </button>
-  </div>
+    </button> -->
 
   <button
     mat-raised-button
     *ngIf="!editMode; else editButton"
     type="submit"
-    [disabled]="
-      !form.valid ||
-      (form.get('doctorIds')?.value?.length === 0 &&
-        form.get('nurseIds')?.value?.length === 0)
-    "
+    [disabled]="!form.valid"
   >
     Stvori tim
   </button>
 
   <ng-template #editButton>
-    <button
-      mat-raised-button
-      type="submit"
-      [disabled]="
-        !form.valid ||
-        (form.get('doctorIds')?.value?.length === 0 &&
-          form.get('nurseIds')?.value?.length === 0)
-      "
-    >
+    <button mat-raised-button type="submit" [disabled]="!form.valid">
       Spremi promjene
     </button>
   </ng-template>
