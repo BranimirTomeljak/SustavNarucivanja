@@ -25,23 +25,24 @@ router.delete('/delete/:id', function(req, res, next) {
     }
 });
 
-router.post('/edit', function(req, res, next) {
+router.post('/edit', async function(req, res, next) {
     let team = new Team(req.body.teamId);
-    let doctors = fetchAllDoctorsFromTeam(team);
-    let nurses = fetchAllNursesFromTeam(team);
+    console.log(team.teamId);
+    let doctors = await Team.fetchAllDoctorsFromTeam(team.teamId);
+    let nurses = await Team.fetchAllNursesFromTeam(team.teamId);
 
-    for (let doctorId of doctors) {
-        team.removeDoctorFromTeam(doctorId);
+    for (let doctor of doctors) {
+        await team.removeDoctorFromTeam(doctor.id);
     }
-    for(let nurseId of nurses) {
-        team.removeNurseFromTeam(nurseId);
+    for(let nurse of nurses) {
+        await team.removeNurseFromTeam(nurse.id);
     }
-
+    console.log("removed");
     for (let doctorId of req.body.doctorIds) {
-        team.addDoctorToTeam(doctorId);
+        await team.addDoctorToTeam(doctorId);
     }
     for(let nurseId of req.body.nurseIds) {
-        team.addNurseToTeam(nurseId);
+        await team.addNurseToTeam(nurseId);
     }
 });
 
