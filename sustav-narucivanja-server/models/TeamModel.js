@@ -15,7 +15,7 @@ class Team {
         let result = await Team.dbGetTeamBy('teamid', teamId, 'team');
         const doctors = await Team.dbGetDoctorsByTeamId(teamId);
         const nurses = await Team.dbGetNursesByTeamId(teamId);
-
+    
         let data = {
             teamId: teamId,
             name: result[0].name,
@@ -113,6 +113,7 @@ class Team {
 
     //dohvat tima iz baze podataka na osnovu `what` i `table` odakle uzimamo
     static async dbGetTeamBy(what, that, table){
+        console.log("Usli");
         const sql = 'SELECT * FROM ' + table + ' WHERE ' + what + ' = ' + that;
         const result = await db.query(sql, []);
         console.log('result is', result, table, what, that)
