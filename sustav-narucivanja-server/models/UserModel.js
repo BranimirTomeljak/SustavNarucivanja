@@ -141,11 +141,11 @@ class User {
 
 
 class Patient extends User{
-    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, doctorid, nFailedAppointments, notificationMethod){
+    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, rest={}){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
-        this.nFailedAppointments = nFailedAppointments
-        this.doctorid = doctorid
-        this.notificationMethod = notificationMethod
+        this.nFailedAppointments = rest.nFailedAppointments
+        this.doctorid = rest.doctorid
+        this.notificationMethod = rest.notificationMethod
         this.type = 'patient'
     }
 
@@ -156,7 +156,7 @@ class Patient extends User{
             await this.saveUserToDb()
         
         const sql = "INSERT INTO patient (id, doctorid, nFailedAppointments, notificationMethod) VALUES (" +
-             [this.id, this.doctorid, this.nFailedAppointments, this.notificationMethod].join(",") + " )";
+             [this.id, this.doctorid, this.nFailedAppointments, "'"+this.notificationMethod+"'"].join(",") + ")";
         await db.query(sql, [], true);
 
     }
@@ -195,9 +195,9 @@ class Patient extends User{
 
 
 class Nurse extends User{
-    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, teamid){
+    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, rest={}){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
-        this.teamid = teamid
+        this.teamid = undefined
         this.type = 'nurse'
     }
 
@@ -265,7 +265,7 @@ class Nurse extends User{
 }
 
 class Doctor extends Nurse{
-    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
+    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, rest={}){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
         this.type = 'doctor'
     }
@@ -335,7 +335,7 @@ class Doctor extends Nurse{
 }
 
 class Admin extends User{
-    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth){
+    constructor(id, name, surname, sex, phonenumber, mail, password, dateofbirth, rest={}){
         super(id, name, surname, sex, phonenumber, mail, password, dateofbirth)
         this.type = 'admin'
     }
