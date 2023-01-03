@@ -57,11 +57,24 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
   }
 
   public ngOnChanges(): void {
+    this.form = this.formInit();
     this.trigger$.next(null);
   }
 
+  private formInit(): FormGroup {
+    let form = new FormGroup({
+      name: new FormControl(this.data?.name, [Validators.required]),
+      doctorId: new FormControl(this.data?.doctors[0].id, [
+        Validators.required,
+      ]),
+      nurseId: new FormControl(this.data?.nurses[0].id, [Validators.required]),
+    });
+
+    return form;
+  }
+
   public form = new FormGroup({
-    name: new FormControl('', [Validators.required]),
+    name: new FormControl(this.data?.name, [Validators.required]),
     doctorId: new FormControl(this.data?.doctors[0].id, [Validators.required]),
     nurseId: new FormControl(this.data?.nurses[0].id, [Validators.required]),
   });
