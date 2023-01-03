@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 const { Patient } = require("../models/UserModel");
 
 const { Vonage } = require('@vonage/server-sdk');
+const Appointment = require('./AppointmentModel');
 const vonage = new Vonage({
     applicationId: 'da9774a8-73a3-4a59-9568-1937558b6b85',
     privateKey: './private.key',
@@ -64,17 +65,19 @@ function getPurposeSubject(purpose){    //TODO popravit
 }
 
 function getPurposeMessage(purpose){    //TODO popravit
+    let patient = Patient.getById(app.patientid);
+    const appointments = db.query(sql, []);
+    
     if(purpose == "registration")
         return `<p>Po&scaron;tovani,<br /><br />Uspje&scaron;no ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Va&scaron; Sustav za naručivanje<br />`;
-
     else if(purpose == "appointmentBooked")
-        return `<p>Po&scaron;tovani ime prezime,<br /><br />Rezerviran Vam je termin u "vrijeme" i traje "minuta"</p><p>Lijep pozdrav</p>`;
+        return `<p>Po&scaron;tovani   ${patient.name}  ${patient.surname},<br /><br />Rezerviran Vam je termin u  ${purpose.time} i traje  ${purpose.duration} minuta. </p><p>Lijep pozdrav</p>`;
 
     else if(purpose == "appointmentChanged")
-        return `<p>Po&scaron;tovani ime prezime,<br /><br />Promijenjen Vam je termin iz "vrijemePrije" u "vrijeme" i traje "minuta"</p><p>Lijep pozdrav</p>`;
+        return `<p>Po&scaron;tovani ${patient.name}  ${patient.surname},<br /><br />Promijenjen Vam je termin iz ${purpose.time} u ${time} i traje ${purpose.duration} minuta.</p><p>Lijep pozdrav</p>`;
 
     else if(purpose == "reminder")
-        return `<p>Po&scaron;tovani ime prezime,</p><p><br>Podsjećamo Vas da imate termin sutra: "vrijeme".<br><br>Lijep pozdrav, Va&scaron; Sustav za naručivanje</p>`;
+        return `<p>Po&scaron;tovani ${patient.name}  ${patient.surname},</p><p><br>Podsjećamo Vas da imate termin sutra: ${purpose.time}.<br><br>Lijep pozdrav, Va&scaron; Sustav za naručivanje</p>`;
         
     else
         return undefined;
@@ -129,7 +132,7 @@ async function sendSMS(purpose, phoneNumber){
             .catch(err => { console.log('There was an error sending the messages.'); console.error(err); });
     }
 
-    //sendSms();    //simulacija
+    // sendSms();    //simulacija
 }
 
 module.exports = {
@@ -138,3 +141,4 @@ module.exports = {
     sendSMS: sendSMS,
     sendNotification: sendNotification
 }
+
