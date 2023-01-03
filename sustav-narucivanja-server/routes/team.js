@@ -25,8 +25,8 @@ router.delete('/delete/:id', function(req, res, next) {
     }
 });
 
-router.post('/edit', async function(req, res, next) {
-    let team = new Team(req.body.teamId);
+router.post('/edit/:id', async function(req, res, next) {
+    let team = new Team(req.params.id);
     console.log(team.teamId);
     let doctors = await Team.fetchAllDoctorsFromTeam(team.teamId);
     let nurses = await Team.fetchAllNursesFromTeam(team.teamId);

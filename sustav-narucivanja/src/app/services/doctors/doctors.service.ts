@@ -42,4 +42,8 @@ export class DoctorsService {
   public deleteTeam(id: number) {
     return this.http.delete(`/api/team/delete/${id}`);
   }
+
+  public editTeam(id: number, data: ITeamCreateData) {
+    return this.http.post(`/api/team/edit/${id}`, data);
+  }
 }
