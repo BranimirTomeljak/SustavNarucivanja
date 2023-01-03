@@ -73,13 +73,14 @@ const sql_create_appointment = `CREATE TABLE appointment (
     time TIMESTAMP WITHOUT TIME ZONE,
     duration INTERVAL, 
     created_on TIMESTAMP WITHOUT TIME ZONE,
-    pending_accept BOOLEAN,
+    changes_from int,
     type TEXT,
     patient_came BOOLEAN,
     
     FOREIGN KEY (patientid) REFERENCES patient(id),
     FOREIGN KEY (doctorid) REFERENCES doctor(id),
-    FOREIGN KEY (nurseid) REFERENCES nurse(id)
+    FOREIGN KEY (nurseid) REFERENCES nurse(id),
+    FOREIGN KEY (changes_from) REFERENCES appointment(id)
 )`; // TODO fix duration
 
 
