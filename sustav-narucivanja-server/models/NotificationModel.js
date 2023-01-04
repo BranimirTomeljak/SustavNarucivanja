@@ -35,7 +35,7 @@ async function sendEmail(purpose, mail){
         from: "sustavzanarucivanje@outlook.com",
         to: mail,
         subject: getPurposeSubject(purpose),
-        html: getPurposeMessage(purpose),
+        html: getPurposeMessage(purpose, mail),
     };
   
     transporter.sendMail(options, function (err, info) {
@@ -64,12 +64,16 @@ function getPurposeSubject(purpose){    //TODO popravit
         return undefined;
 }
 
-function getPurposeMessage(purpose){    //TODO popravit
-    //const appointments = db.query(sql, []);
+function getPurposeMessage(purpose, mail){    //TODO popravit
+    let users = Patient.dbGetUserBy('mail', mail, 'users')
+    const sql1 = 'SELECT name FROM patient WHERE mail = ' + mail;
+    const name = db.query(sql1, []);
+    const sql2 = 'SELECT surname FROM patient WHERE mail = ' + mail;
+    const surname = db.query(sql2, []);
+    name = name._strin
     // link za stranicu... 
-   let patient = req.session.Patient;
     if(purpose == "registration")
-        return `<p>Poštovani ${patient.name} ${Patient.surname},<br /><br />Uspješno ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Vaš Sustav za naručivanje<br />
+        return `<p>Poštovani ${name} ${surname},<br /><br />Uspješno ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Vaš Sustav za naručivanje<br />
         <img src="sustav-narucivanja\sustav-narucivanja\sustav-narucivanja\src\assets\img\hzzo.jpg">`;
     else if(purpose == "appointmentBooked")
         return `<p>Poštovani ${Patient.name} ${Patient.surname},<br /><br />Rezerviran Vam je termin u  ${Appointment.time} i traje  ${Appointment.duration} minuta. </p><p>Lijep pozdrav</p>`;
