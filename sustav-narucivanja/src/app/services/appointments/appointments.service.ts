@@ -15,9 +15,16 @@ export class AppointmentsService {
 
   constructor(private http: HttpClient) {}
   
-  public getAllApointments(): Observable<Array<any>> {
-    return this.http.get<Array<any>>('/api/appointment?role=patient&id=1001');
+  
+  public getAllApointments(role: string, id: number): Observable<Array<any>> {
+    return this.http.get<Array<any>>(`/api/appointment?role=${role}&id=${id}`);
   }
+  
+  /*
+  public getAllApointments(): Observable<Array<any>> {
+    return this.http.get<Array<any>>(`/api/appointment?role=patient&id=1001`);
+  }
+  */
 
   public getAllDoctorApointments(): Observable<Array<any>> {
     return this.http.get<Array<any>>('/api/appointment?role=doctor&id=10');

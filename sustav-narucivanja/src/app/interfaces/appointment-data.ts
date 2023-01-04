@@ -3,7 +3,7 @@ export interface IAppointmentData {
     patientid?: number;
     doctorid?: number;
     nurseid?: number;
-    time: Date;
+    time: string;
     duration: any; // jer dohvacam object a vracam string
     created_on: Date;
     pending_accept: boolean;
