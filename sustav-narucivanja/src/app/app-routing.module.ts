@@ -10,6 +10,8 @@ import { TeamComponent } from './pages/admin/create/team/team.component';
 import { TeamModule } from './pages/admin/create/team/team.module';
 import { TechComponent } from './pages/admin/create/tech/tech.component';
 import { TechModule } from './pages/admin/create/tech/tech.module';
+import { DoctorPageComponent } from './pages/doctor-page/doctor-page.component';
+import { DoctorPageModule } from './pages/doctor-page/doctor-page.module';
 import { HomeComponent } from './pages/home/home.component';
 import { HomeModule } from './pages/home/home.module';
 import { LoginComponent } from './pages/login/login.component';
@@ -26,6 +28,7 @@ const routes: Routes = [
     children: [
       { path: 'admin', component: AdminComponent },
       { path: 'patient', component: PatientComponent },
+      { path: 'doctor', component: DoctorPageComponent}
     ],
     canActivate: [AuthGuard],
   },
@@ -56,6 +59,7 @@ const routes: Routes = [
     RegisterModule,
     AdminModule,
     DoctorModule,
+    DoctorPageModule,
     TechModule,
     TeamModule,
     PatientModule,
