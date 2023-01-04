@@ -84,36 +84,42 @@
     [viewDate]="viewDate"
     [events]="events"
     [refresh]="refresh"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
+    (eventClicked)="handleEvent('Clicked', $event.event) "
     (eventTimesChanged)="eventTimesChanged($event)"
   >
   </mwl-calendar-day-view>
 </div>
 
-<!-- Everything you see below is just for the demo, you don't need to include it in your app -->
+<!-- Everything you see below is just for the demo, you don't need to include it in your app 
 
-<br /><br /><br />
+handleEvent('Clicked', $event.event) 
+eventTimesChanged($event)-->
 
+<br />
+
+<!--
 <h3>
   Rezerviraj termin
+  
   
   <button class="btn btn-primary float-end" (click)="reserveAppointment()">
     Rezerviraj liječnički pregled
   </button>
-  <!--<button class="btn btn-primary float-end" (click)="addEvent()">
+  <button class="btn btn-primary float-end" (click)="addEvent()">
     Add new
-  </button>-->
+  </button>
   <div class="clearfix"></div>
 </h3>
+-->
 
-
+<!--
 <div class="table-responsive">
   <table class="table table-bordered">
     <thead>
       <tr>
         <th>Title</th>
         <th>Primary color</th>
-        <!--<th>Secondary + text color</th>-->
+        <!--<th>Secondary + text color</th>
         <th>Starts at</th>
         <th>Ends at</th>
         <th>Remove</th>
@@ -149,7 +155,7 @@
             (ngModelChange)="event.color!.secondaryText = $event"
             (change)="refresh.next()"
           />
-        </td>-->
+        </td>
         <td>
           <input
             class="form-control"
@@ -190,6 +196,9 @@
   </table>
 </div>
 
+-->
+
+<!--
 <ng-template #modalContent let-close="close">
   <div class="modal-header">
     <h5 class="modal-title">Event action occurred</h5>
@@ -213,3 +222,4 @@
     </button>
   </div>
 </ng-template>
+-->
