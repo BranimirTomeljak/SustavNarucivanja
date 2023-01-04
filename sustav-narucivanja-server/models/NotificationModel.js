@@ -65,19 +65,20 @@ function getPurposeSubject(purpose){    //TODO popravit
 }
 
 function getPurposeMessage(purpose){    //TODO popravit
-    let patient = Patient.getById(app.patientid);
-    const appointments = db.query(sql, []);
-    
+    //const appointments = db.query(sql, []);
+    // link za stranicu... 
+   let patient = req.session.Patient;
     if(purpose == "registration")
-        return `<p>Po&scaron;tovani,<br /><br />Uspje&scaron;no ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Va&scaron; Sustav za naručivanje<br />`;
+        return `<p>Poštovani ${patient.name} ${Patient.surname},<br /><br />Uspješno ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Vaš Sustav za naručivanje<br />
+        <img src="sustav-narucivanja\sustav-narucivanja\sustav-narucivanja\src\assets\img\hzzo.jpg">`;
     else if(purpose == "appointmentBooked")
-        return `<p>Po&scaron;tovani   ${patient.name}  ${patient.surname},<br /><br />Rezerviran Vam je termin u  ${purpose.time} i traje  ${purpose.duration} minuta. </p><p>Lijep pozdrav</p>`;
+        return `<p>Poštovani ${Patient.name} ${Patient.surname},<br /><br />Rezerviran Vam je termin u  ${Appointment.time} i traje  ${Appointment.duration} minuta. </p><p>Lijep pozdrav</p>`;
 
     else if(purpose == "appointmentChanged")
-        return `<p>Po&scaron;tovani ${patient.name}  ${patient.surname},<br /><br />Promijenjen Vam je termin iz ${purpose.time} u ${time} i traje ${purpose.duration} minuta.</p><p>Lijep pozdrav</p>`;
+        return `<p>Poštovani ${Patient.name} ${Patient.surname},<br /><br />Promijenjen Vam je termin u ${Appointment.time} i traje ${Appointment.duration} minuta.</p><p>Lijep pozdrav</p>`;
 
     else if(purpose == "reminder")
-        return `<p>Po&scaron;tovani ${patient.name}  ${patient.surname},</p><p><br>Podsjećamo Vas da imate termin sutra: ${purpose.time}.<br><br>Lijep pozdrav, Va&scaron; Sustav za naručivanje</p>`;
+        return `<p>Poštovani ${Patient.name} ${Patient.surname},</p><p><br> Podsjećamo Vas da imate termin sutra: ${Appointment.time}.<br><br>Lijep pozdrav, Vaš Sustav za naručivanje</p>`;
         
     else
         return undefined;
@@ -141,4 +142,6 @@ module.exports = {
     sendSMS: sendSMS,
     sendNotification: sendNotification
 }
+
+//console.log(getPurposeMessage("registration"));
 
