@@ -47,7 +47,7 @@ router.post('/add', async function(req, res, next) {
     res.status(500).send('Appointment exists.')
   else {
     app.saveToDb();
-    res.send("OK");
+    res.status(300).send("OK");
   }
 });
 
@@ -70,16 +70,15 @@ needed in the query:
     nurseid or doctorid: int
 */
 router.post('/add_range', async function(req, res, next) {
-  
-  if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined))
+  if ((req.body.doctorid===undefined) === (req.body.nurseid===undefined))
     throw 'cannot both be defined'
 
-  console.log('the date is ' + req.query.time_start )
+  console.log('the date is ' + req.body.time_start )
   
   const loop_over_appointments = async (func) => {
     // Parse the start and end times as Date objects
-    const startTime = add_hour(new Date(Date.parse(req.query.time_start)));
-    const endTime   = add_hour(new Date(Date.parse(req.query.time_end)));
+    const startTime = add_hour(add_hour(new Date(Date.parse(req.body.time_start))));
+    const endTime   = add_hour(add_hour(new Date(Date.parse(req.body.time_end))));
 
     // Set the current time to the start time
     let currentTime = startTime;
@@ -101,9 +100,9 @@ router.post('/add_range', async function(req, res, next) {
   const appointment_factory = (time) => {
     return new Appointment(
       id = undefined,
-      req.query.patientid,
-      req.query.doctorid,
-      req.query.nurseid,
+      req.body.patientid,
+      req.body.doctorid,
+      req.body.nurseid,
       time,
       '00:' + appointment_duration + ':00'
     )
@@ -133,86 +132,111 @@ router.post('/add_range', async function(req, res, next) {
 
   if (await loop_over_appointments(check_errors)){
     await loop_over_appointments(save_to_db)
-    res.send("OK");
+    res.status(300).send("OK");
   }
 });
 
 
 
 /* 
-these 6 are similar, they need identification information of an appointment in query
-  time: string ("YYYY-MM-DD HH:MM:SS")
-  doctorid or nurseid: int
+these 6 are similar, they need identification information of an appointment in body
 */
 
 // when the patient chooses one of the available doctor or nurse appointments
 // this is used to reserve it
-// extra fields ->
+// Args:
 //  type: string (type of an appointment ('vadenje krvi', ...))
+//  id: appointment id
 router.post('/reserve', async function(req, res, next) {
   // TODO limit number of reserves
-  update_app(req, res, (app)=>{
-    app.patientid = req.query.patientid
-    app.created_on = curr_date_factory()
-    app.type = req.query.type
-  })
+  app = (await Appointment.fetchBy('id', req.body.id))[0]
+  app.patientid = req.body.patientid
+  app.created_on = curr_date_factory()
+  app.type = req.body.type
+  await app.updateDb()
 
-  let doctor = await Doctor.getById(doctorid);
+  let doctor = await Doctor.getById(app.doctorid);  //dobavit pravi doctor id
   notification.sendEmail("appointmentBooked", doctor.mail); //obavijesti doktora o rezervaciji termina
+  res.status(300).send("OK")
 });
 
 // if somebody needs to cancel an appointment
 // the doctor or nurse slot is kept available, just the patient id is not linked to the appointment
+// Args:
+// id: appointment id
 router.post('/cancel', async function(req, res, next) {
-  update_app(req, res, (app) => {
-    app.patientid = undefined
-    app.created_on = undefined
-    app.pending_accept = undefined
-    app.type = undefined
-  })
+  app = (await Appointment.fetchBy('id', req.body.id))[0]
+  app.patientid = undefined
+  app.created_on = undefined
+  app.changes_from = undefined
+  app.type = undefined
+  await app_to.updateDb()
+  res.status(300).send("OK")
 });
 
-// work in progress
+// so doctor can change the appointment of the patient
+// it can be decomposed in canceling the appointment and then reserving
+// a new one 
+// Args:
+// from_id: id of appointment from which we are changing
+// to_id:   id of appointment to which we are changing
 router.post('/change', async function(req, res, next) {
-  update_app(req, res, (app)=>{
-    app.pending_accept = false
-    app.created_on = curr_date_factory()
-  } )
+  app_from = (await Appointment.fetchBy('id', req.body.from_id))[0]
+  app_to   = (await Appointment.fetchBy('id', req.body.to_id))[0]
+  app_to.changes_from = req.body.from_id
+  app_to.patientid = app_from.patientid
+  await app_to.updateDb()
+  res.status(300).send("OK")
 });
 
 // if the doctor moves the appointment the patient has to accept
+// Args:
+// to_id:   id of appointment to which we are changing
 router.post('/accept_change', async function(req, res, next) {
-  update_app(req, res, (app)=>{
-    app.pending_accept = false
-    app.created_on = curr_date_factory()
-  })
-  
+  app_to   = (await Appointment.fetchBy('id', req.body.to_id))[0]
+  app_from = (await Appointment.fetchBy('id', app_to.changes_from))[0]
+  app_to.changes_from = undefined
+  app_to.created_on = curr_date_factory()  
+  app_from.patientid = undefined
+  app_from.created_on = undefined
+  app_from.changes_from = undefined
+  app_from.type = undefined
+  await app_to.updateDb()
+  await app_from.updateDb()
+  res.status(300).send("OK")
 });
 
 // if the doctor moves the appointment the patient can reject
+// Args:
+// to_id:   id of appointment to which we are changing
 router.post('/reject_change', async function(req, res, next) {
-  update_app(req, res, (app)=> {
-    app.pending_accept = false
-    app.patientid = undefined
-  })
+  app_to = (await Appointment.fetchBy('id', req.body.to_id))[0]
+  app_to.changes_from = undefined
+  app_to.patientid = undefined
+  await app_to.updateDb()
+  res.status(300).send("OK")
 });
 
 // at the end of the day nurse/doctor has to record did the patiend come
 // to the appointment
-// extra fields ->
+// Args:
+//  id: appointment id
 //  patient_came: boolean
 router.post('/record_attendance', async function(req, res, next) {
-  update_app(req, res, (app)=>{
-    app.patient_came = JSON.parse(req.query.patient_came)
-  })
+  app = (await Appointment.fetchBy('id', req.body.id))[0]
+  app.patient_came = JSON.parse(req.body.patient_came)
+  await app.updateDb()
+  res.status(300).send("OK")
 });
 
 
 
 // delete one appointment with id = `id`
+// Args:
+// id:   id of appointment to which we are deleting
 router.post('/delete', async function(req, res, next) {
   let app = new Appointment(
-    id = req.query.id,
+    id = req.body.id,
     undefined,
     undefined,
     undefined,
@@ -224,35 +248,11 @@ router.post('/delete', async function(req, res, next) {
     res.status(500).send('Does not exist in the database.')
   else{
     app.removeFromDb()
-    res.send("OK");
+    res.status(300).send("OK");
   }
 
 });
 
-const update_app = async (req, res, func) => {
-  if ((req.query.doctorid===undefined) === (req.query.nurseid===undefined)){
-    res.status(500).send('Only one of doctorid or nurseid can be defined')
-    return false
-  }
-  let app;
-  const time   = add_hour(new Date(Date.parse(req.query.time)));
-
-  if (req.query.doctorid !== undefined)
-    app = await Appointment.fetchBy2("doctorid", req.query.doctorid, "time", time)
-  else
-    app = await Appointment.fetchBy2("nurseid", req.query.nurseid, "time", time)
-  if (app.length === 0){
-    res.status(500).send('There is no specified appointment slot')
-    return
-  }
-  app = app[0]
-  console.log('app')
-  console.log(app)
-  func(app)
-
-  await app.updateDb()
-  res.send("OK");
-}
 
 notification.appointmentReminderEmail();
 

@@ -1,4 +1,4 @@
 export interface ITeamData {
-  doctorId: number;
-  nurseId: number;
+  teamid: number;
+  name: number;
 }

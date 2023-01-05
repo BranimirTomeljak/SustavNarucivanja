@@ -22,11 +22,12 @@ The body encoded in a x-www-form-urlencoded way has to have:
   name: string
   surname: string
   sex: 'M' or 'F'
-  phoneNumber: string (9 or 10 chars)
+  phoneNumber: string (9 or 10 chars) (has to be unique)
   mail: string, *@*.* (has to be unique)
   password: string
   dateOfBirth: string (YYYY-MM-DD)
   doctorId: int (only for patient ("/"))
+  notificationMethod: string (only for patient ("/"))
 
 If everything is ok you get OK you get 200 else error msgs
 */
@@ -57,6 +58,7 @@ const check_and_put = async (req, res, where) =>{
     password,
     dateOfBirth,
     doctorId,
+    notificationMethod,
   } = req.body;
 
   let errors = [];
@@ -70,6 +72,7 @@ const check_and_put = async (req, res, where) =>{
     password,
     dateOfBirth,
     doctorId,
+    notificationMethod
   });
 
   // check for errors
@@ -81,7 +84,8 @@ const check_and_put = async (req, res, where) =>{
     !mail ||
     !password ||
     !dateOfBirth ||
-    (!doctorId && where===Patient)
+    (!doctorId && where===Patient) ||
+    (!notificationMethod && where===Patient)
   ) {
     errors.push({ message: "Please enter all fields" });
     console.log('enter all fields')
@@ -137,15 +141,28 @@ const check_and_put = async (req, res, where) =>{
     mail,
     hashedPassword,
     dateOfBirth,
-    doctorId,
-    0
+    {
+      // TODO
+      // this is very important, the frontent uses 'doctorId' while database uses 'doctorid'
+      doctorid:doctorId,
+      notificationMethod:notificationMethod,
+      nFailedAppointments:0
+    },
   )
   try{
-    person.addToDb();
-    //notification.sendEmail("registration", mail);
+    await person.addToDb();
+    //notification.sendNotification("mail", "registration", mail, phoneNumber); //(notificationMethod, purpose, mail, phoneNumber)
+    //notification.sendNotification(notificationMethod, "registration", mail, phoneNumber); //kad dobijemo notificationMethod u body-u
     res.json(person);
   }
   catch{
+    console.log("problem with saving, going to rm")
+    try{
+      await person.removeUserFromDb()
+    }
+    catch{
+      console.log('could not rm from db')
+    }
     res.sendStatus(400);
   }
   return person
