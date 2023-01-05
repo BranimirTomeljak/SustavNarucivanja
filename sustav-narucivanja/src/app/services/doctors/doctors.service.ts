@@ -35,8 +35,8 @@ export class DoctorsService {
     return this.http.get<ISingleTeam>(`/api/team/${id}`);
   }
 
-  public getAllTeams(): Observable<Array<ITeamData>> {
-    return this.http.get<Array<ITeamData>>('/api/team/all');
+  public getAllTeams(): Observable<Array<ISingleTeam>> {
+    return this.http.get<Array<ISingleTeam>>('/api/team/all');
   }
 
   public deleteTeam(id: number) {

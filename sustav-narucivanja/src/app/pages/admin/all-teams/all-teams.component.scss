@@ -6,3 +6,16 @@
     padding: 20px;
     box-sizing: border-box;
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #ddd;
+}
+
+.edit {
+    background-color: transparent;
+    color: #3f51b5;
+    box-shadow: none;
+}
