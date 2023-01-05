@@ -11,18 +11,20 @@ const vonage = new Vonage({
     apiSecret: "jcfVCTE4UVYOaVfK"
 });
 
-async function sendNotification(method, purpose, mail, phoneNumber){
-    if(method == "mail")
-        sendEmail(purpose, mail);
+async function sendNotification(method, purpose, person){
+    console.log("!! ");
+    console.log(person);
+    if(method == "sms")
+        sendSMS(purpose, person);   
     else
-        sendSMS(purpose, phoneNumber);
+        sendEmail(purpose, person);
 }
 
 //patientRegistration - registration
 //appointmentBooking - appointmentBooked
 //appointmentChange - appointmentChanged        TODO
 //appointmentReminderEmail - reminder
-async function sendEmail(purpose, mail){
+async function sendEmail(purpose, person){
     const transporter = nodemailer.createTransport({
         service: "hotmail",
         auth: {
@@ -33,9 +35,9 @@ async function sendEmail(purpose, mail){
   
     const options = {
         from: "sustavzanarucivanje@outlook.com",
-        to: mail,
+        to: person.mail,
         subject: getPurposeSubject(purpose),
-        html: getPurposeMessage(purpose, mail),
+        html: getPurposeMessage(purpose, person),
     };
   
     transporter.sendMail(options, function (err, info) {
@@ -64,24 +66,23 @@ function getPurposeSubject(purpose){    //TODO popravit
         return undefined;
 }
 
-async function getPurposeMessage(purpose, mail){ //TODO popravit
-    let patient = await Patient.fetchBymail(mail);
+function getPurposeMessage(purpose, person){ //TODO popravit
     if(purpose == "registration")
-           return `<p>Poštovani ${patient.name} ${patient.surname},<br /><br />Uspješno ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Vaš Sustav za naručivanje<br />
-           <img src="sustav-narucivanja\sustav-narucivanja\sustav-narucivanja\src\assets\img\hzzo.jpg">`;
+        return `<p>Poštovani ${person.name} ${person.surname},<br /><br />Uspješno ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Vaš Sustav za naručivanje<br />
+        <img src="sustav-narucivanja\sustav-narucivanja\sustav-narucivanja\src\assets\img\hzzo.jpg">`;
     else if(purpose == "appointmentBooked")
-           return `<p>Poštovani ${patient.name} ${patient.surname},<br /><br />Rezerviran Vam je termin u  ${undefined} i traje  ${undefined} minuta. </p><p>Lijep pozdrav</p>`;
+        return `<p>Poštovani ${person.name} ${person.surname},<br /><br />Rezerviran Vam je termin. Provjerite na "link aplikacije" kada`;
     else if(purpose == "appointmentChanged")
-           return `<p>Poštovani ${patient.name} ${patient.surname},<br /><br />Promijenjen Vam je termin u ${undefined} i traje ${undefined} minuta.</p><p>Lijep pozdrav</p>`;
+        return `<p>Poštovani ${person.name} ${person.surname},<br /><br />slicno ka ovo gori</p>`;
     else if(purpose == "reminder")
-           return `<p>Poštovani ${patient.name} ${patient.surname},</p><p><br> Podsjećamo Vas da imate termin sutra: ${undefined}.<br><br>Lijep pozdrav, Vaš Sustav za naručivanje</p>`;
+        return `<p>Poštovani ${person.name} ${person.surname},</p><p><br> Podsjećamo Vas da imate termin sutra: provjerite u apliakciji bla bla.<br><br>Lijep pozdrav, Vaš Sustav za naručivanje</p>`;
     else
-           return undefined;
+        return undefined;
         
     
 }
 
-function getPurposeSMS(purpose){    //TODO popravit
+function getPurposeSMS(purpose, person){    //TODO popravit
     if(purpose == "registration")
         return `registration`;
 
@@ -119,10 +120,10 @@ async function appointmentReminderEmail() {
     }, 60*60*1000);
 }
 
-async function sendSMS(purpose, phoneNumber){
+async function sendSMS(purpose, person){
     const from = "Sustav za naručivanje"
-    const to = phoneNumber
-    const text = getPurposeSMS(purpose);
+    const to = person.phoneNumber
+    const text = getPurposeSMS(purpose, person);
 
     async function sendSms() {
         await vonage.sms.send({to, from, text})
@@ -140,6 +141,5 @@ module.exports = {
     sendNotification: sendNotification
 }
 
-console.log(getPurposeMessage('registration', 'bruno.racki@fer.hr'));
-sendEmail('registration', 'bruno.racki@fer.hr')
-
+//console.log(getPurposeMessage('registration', 'bruno.racki@fer.hr'));
+//sendEmail('registration', 'bruno.racki@fer.hr')
