@@ -1,16 +1,8 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  BehaviorSubject,
-  EMPTY,
-  filter,
-  Observable,
-  of,
-  Subscription,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, Observable, of, Subscription, switchMap } from 'rxjs';
+import { ISingleTeam } from 'src/app/interfaces/single-team';
 import { ITeamCreateData } from 'src/app/interfaces/team-create-data';
 import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
@@ -19,7 +11,11 @@ import { DoctorsService } from 'src/app/services/doctors/doctors.service';
   templateUrl: './team-form.component.html',
   styleUrls: ['./team-form.component.scss'],
 })
-export class TeamFormComponent implements OnDestroy {
+export class TeamFormComponent implements OnDestroy, OnChanges {
+  @Input() public editMode: boolean = false;
+  @Input() public teamId?: number;
+  @Input() public data?: ISingleTeam;
+
   private readonly subscription = new Subscription();
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public doctors$: Observable<any> = this.trigger$.pipe(
@@ -27,8 +23,12 @@ export class TeamFormComponent implements OnDestroy {
       return this.doctorsService.getAllDoctors().pipe(
         switchMap((result) => {
           let doctors: Array<any> = [];
+          const doctorIds = this.form.get('doctorIds')?.value as Array<number>;
           result.forEach((doctor: any) => {
-            if (!doctor.teamid) {
+            if (
+              (!doctor.teamid || this.dataDoctors.includes(doctor.id)) &&
+              !doctorIds.includes(doctor.id)
+            ) {
               doctors.push(doctor);
             }
           });
@@ -42,9 +42,13 @@ export class TeamFormComponent implements OnDestroy {
       return this.doctorsService.getAllNurses().pipe(
         switchMap((result) => {
           let nurses: Array<any> = [];
-          result.forEach((doctor: any) => {
-            if (!doctor.teamid) {
-              nurses.push(doctor);
+          const nurseIds = this.form.get('doctorIds')?.value as Array<number>;
+          result.forEach((nurse: any) => {
+            if (
+              (!nurse.teamid || this.dataNurses.includes(nurse.id)) &&
+              !nurseIds.includes(nurse.id)
+            ) {
+              nurses.push(nurse);
             }
           });
           return of(nurses);
@@ -57,6 +61,11 @@ export class TeamFormComponent implements OnDestroy {
     private readonly doctorsService: DoctorsService,
     private readonly router: Router
   ) {
+    this.trigger$.next(null);
+  }
+
+  public ngOnChanges(): void {
+    this.setFormValues();
     this.trigger$.next(null);
   }
 
@@ -74,12 +83,50 @@ export class TeamFormComponent implements OnDestroy {
     return this.form.get('nurseIds') as FormArray;
   }
 
-  addDoctorId(): void {
+  get dataDoctors(): Array<any> {
+    const doctors: Array<any> = [];
+    this.data?.doctors.forEach((doctor) => {
+      doctors.push(doctor.id);
+    });
+    return doctors;
+  }
+
+  get dataNurses(): Array<any> {
+    const nurses: Array<any> = [];
+    this.data?.nurses.forEach((nurse) => {
+      nurses.push(nurse.id);
+    });
+    return nurses;
+  }
+
+  private setFormValues(): void {
+    if (this.data) {
+      this.form.get('name')?.setValue(this.data.name);
+      this.data.doctors.forEach((doctor) => {
+        this.doctorIds.push(new FormControl(doctor.id, [Validators.required]));
+      });
+      this.data.nurses.forEach((nurse) => {
+        this.nurseIds.push(new FormControl(nurse.id, [Validators.required]));
+      });
+    }
+  }
+
+  public addDoctorId(): void {
     this.doctorIds.push(new FormControl(null, [Validators.required]));
   }
 
-  addNurseId(): void {
+  public addNurseId(): void {
     this.nurseIds.push(new FormControl(null, [Validators.required]));
+  }
+
+  public onDoctorRemoveClick(index: number): void {
+    const doctors = this.form.get('doctorIds') as FormArray;
+    doctors.removeAt(index);
+  }
+
+  public onNurseRemoveClick(index: number): void {
+    const nurses = this.form.get('nurseIds') as FormArray;
+    nurses.removeAt(index);
   }
 
   public onSubmit(): void {
@@ -92,6 +139,10 @@ export class TeamFormComponent implements OnDestroy {
     const teamSubscription = this.doctorsService.createTeam(data).subscribe();
     this.subscription.add(teamSubscription);
     this.router.navigate(['/admin']);
+  }
+
+  public test(): void {
+    console.log(this.data);
   }
 
   public ngOnDestroy(): void {
