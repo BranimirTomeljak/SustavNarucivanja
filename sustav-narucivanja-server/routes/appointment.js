@@ -24,34 +24,6 @@ router.get('/', async function(req, res, next) {
   res.json(apps);
 });
 
-// create appointment with `patientid`, nurse or doctor id 
-// time and duration
-// this creates only one appointment and it can have any length
-router.post('/add', async function(req, res, next) {  
-  let app = new Appointment(
-    id = undefined,
-    req.body.patientid,
-    req.body.doctorid,
-    req.body.nurseid,
-    req.body.time,
-    req.body.duration
-  )
-
-  if ((req.body.doctorid===undefined) === (req.body.nurseid===undefined))
-    //throw 'cannot both be defined'
-    res.status(500).send('doctorId and nurseId cannot both be defined')
-
-  if (await app.conflictsWithDb())
-    res.status(500).send('Appointment overlaps.')
-  else if (await app.isSavedToDb())
-    res.status(500).send('Appointment exists.')
-  else {
-    app.saveToDb();
-    res.status(300).send("OK");
-  }
-});
-
-
 /*
 Makes a block of appointments between `time_start` and `time_end` of
 length `appointment_duration`.
