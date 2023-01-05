@@ -66,14 +66,11 @@ function getPurposeSubject(purpose){    //TODO popravit
 
 async function getPurposeMessage(purpose, mail){    //TODO popravit
     let patient = await Patient.fetchBymail(mail)
-
     if(purpose == "registration")
         return `<p>Poštovani ${patient.name} ${patient.surname},<br /><br />Uspješno ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Vaš Sustav za naručivanje<br />
         <img src="sustav-narucivanja\sustav-narucivanja\sustav-narucivanja\src\assets\img\hzzo.jpg">`;
     else if(purpose == "appointmentBooked")
         return `<p>Poštovani ${patient.name} ${patient.surname},<br /><br />Rezerviran Vam je termin u  ${undefined} i traje  ${undefined} minuta. </p><p>Lijep pozdrav</p>`;
-        return `<p>Poštovani ${patient.name} ${patient.surname},<br /><br />Rezerviran Vam je termin u  ${undefined} i traje  ${undefined} minuta. </p><p>Lijep pozdrav</p>`;
-
     else if(purpose == "appointmentChanged")
         return `<p>Poštovani ${patient.name} ${patient.surname},<br /><br />Promijenjen Vam je termin u ${undefined} i traje ${undefined} minuta.</p><p>Lijep pozdrav</p>`;
 
@@ -82,8 +79,6 @@ async function getPurposeMessage(purpose, mail){    //TODO popravit
         
     else
         return undefined;
-    
-    
 }
 
 function getPurposeSMS(purpose){    //TODO popravit
