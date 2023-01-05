@@ -1,20 +1,17 @@
-const {
-    Pool
-} = require('pg');
+const { Pool } = require("pg");
 
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'medicina',
-    password: 'postgres',
-    port: 5432,
+  user: "postgres",
+  host: "localhost",
+  database: "medicina",
+  password: "postgres",
+  port: 5432,
 });
 
 const drop_tables = `
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
-`
-
+`;
 
 const sql_create_users = `CREATE TABLE users (
     id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -79,7 +76,6 @@ const sql_create_appointment = `CREATE TABLE appointment (
     FOREIGN KEY (doctorid) REFERENCES doctor(id),
     FOREIGN KEY (nurseid) REFERENCES nurse(id)
 )`; // TODO fix duration
-
 
 const sql_insert_users = `INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth)
     VALUES 
@@ -1086,105 +1082,106 @@ const sql_insert_users = `INSERT INTO users (name, surname, sex, phoneNumber, ma
     
 `;
 
-const sql_insert_team = `INSERT INTO team (name) VALUES ('Prvi'), ('Drugi'), ('Treci'), ('Cetvrti'), ('Peti')`
-const sql_insert_admin = `INSERT INTO admin (id) VALUES (2), (3), (5)`
-const sql_insert_doctor = `INSERT INTO doctor (id, teamid) VALUES (7, NULL), (1, 1), (2, 1), (3, 2), (4, 3), (5, 3), (6, 3), (10, 3), (8, 3), (9, 3)`
-const sql_insert_nurse = `INSERT INTO nurse (id, teamid) VALUES (8, NULL), (10, 1), (12, 1), (14, 2), (16, 3)`
+const sql_insert_team = `INSERT INTO team (name) VALUES ('Prvi'), ('Drugi'), ('Treci')`;
+const sql_insert_admin = `INSERT INTO admin (id) VALUES (2), (3), (5)`;
+const sql_insert_doctor = `INSERT INTO doctor (id, teamid) VALUES (7, NULL), (1, 1), (2, NULL), (3, 2), (4, 3), (5, NULL), (6, NULL), (10, NULL), (8, NULL), (9, NULL)`;
+const sql_insert_nurse = `INSERT INTO nurse (id, teamid) VALUES (8, NULL), (10, 1), (12, NULL), (14, 2), (16, 3)`;
 const sql_insert_patient = `INSERT INTO patient (nFailedAppointments, id, doctorid) VALUES 
-    (0, 100, 7), (0, 101, 7), (0, 102, 7)`
+    (0, 100, 7), (0, 101, 7), (0, 102, 7)`;
 
 const sql_insert_appointments = `INSERT INTO appointment (patientid, doctorid, nurseid, time, duration) VALUES 
     (100, 7, NULL, '2015-01-10 00:51:14', '00:20:00'),
     (101, 7, NULL, '2015-01-10 01:51:14', '00:20:00'),
     (101, 9, NULL, '2015-01-10 01:51:14', '00:20:00'),
     (101, 7, NULL, '2015-01-10 22:00:14', '02:20:00')
-`
-
+`;
 
 let table_names = [
-    "users",
-    "admin",
-    "team",
-    "doctor",
-    "nurse",
-    "patient",
-    "appointment"
-]
+  "users",
+  "admin",
+  "team",
+  "doctor",
+  "nurse",
+  "patient",
+  "appointment",
+];
 
 let tables = [
-    sql_create_users,
-    sql_create_admin,
-    sql_create_team,
-    sql_create_doctor,
-    sql_create_nurse,
-    sql_create_patient,
-    sql_create_appointment,
+  sql_create_users,
+  sql_create_admin,
+  sql_create_team,
+  sql_create_doctor,
+  sql_create_nurse,
+  sql_create_patient,
+  sql_create_appointment,
 ];
 
 let table_data = [
-    sql_insert_users,
-    sql_insert_admin,
-    sql_insert_team,
-    sql_insert_doctor,
-    sql_insert_nurse,
-    sql_insert_patient,
-    sql_insert_appointments,
-]
-
-let indexes = [
+  sql_insert_users,
+  sql_insert_admin,
+  sql_insert_team,
+  sql_insert_doctor,
+  sql_insert_nurse,
+  sql_insert_patient,
+  sql_insert_appointments,
 ];
 
-if ((tables.length !== table_data.length) || (tables.length !== table_names.length)) {
-    console.log("tables, names and data arrays length mismatch.")
-    return
+let indexes = [];
+
+if (
+  tables.length !== table_data.length ||
+  tables.length !== table_names.length
+) {
+  console.log("tables, names and data arrays length mismatch.");
+  return;
 }
 
 //create tables and populate with data (if provided)
 
 (async () => {
-    console.log("Dropping tables");
+  console.log("Dropping tables");
+  try {
+    await pool.query(drop_tables, []);
+    console.log("dropped all tables.");
+  } catch (err) {
+    console.log("Error could not drop all tables");
+  }
+
+  console.log("Creating and populating tables");
+  for (let i = 0; i < tables.length; i++) {
+    console.log("Creating table " + table_names[i] + ".");
+    console.log(tables[i]);
     try {
-        await pool.query(drop_tables, [])
-        console.log("dropped all tables.")
+      await pool.query(tables[i], []);
+      console.log("Table " + table_names[i] + " created.");
+      if (table_data[i] !== undefined) {
+        try {
+          await pool.query(table_data[i], []);
+          console.log("Table " + table_names[i] + " populated with data.");
+        } catch (err) {
+          console.log(
+            "Error populating table " + table_names[i] + " with data."
+          );
+          return console.log(err.message);
+        }
+      }
     } catch (err) {
-        console.log("Error could not drop all tables")
+      console.log("Error creating table " + table_names[i]);
+      return console.log(err.message);
     }
+  }
 
-    console.log("Creating and populating tables");
-    for (let i = 0; i < tables.length; i++) {
-        console.log("Creating table " + table_names[i] + ".");
-        console.log(tables[i])
-        try {
-
-            await pool.query(tables[i], [])
-            console.log("Table " + table_names[i] + " created.");
-            if (table_data[i] !== undefined) {
-                try {
-                    await pool.query(table_data[i], [])
-                    console.log("Table " + table_names[i] + " populated with data.");
-                } catch (err) {
-                    console.log("Error populating table " + table_names[i] + " with data.")
-                    return console.log(err.message);
-                }
-            }
-        } catch (err) {
-            console.log("Error creating table " + table_names[i])
-            return console.log(err.message);
-        }
+  console.log("Creating indexes");
+  for (let i = 0; i < indexes.length; i++) {
+    try {
+      await pool.query(indexes[i], []);
+      console.log("Index " + i + " created.");
+    } catch (err) {
+      console.log("Error creating index " + i + ".");
     }
+  }
 
-    console.log("Creating indexes");
-    for (let i = 0; i < indexes.length; i++) {
-        try {
-            await pool.query(indexes[i], [])
-            console.log("Index " + i + " created.")
-        } catch (err) {
-            console.log("Error creating index " + i + ".")
-        }
-    }
-
-    await pool.end();
-})()
-
+  await pool.end();
+})();
 
 // sudo -u postgres psql -c 'create database test;'
