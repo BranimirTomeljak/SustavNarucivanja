@@ -5,6 +5,7 @@ import { SingleTeamModule } from 'src/app/components/single-team/single-team.mod
 import { TeamFormModule } from 'src/app/components/team-form/team-form.module';
 import { MainNavigationModule } from 'src/app/components/main-navigation/main-navigation.module';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [TeamViewComponent],
@@ -14,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
     TeamFormModule,
     MainNavigationModule,
     MatButtonModule,
+    RouterModule,
   ],
   exports: [TeamViewComponent],
 })
