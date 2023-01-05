@@ -6,7 +6,8 @@ import {
   OnInit,
   OnDestroy,
   Input,
-  Inject
+  Inject,
+  ViewEncapsulation
 } from '@angular/core';
 import {
   startOfDay,
@@ -55,31 +56,17 @@ const colors: Record<string, EventColor> = {
 @Component({
   selector: 'app-kalendar',
   templateUrl: './kalendar.component.html',
-  styleUrls: ['./kalendar.component.scss']
+  styleUrls: ['./kalendar.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class KalendarComponent implements OnInit ,OnDestroy {
   private readonly _user$ = localStorage.getItem('user')
   ? JSON.parse(localStorage.getItem('user')!)
   : null
-  private readonly id: number = this._user$.id;
-  private readonly type: string = this._user$.type;
-
 
   private readonly subscription = new Subscription();
-  // dohvacanje appointmenta
   private readonly trigger$ = new BehaviorSubject<any>(null);
-  public appointments$: Observable<any> = this.trigger$.pipe(
-    switchMap(() => {
-      return this.appointmentsService.getAllApointments('patient', 1001);
-    })
-  );
-  public doctorAppointments$: Observable<any> = this.trigger$.pipe(
-    switchMap(() => {
-      return this.appointmentsService.getAllDoctorApointments();
-    })
-  );
-
-  
+ 
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
@@ -87,6 +74,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   CalendarView = CalendarView;
 
   viewDate: Date = new Date();
+  //@Input() viewDate : Date = new Date();
 
   modalData!: {
     action: string;
@@ -114,13 +102,8 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   ];
   */
 
-  refresh = new Subject<void>();
+  @Input() refresh = new Subject<void>();
 
-  public starts: Date[] = [];
-  private durations: object[] = [];
-  private ends: Date[] = [];
-
-  
   private addDuration = (date: Date, obj: object): Date => {
     const result = new Date(date);
     let hours = 0;
@@ -153,6 +136,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
     return new Date(diff).toLocaleTimeString();
   }
 
+  // dodajemo vremensku zonu u slucaju da koristimo funkciju addTimeZone()
   private addTimeZone = (date?: Date) : Date => {
     var endDefined = new Date(0);
     if(date !== undefined){
@@ -165,8 +149,8 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   }
   
   ngOnInit(): void {
-    this.refresh.next();
-    this.viewDate = new Date();
+    this.events.forEach(e => this.refresh.next());
+    //this.refresh.next();
   }
 
   ngOnDestroy(): void {
@@ -268,87 +252,16 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       }
       return iEvent;
     });
-    if(this.handleEvent == undefined){
-      console.log('kuraccc')
-    } else {
     this.handleEvent('Dropped or resized', event);
-    }
   }
   
   handleEvent(action: string, event: CalendarEvent): void {
-    if(this.type == 'patient'){
-      if(event.color?.primary == colors['yellow'].primary){
-        const dialogRef = this.dialog.open(ReserveAppointmentDialog, {
-          data : { appointment : event.title.toLocaleLowerCase(),
-                  date : event.start.toLocaleDateString()}
-        });
-        dialogRef.afterClosed().subscribe(result => {
-          const data : IAppointmentData = {
-            id: event.id,
-            patientid : 1001,
-            doctorid : 10,
-            nurseid : undefined,
-            time : this.addTimeZone(event.start).toISOString(),
-            duration : this.getDuration(this.addTimeZone(event.start), event.end),
-            created_on : new Date(),
-            pending_accept : false,
-            type : null,
-            patient_came : false,
-          }
-          console.log('insertam')
-          console.log(data);
-          // ako baci konflikt napisati neku poruku
-          const appointmentSubscription = this.appointmentsService
-            .addAppointment(data)
-            .subscribe(() => {
-              //this.router.navigate(['/patient'])
-              this.refresh.next()
-            });
-            this.subscription.add(appointmentSubscription);
-        })
-        
-      }
-      if(event.color?.primary == colors['red'].primary || event.color?.primary == colors['blue'].primary){
-        const dialogRef = this.dialog.open(CancelAppointmentDialog, {
-          data : { appointment : event.title.toLocaleLowerCase(),
-                  date : event.start.toLocaleDateString()}
-        });
-        dialogRef.afterClosed().subscribe(result => {
-          console.log(`Dialog result: ${result}`);
-          if(result){
-            const data : IAppointmentData = {
-              id: event.id,
-              patientid : 1001,
-              doctorid : 10,
-              nurseid : undefined,
-              time : event.start.toISOString(),
-              duration : this.getDuration(this.addTimeZone(event.start), event.end),
-              created_on : new Date(),
-              pending_accept : false,
-              type : null,
-              patient_came : false,
-            }
-            console.log('deletam')
-            console.log(data);
-    
-            // ako baci konflikt napisati neku poruku
-            const appointmentSubscription = this.appointmentsService
-            .cancelAppointment(data)
-            .subscribe(() => {
-              //this.router.navigate(['/patient'])
-              this.refresh.next()
-            });
-            this.subscription.add(appointmentSubscription);
-            
-          }
-        })
-      }
-
-      // dialog
-    } else if(this.type == 'doctor'){
-      console.log("sad je doktor");
-    } else if(this.type == 'nurse'){
-      console.log("sad je sestra");
+    if(this._user$.type == 'patient'){
+      this.handlePatient(event);
+    } else if(this._user$.type == 'doctor'){
+      this.handleDoctor(event);
+    } else if(this._user$.type == 'nurse'){
+      this.handleNurse(event);
     }
   }
 
@@ -386,6 +299,71 @@ export class KalendarComponent implements OnInit ,OnDestroy {
     
   }
   */
+
+  handlePatient(event: CalendarEvent) : void {
+    const data : IAppointmentData = {
+      id: event.id,
+      patientid : this._user$.id,
+      doctorid : this._user$.doctorid,
+      nurseid : undefined,
+      time : event.start.toISOString(), // ako koristimo addAppointment(data) => this.addTimeZone(event.start).toISOString()
+      duration : this.getDuration(this.addTimeZone(event.start), event.end),
+      created_on : new Date(),
+      pending_accept : false,
+      type : null,
+      patient_came : false,
+    }
+    if(event.color?.primary == colors['yellow'].primary){
+      const dialogRef = this.dialog.open(ReserveAppointmentDialog, {
+        data : { appointment : event.title.toLocaleLowerCase(),
+                date : event.start.toLocaleDateString()}
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if(result){
+          console.log('insertam')
+        console.log(data);
+        // ako baci konflikt napisati neku poruku
+        const appointmentSubscription = this.appointmentsService
+          .reserveAppointment(data)
+          .subscribe(() => {
+            //this.router.navigate(['/patient'])
+            this.refresh.next()
+          });
+          this.subscription.add(appointmentSubscription);
+          this.refresh.next()
+        }
+      })
+    }
+    if(event.color?.primary == colors['red'].primary || event.color?.primary == colors['blue'].primary){
+      const dialogRef = this.dialog.open(CancelAppointmentDialog, {
+        data : { appointment : event.title.toLocaleLowerCase(),
+                date : event.start.toLocaleDateString()}
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        console.log(`Dialog result: ${result}`);
+        if(result){
+          console.log('deletam')
+          console.log(data);
+          // ako baci konflikt napisati neku poruku
+          const appointmentSubscription = this.appointmentsService
+          .cancelAppointment(data)
+          .subscribe(() => {
+            //this.router.navigate(['/patient'])
+            this.refresh.next()
+          });
+          this.subscription.add(appointmentSubscription);
+        }
+      })
+    }
+  }
+
+  handleDoctor(event : CalendarEvent) : void {
+    console.log('Sad je doktor');
+  }
+
+  handleNurse(event : CalendarEvent) : void {
+    console.log('Sad je medicinska sestra');
+  }
 }
 
 @Component({

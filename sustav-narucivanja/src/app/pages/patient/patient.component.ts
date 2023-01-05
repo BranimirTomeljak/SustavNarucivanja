@@ -63,6 +63,7 @@ export class PatientComponent implements OnInit{
   }
 
   events : CalendarEvent[] = [];
+  viewDate : Date = new Date();
 
   public ngOnInit() : void {
     this.fetchAppointments();
@@ -127,7 +128,7 @@ export class PatientComponent implements OnInit{
             //actions: this.actions
           })
         });
-        //this.viewDate = new Date();
+        this.viewDate = new Date();
         this.refresh.next();
       },
       // za error
