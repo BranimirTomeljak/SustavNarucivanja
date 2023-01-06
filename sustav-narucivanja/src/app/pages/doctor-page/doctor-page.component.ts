@@ -141,4 +141,8 @@ export class DoctorPageComponent implements OnInit {
       */
     );
   }
+
+  odrediVlastitaPravila(){
+    console.log('Odredujem vlastita pravila...')
+  }
 }

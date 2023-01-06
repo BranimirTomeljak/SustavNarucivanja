@@ -64,6 +64,8 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   ? JSON.parse(localStorage.getItem('user')!)
   : null
 
+  private type : string = 'patient';
+
   private readonly subscription = new Subscription();
   private readonly trigger$ = new BehaviorSubject<any>(null);
  
@@ -256,13 +258,36 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   }
   
   handleEvent(action: string, event: CalendarEvent): void {
-    if(this._user$.type == 'patient'){
-      this.handlePatient(event);
-    } else if(this._user$.type == 'doctor'){
-      this.handleDoctor(event);
-    } else if(this._user$.type == 'nurse'){
-      this.handleNurse(event);
+    /*
+    switch (this._user$.type) {
+      case 'patient':
+        this.handlePatient(event);
+        break;
+      case 'doctor':
+        this.handleDoctor(event);
+      break;
+      case 'nurse':
+        this.handleNurse(event);
+        break;
+      default:
+        break;
     }
+    */
+   
+    switch (this.type) {
+      case 'patient':
+        this.handlePatient(event);
+        break;
+      case 'doctor':
+        this.handleDoctor(event);
+      break;
+      case 'nurse':
+        this.handleNurse(event);
+        break;
+      default:
+        break;
+    }
+    
   }
 
   addEvent(): void {
@@ -359,10 +384,54 @@ export class KalendarComponent implements OnInit ,OnDestroy {
 
   handleDoctor(event : CalendarEvent) : void {
     console.log('Sad je doktor');
+    const data : IAppointmentData = {
+      id: event.id,
+      patientid : this._user$.id,
+      doctorid : this._user$.doctorid,
+      nurseid : undefined,
+      time : event.start.toISOString(), // ako koristimo addAppointment(data) => this.addTimeZone(event.start).toISOString()
+      duration : this.getDuration(this.addTimeZone(event.start), event.end),
+      created_on : new Date(),
+      pending_accept : false,
+      type : null,
+      patient_came : false,
+    }
+    if(event.color?.primary == colors['blue'].primary){
+      const dialogRef = this.dialog.open(ChangeAppointmentDialog, {
+        data : { appointment : event.title.toLocaleLowerCase(),
+                date : event.start.toLocaleDateString()}
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if(result){
+        console.log('pomicem')
+        console.log(data);
+        /*
+        // ako baci konflikt napisati neku poruku
+        const appointmentSubscription = this.appointmentsService
+          .reserveAppointment(data)
+          .subscribe(() => {
+            //this.router.navigate(['/patient'])
+            this.refresh.next()
+          });
+          this.subscription.add(appointmentSubscription);
+          this.refresh.next()
+        */
+        }
+      })
+    }
   }
 
   handleNurse(event : CalendarEvent) : void {
     console.log('Sad je medicinska sestra');
+  }
+
+  switchDoctor(){
+    this.type = 'doctor';
+    console.log('patient');
+  }
+  switchPatient(){
+    this.type = 'patient';
+    console.log('docotor');
   }
 }
 
@@ -379,5 +448,13 @@ export class CancelAppointmentDialog {
   templateUrl: 'dialogs/reserve-appointment-dialog.html',
 })
 export class ReserveAppointmentDialog {
+  constructor(@Inject(MAT_DIALOG_DATA) public data : {appointment : string, date: string}) {}
+}
+
+@Component({
+  selector: 'change-appointment-dialog',
+  templateUrl: 'dialogs/change-appointment-dialog.html',
+})
+export class ChangeAppointmentDialog {
   constructor(@Inject(MAT_DIALOG_DATA) public data : {appointment : string, date: string}) {}
 }
