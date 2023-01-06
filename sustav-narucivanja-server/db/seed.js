@@ -34,6 +34,7 @@ const sql_create_patient = `CREATE TABLE patient (
     id INT NOT NULL,
     doctorid INT NOT NULL,
     nFailedAppointments INT NOT NULL,
+    notificationMethod text NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES users(id),
     FOREIGN KEY (doctorid) REFERENCES doctor(id)
@@ -68,13 +69,14 @@ const sql_create_appointment = `CREATE TABLE appointment (
     time TIMESTAMP WITHOUT TIME ZONE,
     duration INTERVAL, 
     created_on TIMESTAMP WITHOUT TIME ZONE,
-    pending_accept BOOLEAN,
+    changes_from int,
     type TEXT,
     patient_came BOOLEAN,
     
     FOREIGN KEY (patientid) REFERENCES patient(id),
     FOREIGN KEY (doctorid) REFERENCES doctor(id),
-    FOREIGN KEY (nurseid) REFERENCES nurse(id)
+    FOREIGN KEY (nurseid) REFERENCES nurse(id),
+    FOREIGN KEY (changes_from) REFERENCES appointment(id)
 )`; // TODO fix duration
 
 const sql_insert_users = `INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth)
@@ -1086,8 +1088,8 @@ const sql_insert_team = `INSERT INTO team (name) VALUES ('Prvi'), ('Drugi'), ('T
 const sql_insert_admin = `INSERT INTO admin (id) VALUES (2), (3), (5)`;
 const sql_insert_doctor = `INSERT INTO doctor (id, teamid) VALUES (7, NULL), (1, 1), (2, NULL), (3, 2), (4, 3), (5, NULL), (6, NULL), (10, NULL), (8, NULL), (9, NULL)`;
 const sql_insert_nurse = `INSERT INTO nurse (id, teamid) VALUES (8, NULL), (10, 1), (12, NULL), (14, 2), (16, 3)`;
-const sql_insert_patient = `INSERT INTO patient (nFailedAppointments, id, doctorid) VALUES 
-    (0, 100, 7), (0, 101, 7), (0, 102, 7)`;
+const sql_insert_patient = `INSERT INTO patient (nFailedAppointments, id, doctorid, notificationMethod) VALUES 
+    (0, 100, 7, 'email'), (0, 101, 7, 'email'), (0, 102, 7, 'email')`;
 
 const sql_insert_appointments = `INSERT INTO appointment (patientid, doctorid, nurseid, time, duration) VALUES 
     (100, 7, NULL, '2015-01-10 00:51:14', '00:20:00'),
