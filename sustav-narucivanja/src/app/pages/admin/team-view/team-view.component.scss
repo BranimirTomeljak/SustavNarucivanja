@@ -1,3 +1,5 @@
+@import '../../../../assets/styles/variables.scss';
+
 .container {
     display: flex;
     flex-direction: column;
@@ -8,7 +10,7 @@
 }
 
 .delete-button {
-    background-color: red;
-    color: white;
+    background-color: $warn-color;
+    color: $secondary-color;
     min-width: 130px;
 }
