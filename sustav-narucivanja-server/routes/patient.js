@@ -1,5 +1,4 @@
 var express = require('express');
-//const { rawListeners } = require('../app');
 var Appointment = require('../models/AppointmentModel');
 const { Patient, Doctor } = require('../models/UserModel');
 
