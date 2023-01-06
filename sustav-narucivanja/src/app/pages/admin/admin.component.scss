@@ -1,3 +1,5 @@
+@import '../../../assets/styles/variables.scss';
+
 .container {
     display: flex;
     flex-direction: column;
@@ -8,6 +10,6 @@
 a {
     margin-top: 20px;
     min-width: 200px;
-    background-color: #3f51b5;
-    color: #fff;
+    background-color: $main-color;
+    color: $secondary-color;
 }
