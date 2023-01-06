@@ -80,6 +80,7 @@ export class RegisterComponent implements OnDestroy {
       phoneNumber: this.form.get('phoneNumber')?.value,
       doctorId: this.form.get('doctor')?.value,
       dateOfBirth: this.form.get('dateOfBirth')?.value,
+      notificationMethod: 'email',
     };
 
     console.log(data);
