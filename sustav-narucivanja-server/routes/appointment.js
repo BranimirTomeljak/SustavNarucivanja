@@ -42,9 +42,6 @@ needed in the query:
     nurseid or doctorid: int
 */
 router.post('/add_range', async function(req, res, next) {
-  if ((req.body.doctorid===undefined) === (req.body.nurseid===undefined))
-    throw 'cannot both be defined'
-
   console.log('the date is ' + req.body.time_start )
   
   const loop_over_appointments = async (func) => {
@@ -70,11 +67,17 @@ router.post('/add_range', async function(req, res, next) {
   }
 
   const appointment_factory = (time) => {
+    let doctorid = undefined
+    if (req.session.user.type === 'doctor')
+      doctorid = req.session.user.id
+    let nurseid = undefined
+    if (req.session.user.type === 'nurse')
+      nurseid = req.session.user.id
     return new Appointment(
-      id = undefined,
-      req.body.patientid,
-      req.body.doctorid,
-      req.body.nurseid,
+      undefined,
+      undefined,
+      doctorid,
+      nurseid,
       time,
       '00:' + appointment_duration + ':00'
     )
@@ -122,7 +125,7 @@ these 6 are similar, they need identification information of an appointment in b
 router.post('/reserve', async function(req, res, next) {
   // TODO limit number of reserves
   app = (await Appointment.fetchBy('id', req.body.id))[0]
-  app.patientid = req.body.patientid
+  app.patientid = req.session.user.id
   app.created_on = curr_date_factory()
   app.type = req.body.type
   await app.updateDb()
