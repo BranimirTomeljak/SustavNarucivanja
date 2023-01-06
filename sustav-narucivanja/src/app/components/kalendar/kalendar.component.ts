@@ -34,8 +34,8 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { Router } from '@angular/router';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
+import { IChangeAppointmentData } from 'src/app/interfaces/change-appointment-data';
 import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
-
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -386,7 +386,6 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   }
 
   handleDoctor(event : CalendarEvent) : void {
-    console.log('Sad je doktor');
     const data : IAppointmentData = {
       id: event.id,
       patientid : this._user$.id,
@@ -406,19 +405,39 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       });
       dialogRef.afterClosed().subscribe(result => {
         if(result){
-        console.log('pomicem')
-        console.log(data);
-        /*
-        // ako baci konflikt napisati neku poruku
-        const appointmentSubscription = this.appointmentsService
-          .reserveAppointment(data)
+        //console.log(data);
+        var appointments : string[] = [];
+        var evs : CalendarEvent[] = [];
+        evs = this.events.filter(e => e.color?.primary == colors['yellow'].primary
+        && e.start.toLocaleDateString() == event.start.toLocaleDateString()); 
+        this.events.filter(e => e.color?.primary == colors['yellow'].primary
+                        && e.start.toLocaleDateString() == event.start.toLocaleDateString())
+                        .forEach(e => {
+                          appointments.push(
+                            e.title
+                          )
+                        })
+        const dialogRef = this.dialog.open(FreeAppointmentDialog, {
+          data : {apps : appointments}
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          console.log(result);
+          if(result != false && result != undefined){ 
+            var newEvent = evs.find(e => e.title == result);
+          const data : IChangeAppointmentData = {
+            from_id : event.id,
+            to_id : newEvent?.id
+          }
+          const appointmentSubscription = this.appointmentsService
+          .changeAppointment(data)
           .subscribe(() => {
             //this.router.navigate(['/patient'])
             this.refresh.next()
           });
           this.subscription.add(appointmentSubscription);
           this.refresh.next()
-        */
+          }
+        })
         }
       })
     }
@@ -430,12 +449,17 @@ export class KalendarComponent implements OnInit ,OnDestroy {
 
   switchDoctor(){
     this.type = 'doctor';
-    console.log('patient');
+    console.log('doctoro');
   }
   switchPatient(){
     this.type = 'patient';
-    console.log('docotor');
+    console.log('patiento');
   }
+}
+
+type app = {
+  name : string,
+  id?: number | string
 }
 
 @Component({
@@ -460,4 +484,13 @@ export class ReserveAppointmentDialog {
 })
 export class ChangeAppointmentDialog {
   constructor(@Inject(MAT_DIALOG_DATA) public data : {appointment : string, date: string}) {}
+}
+
+@Component({
+  selector: 'free-appointment-dialog',
+  templateUrl: 'dialogs/free-appointment-dialog.html',
+})
+export class FreeAppointmentDialog {
+  constructor(@Inject(MAT_DIALOG_DATA) public data : {apps : string[], events : CalendarEvent[]}) {}
+  event : string = '';
 }

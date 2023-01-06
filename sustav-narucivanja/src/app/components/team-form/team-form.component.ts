@@ -95,16 +95,6 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
     return nurses;
   }
 
-  public onDoctorRemoveClick(index: number): void {
-    const doctors = this.form.get('doctorIds') as FormArray;
-    doctors.removeAt(index);
-  }
-
-  public onNurseRemoveClick(index: number): void {
-    const nurses = this.form.get('nurseIds') as FormArray;
-    nurses.removeAt(index);
-  }
-
   public onSubmit(): void {
     const data: ITeamCreateData = {
       name: this.form.get('name')?.value as string,
@@ -123,10 +113,6 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
         .subscribe(() => this.router.navigate(['/admin']));
       this.subscription.add(teamSubscription);
     }
-  }
-
-  public test(): void {
-    console.log(this.data);
   }
 
   public test(): void {

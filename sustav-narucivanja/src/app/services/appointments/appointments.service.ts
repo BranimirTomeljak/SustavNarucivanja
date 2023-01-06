@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 //import { IObservable } from 'mobx';
 import { Observable, tap, BehaviorSubject } from 'rxjs';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
+import { IChangeAppointmentData } from 'src/app/interfaces/change-appointment-data';
 import { IRangeData } from 'src/app/interfaces/range-data';
 import { IRegisterData } from 'src/app/interfaces/register-data';
 import { IUser } from 'src/app/interfaces/user';
@@ -26,8 +27,8 @@ export class AppointmentsService {
   }
   */
 
-  public getAllDoctorApointments(): Observable<Array<any>> {
-    return this.http.get<Array<any>>('/api/appointment?role=doctor&id=10');
+  public getAllDoctorApointments(id: number): Observable<Array<any>> {
+    return this.http.get<Array<any>>(`/api/appointment?role=doctor&id=${id}`);
   }
 
   public addAppointment(data : IAppointmentData) {
@@ -46,7 +47,7 @@ export class AppointmentsService {
     return this.http.post('/api/appointment/cancel', data);
   }
 
-  public changeAppointment(data : IAppointmentData) {
+  public changeAppointment(data : IChangeAppointmentData) {
     return this.http.post('/api/appointment/change', data);
   }
 

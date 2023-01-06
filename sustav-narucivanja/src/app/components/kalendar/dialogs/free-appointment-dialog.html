@@ -1,0 +1,21 @@
+<div *ngIf="data.apps.length != 0; else noAppointments">
+<h2 mat-dialog-title>Odaberite neki od slobodnih termina</h2>
+<mat-dialog-content class="mat-typography">
+    <h2>
+    <mat-radio-group [(ngModel)] = "event">
+    <div *ngFor="let e of data.apps">
+        <mat-radio-button value="{{e}}">{{e}}</mat-radio-button>
+    </div>
+    </mat-radio-group>
+    </h2>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button btn btn-primary [mat-dialog-close]="false">Odustani</button>
+  <button mat-button [mat-dialog-close]="event" cdkFocusInitial>Potvrdi</button>
+</mat-dialog-actions>
+</div>
+
+<ng-template #noAppointments>
+    <h2  mat-dialog-title>Nema slobodnih termina</h2>
+    <button mat-button [mat-dialog-close]="false" cdkFocusInitial>Zatvori</button>
+</ng-template>
