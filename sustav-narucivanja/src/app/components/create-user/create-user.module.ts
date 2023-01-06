@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MainNavigationModule } from '../main-navigation/main-navigation.module';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [CreateUserComponent],
@@ -21,7 +22,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatButtonModule,
     MainNavigationModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    RouterModule,
   ],
   exports: [CreateUserComponent],
 })

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { EMPTY, Subscription } from 'rxjs';
 import { IDoctorNurseData } from 'src/app/interfaces/doctor_nurse-data';
@@ -13,7 +13,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   templateUrl: './create-user.component.html',
   styleUrls: ['./create-user.component.scss'],
 })
-export class CreateUserComponent {
+export class CreateUserComponent implements OnDestroy {
   @Input() public type?: string;
 
   private readonly subscription = new Subscription();
@@ -103,5 +103,9 @@ export class CreateUserComponent {
               this.router.navigate(['/admin']);
             });
     this.subscription.add(createSubscription);
+  }
+
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

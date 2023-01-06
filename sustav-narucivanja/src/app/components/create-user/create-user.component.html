@@ -36,9 +36,7 @@
 
     <mat-form-field>
       <mat-label>Ime</mat-label>
-      <input matInput type="text"
-      placeholder="Ime"
-      formControlName="name" />
+      <input matInput type="text" placeholder="Ime" formControlName="name" />
     </mat-form-field>
 
     <mat-form-field>
@@ -61,8 +59,16 @@
 
     <mat-form-field class="toggle">
       <mat-label>Datum rođenja</mat-label>
-      <input formControlName="dateOfBirth" placeholder="MM/DD/YYYY" matInput [matDatepicker]="dateOfBirth">
-      <mat-datepicker-toggle matSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
+      <input
+        formControlName="dateOfBirth"
+        placeholder="MM/DD/YYYY"
+        matInput
+        [matDatepicker]="dateOfBirth"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="dateOfBirth"
+      ></mat-datepicker-toggle>
       <mat-datepicker #dateOfBirth></mat-datepicker>
     </mat-form-field>
 
@@ -76,6 +82,7 @@
       />
     </mat-form-field>
 
-    <button type="submit" color="primary" mat-raised-button>Potvrdi</button>
+    <button type="submit" mat-raised-button>Potvrdi</button>
   </form>
+  <a mat-raised-button class="back" [routerLink]="'/admin'">Odustani</a>
 </div>

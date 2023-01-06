@@ -1,0 +1,44 @@
+<app-main-navigation></app-main-navigation>
+
+<ng-container *ngIf="teams$ | async as teams">
+  <table mat-table [dataSource]="teams" class="mat-elevation-z8">
+    <ng-container matColumnDef="teamId">
+      <th mat-header-cell *matHeaderCellDef>Id</th>
+      <td mat-cell *matCellDef="let element">{{ element.teamId }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Ime tima</th>
+      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="doctor">
+      <th mat-header-cell *matHeaderCellDef>Doktor</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.doctors[0].name + " " + element.doctors[0].surname }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tech">
+      <th mat-header-cell *matHeaderCellDef>Tehničar</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.nurses[0].name + " " + element.nurses[0].surname }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <a
+          mat-mini-fab
+          class="edit"
+          [routerLink]="'/admin/team/' + element.teamId"
+          ><mat-icon>edit</mat-icon></a
+        >
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</ng-container>

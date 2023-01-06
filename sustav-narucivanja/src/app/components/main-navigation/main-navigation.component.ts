@@ -11,7 +11,19 @@ export class MainNavigationComponent {
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router
-  ) {}
+  ) {
+    if (JSON.parse(localStorage.getItem('user') || '{}').type === 'admin') {
+      this.links = [
+        { title: 'Naslovna', path: '/' },
+        { title: 'Admin', path: '/admin' },
+      ];
+    } else {
+      this.links = [
+        { title: 'Naslovna', path: '/' },
+        { title: 'Profil', path: '/patient' },
+      ];
+    }
+  }
   public links = [
     { title: 'Naslovna', path: '/' },
     { title: 'Profil', path: '/patient' },

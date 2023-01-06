@@ -1,0 +1,16 @@
+@import '../../../../assets/styles/variables.scss';
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.delete-button {
+    background-color: $warn-color;
+    color: $secondary-color;
+    min-width: 130px;
+}

@@ -1,0 +1,17 @@
+<!-- <app-single-team [data]="data"></app-single-team> -->
+
+<app-main-navigation></app-main-navigation>
+
+<div class="container">
+  <h1>Uredi medicinski tim</h1>
+
+  <app-team-form
+    [data]="data"
+    [editMode]="true"
+    [teamId]="teamId"
+  ></app-team-form>
+
+  <button mat-raised-button class="delete-button" (click)="onDeleteClick()">
+    Izbrišite tim
+  </button>
+</div>
