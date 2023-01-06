@@ -36,7 +36,7 @@ export class LoginComponent implements OnDestroy {
       this.form.get('password')?.value === 'admin'
     ) {
       localStorage.setItem('user', JSON.stringify({ type: 'admin' }));
-      this.router.navigate(['/admin']);
+      this.router.navigate(['/']);
       return;
     }
 
