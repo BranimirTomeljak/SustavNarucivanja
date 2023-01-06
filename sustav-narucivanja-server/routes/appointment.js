@@ -10,46 +10,19 @@ const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;}
 const curr_date_factory = ()=> {return add_hour(new Date())}
 
 // IMPORTANT!!!!
-// once we get the authentification and session working you will not need to send id and role
+// once we get the authentification and session working you will not need to send id and type
 
 
-// get all appointemnts from an `id` with `role`
+// get all appointemnts from an `id` with `type`
 router.get('/', async function(req, res, next) {
-  let role = req.query.role
-  let id   = req.query.id
-  if (role == 'admin')
+  let type = req.session.user.type
+  let id   = req.session.user.id
+  if (type == 'admin')
     throw 'no admin here'
-  let field = {'doctor':'doctorid', 'patient':'patientid', 'nurse':'nurseid'}[role]
+  let field = {'doctor':'doctorid', 'patient':'patientid', 'nurse':'nurseid'}[type]
   let apps = await Appointment.fetchBy(field, id)
   res.json(apps);
 });
-
-// create appointment with `patientid`, nurse or doctor id 
-// time and duration
-// this creates only one appointment and it can have any length
-router.post('/add', async function(req, res, next) {
-  if ((req.body.doctorid===undefined) === (req.body.nurseid===undefined))
-    throw 'cannot both be defined'
-
-  let app = new Appointment(
-    id = undefined,
-    req.body.patientid,
-    req.body.doctorid,
-    req.body.nurseid,
-    req.body.time,
-    req.body.duration
-  )
-
-  if (await app.conflictsWithDb())
-    res.status(500).send('Appointment overlaps.')
-  else if (await app.isSavedToDb())
-    res.status(500).send('Appointment exists.')
-  else {
-    app.saveToDb();
-    res.status(300).send("OK");
-  }
-});
-
 
 /*
 Makes a block of appointments between `time_start` and `time_end` of
@@ -69,9 +42,6 @@ needed in the query:
     nurseid or doctorid: int
 */
 router.post('/add_range', async function(req, res, next) {
-  if ((req.body.doctorid===undefined) === (req.body.nurseid===undefined))
-    throw 'cannot both be defined'
-
   console.log('the date is ' + req.body.time_start )
   
   const loop_over_appointments = async (func) => {
@@ -97,11 +67,17 @@ router.post('/add_range', async function(req, res, next) {
   }
 
   const appointment_factory = (time) => {
+    let doctorid = undefined
+    if (req.session.user.type === 'doctor')
+      doctorid = req.session.user.id
+    let nurseid = undefined
+    if (req.session.user.type === 'nurse')
+      nurseid = req.session.user.id
     return new Appointment(
-      id = undefined,
-      req.body.patientid,
-      req.body.doctorid,
-      req.body.nurseid,
+      undefined,
+      undefined,
+      doctorid,
+      nurseid,
       time,
       '00:' + appointment_duration + ':00'
     )
@@ -149,7 +125,7 @@ these 6 are similar, they need identification information of an appointment in b
 router.post('/reserve', async function(req, res, next) {
   // TODO limit number of reserves
   app = (await Appointment.fetchBy('id', req.body.id))[0]
-  app.patientid = req.body.patientid
+  app.patientid = req.session.user.id
   app.created_on = curr_date_factory()
   app.type = req.body.type
   await app.updateDb()
