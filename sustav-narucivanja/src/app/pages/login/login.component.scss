@@ -18,8 +18,8 @@
   .error {
     padding: 16px;
     width: 300px;
-    color: white;
-    background-color: red;
+    color: $secondary-color;
+    background-color: $warn-color;
   }
 
   .info {
@@ -41,4 +41,6 @@ form {
 }
 button {
     margin: 20px;
+    background-color: $main-color;
+    color: $secondary-color;
 }

@@ -7,4 +7,5 @@ export interface IRegisterData {
   sex: string;
   dateOfBirth: Date;
   doctorId: number;
+  notificationMethod: string;
 }

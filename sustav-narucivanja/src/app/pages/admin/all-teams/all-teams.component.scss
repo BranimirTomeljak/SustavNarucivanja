@@ -1,3 +1,5 @@
+@import '../../../../assets/styles/variables.scss';
+
 .container {
     display: flex;
     flex-direction: column;
@@ -5,4 +7,17 @@
     justify-content: center;
     padding: 20px;
     box-sizing: border-box;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #ddd;
+}
+
+.edit {
+    background-color: transparent;
+    color: $main-color;
+    box-shadow: none;
 }
