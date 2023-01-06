@@ -129,7 +129,7 @@ router.post('/reserve', async function(req, res, next) {
   app.type = req.body.type
   await app.updateDb()
 
-  let doctor = await Doctor.getById(app.doctorid);  //dobavit pravi doctor id
+  let doctor = await Doctor.getById(app.doctorid);
   notification.sendEmail("appointmentReserved", doctor); //obavijesti doktora o rezervaciji termina
   res.status(300).send("OK")
 });
