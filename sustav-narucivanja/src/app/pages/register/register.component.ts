@@ -51,6 +51,7 @@ export class RegisterComponent implements OnDestroy {
       Validators.maxLength(10),
     ]),
     doctor: new FormControl('', [Validators.required]),
+    notificationMethod: new FormControl('', [Validators.required]),
   });
 
   public onFormSubmit(): void {
@@ -80,10 +81,8 @@ export class RegisterComponent implements OnDestroy {
       phoneNumber: this.form.get('phoneNumber')?.value,
       doctorId: this.form.get('doctor')?.value,
       dateOfBirth: this.form.get('dateOfBirth')?.value,
-      notificationMethod: 'email',
+      notificationMethod: this.form.get('notificationMethod')?.value,
     };
-
-    console.log(data);
 
     const registerSubscription = this.authService
       .register(data)
