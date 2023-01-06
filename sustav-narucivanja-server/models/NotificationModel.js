@@ -49,7 +49,7 @@ async function sendEmail(purpose, person){
     });
 }
 
-function getPurposeSubject(purpose){    //TODO popravit
+function getPurposeSubject(purpose){
     if(purpose == "registration")
         return "Potvrda registracije na Sustav za naručivanje";
 
@@ -66,7 +66,7 @@ function getPurposeSubject(purpose){    //TODO popravit
         return undefined;
 }
 
-function getPurposeMessage(purpose, person){ //TODO popravit
+function getPurposeMessage(purpose, person){
     if(purpose == "registration")
         return `<p>Poštovani ${person.name} ${person.surname},<br /><br />
         uspješno ste se registrirali na Sustav za naručivanje.<br /><br />
@@ -111,7 +111,7 @@ function getPurposeMessage(purpose, person){ //TODO popravit
         return undefined;
 }
 
-function getPurposeSMS(purpose, person){    //TODO popravit
+function getPurposeSMS(purpose, person){
     if(purpose == "registration")
         return `Poštovani ${person.name} ${person.surname},
         uspješno ste rezervirali termin u našemu sustavu. 
@@ -173,7 +173,6 @@ async function sendSMS(purpose, person){
     }
 
     //sendSms();    //simulacija
-    //sendEmail("appointmentBooked", "bruno.racki@fer.hr");
 }
 
 
@@ -183,5 +182,3 @@ module.exports = {
     sendSMS: sendSMS,
     sendNotification: sendNotification
 }
-
-//console.log(getPurposeMessage('registration', 'bruno.racki@fer.hr'));
