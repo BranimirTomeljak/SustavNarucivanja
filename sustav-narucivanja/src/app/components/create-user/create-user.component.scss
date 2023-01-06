@@ -41,5 +41,16 @@ form {
     align-items: center;
 }
 button {
+    margin-top: 20px;
+    background-color: #3f51b5;
+    color: #fff;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #000000DE;
+}
+
+.back {
     margin: 20px;
 }
