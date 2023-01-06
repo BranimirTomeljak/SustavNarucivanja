@@ -104,10 +104,10 @@ class User {
         if (this.id !== undefined)
             throw 'cannot have defined id and try to save the user'
 
-        const sql = "INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth, doctorId) VALUES ('" +
+        const sql = "INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth) VALUES ('" +
             this.name + "', '" + this.surname + "', '" +
             this.sex + "', '" + this.phonenumber + "', '" + this.mail + "', '" +
-            this.password + "', '" + this.dateofbirth + "' ,1) RETURNING id;" // TODO remove doctor id
+            this.password + "', '" + this.dateofbirth + "') RETURNING id;" // TODO remove doctor id
 
         const result = await db.query(sql, []);
         this.id = result[0].id
