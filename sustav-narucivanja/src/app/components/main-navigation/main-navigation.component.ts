@@ -16,18 +16,18 @@ export class MainNavigationComponent {
       this.links = [
         { title: 'Naslovna', path: '/' },
         { title: 'Admin', path: '/admin' },
+        { title: 'Profil', path: '/profile' },
       ];
     } else {
       this.links = [
         { title: 'Naslovna', path: '/' },
-        { title: 'Profil', path: '/patient' },
+        { title: 'Kalendar', path: '/patient' },
+        { title: 'Profil', path: '/profile' },
       ];
     }
   }
-  public links = [
-    { title: 'Naslovna', path: '/' },
-    { title: 'Profil', path: '/patient' },
-  ];
+
+  public links: Array<{ title: string; path: string }> = [];
 
   public onLogoutClick() {
     this.authService.logout();
