@@ -138,7 +138,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
     return new Date(diff).toLocaleTimeString();
   }
 
-  // dodajemo vremensku zonu u slucaju da koristimo funkciju addTimeZone()
+  // dodajemo vremensku zonu u slucaju da koristimo funkciju /add
   private addTimeZone = (date?: Date) : Date => {
     var endDefined = new Date(0);
     if(date !== undefined){
@@ -455,11 +455,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
     this.type = 'patient';
     console.log('patiento');
   }
-}
 
-type app = {
-  name : string,
-  id?: number | string
 }
 
 @Component({

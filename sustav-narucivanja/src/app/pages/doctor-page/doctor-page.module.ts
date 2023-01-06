@@ -4,6 +4,7 @@ import { MainFooterModule } from 'src/app/components/main-footer/main-footer.mod
 import { MainNavigationModule } from 'src/app/components/main-navigation/main-navigation.module';
 import { KalendarModule } from 'src/app/components/kalendar/kalendar.module';
 import { DoctorPageComponent } from './doctor-page.component';
+import { WorkingHoursComponent } from './working-hours/working-hours.component';
 
 @NgModule({
   declarations: [DoctorPageComponent],

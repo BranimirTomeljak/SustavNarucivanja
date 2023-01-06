@@ -12,6 +12,7 @@ import { EventColor } from 'calendar-utils';
 import { BehaviorSubject, Observable, Subject, Subscription, switchMap } from 'rxjs';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
+import { Router } from '@angular/router';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -57,6 +58,7 @@ export class DoctorPageComponent implements OnInit {
 
   constructor(
     private readonly appointmentsService: AppointmentsService,
+    private readonly router: Router,
   ) {
     this.trigger$.next(null);
    }
@@ -143,6 +145,6 @@ export class DoctorPageComponent implements OnInit {
   }
 
   odrediVlastitaPravila(){
-    console.log('Odredujem vlastita pravila...')
+    this.router.navigate(['/doctor/working-hours'])
   }
 }

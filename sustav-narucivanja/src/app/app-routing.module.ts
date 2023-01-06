@@ -25,6 +25,8 @@ import { PatientComponent } from './pages/patient/patient.component';
 import { PatientModule } from './pages/patient/patient.module';
 import { RegisterComponent } from './pages/register/register.component';
 import { RegisterModule } from './pages/register/register.module';
+import { WorkingHoursComponent } from './pages/doctor-page/working-hours/working-hours.component';
+import { WorkingHoursModule } from './pages/doctor-page/working-hours/working-hours.module';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -49,7 +51,11 @@ const routes: Routes = [
         canActivate: [AdminGuard],
       },
       { path: 'patient', component: PatientComponent },
-      { path: 'doctor', component: DoctorPageComponent}
+      { path: 'doctor',
+        children: [
+          { path: '', component: DoctorPageComponent },
+          { path: 'working-hours', component: WorkingHoursComponent}
+        ]},
     ],
     canActivate: [AuthGuard],
   },
@@ -73,6 +79,7 @@ const routes: Routes = [
     AdminModule,
     DoctorModule,
     DoctorPageModule,
+    WorkingHoursModule,
     TechModule,
     TeamModule,
     PatientModule,
