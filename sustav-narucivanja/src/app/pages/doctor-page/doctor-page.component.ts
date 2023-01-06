@@ -15,6 +15,7 @@ import { IAppointmentData } from 'src/app/interfaces/appointment-data';
 import { Router } from '@angular/router';
 import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Form, FormBuilder} from '@angular/forms';
+import { RecordAttendanceDialogComponent } from 'src/app/components/record-attendance-dialog/record-attendance-dialog.component';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -165,7 +166,7 @@ export class DoctorPageComponent implements OnInit {
                 title : 'Rezerviran termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                     + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
                 selected : undefined}));
-    const dialogRef = this.dialog.open(RecordAttendaceDialog, {
+    const dialogRef = this.dialog.open(RecordAttendanceDialogComponent, {
       data : {
         appointments : apps,
       }
@@ -200,6 +201,7 @@ type App = {
   selected?: boolean
 }
 
+/*
 @Component({
   selector: 'record-attendance-dialog',
   templateUrl: 'dialogs/record-attendance-dialog.html',
@@ -217,3 +219,4 @@ export class RecordAttendaceDialog {
     }
   }
 }
+*/

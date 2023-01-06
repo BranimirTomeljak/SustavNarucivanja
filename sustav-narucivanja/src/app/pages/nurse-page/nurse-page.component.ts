@@ -15,6 +15,7 @@ import { IAppointmentData } from 'src/app/interfaces/appointment-data';
 import { Router } from '@angular/router';
 import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Form, FormBuilder} from '@angular/forms';
+import { RecordAttendanceDialogComponent } from 'src/app/components/record-attendance-dialog/record-attendance-dialog.component';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -158,13 +159,13 @@ export class NursePageComponent implements OnInit {
                 .filter(app => new Date(app.time.slice(0,-1)).toLocaleDateString() == new Date().toLocaleDateString())
                 .filter(app => this.addDuration(new Date(app.time.slice(0, -1)), app.duration).getTime() < new Date().getTime());
     var apps : App[] = [];
+    console.log(appointments)
     appointments.forEach(app => apps.push({
                 id : app.id ,
                 title : 'Rezerviran termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                     + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
                 selected : undefined}));
-    /*
-    const dialogRef = this.dialog.open(RecordAttendaceDialog, {
+    const dialogRef = this.dialog.open(RecordAttendanceDialogComponent, {
       data : {
         appointments : apps,
       }
@@ -190,7 +191,6 @@ export class NursePageComponent implements OnInit {
         })
       }
     })
-    */
   }
 }
 
@@ -199,22 +199,3 @@ type App = {
   title: string,
   selected?: boolean
 }
-/*
-@Component({
-  selector: 'record-attendance-dialog',
-  templateUrl: 'dialogs/record-attendance-dialog.html',
-})
-export class RecordAttendaceDialog {
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data : {appointments : App[]},
-    private _formBuilder: FormBuilder
-  ) {}
-  onChange(appointment : App, attendance : boolean){
-    //console.log(appointment.selected);
-    var app = this.data.appointments.find(a => a == appointment);
-    if(app != undefined){
-      app.selected = attendance;
-    }
-  }
-}
-*/
