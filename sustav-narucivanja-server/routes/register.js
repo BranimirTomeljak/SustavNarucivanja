@@ -151,7 +151,6 @@ const check_and_put = async (req, res, where) =>{
   )
   try{
     await person.addToDb();
-    //notification.sendNotification("mail", "registration", person); //(notificationMethod, purpose, mail, phoneNumber)
     notification.sendNotification(notificationMethod, "registration", person); //kad dobijemo notificationMethod u body-u of frontenda
     res.json(person);
   }

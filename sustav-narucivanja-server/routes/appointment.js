@@ -1,8 +1,7 @@
 var express = require('express');
-//const { rawListeners } = require('../app');
 const notification = require("../models/NotificationModel");
 var Appointment = require('../models/AppointmentModel');
-var { Doctor } = require("../models/UserModel");
+var { Doctor, Patient } = require("../models/UserModel");
 
 var router = express.Router();
 const appointment_duration = 30;
@@ -131,7 +130,7 @@ router.post('/reserve', async function(req, res, next) {
   await app.updateDb()
 
   let doctor = await Doctor.getById(app.doctorid);  //dobavit pravi doctor id
-  notification.sendEmail("appointmentBooked", doctor.mail); //obavijesti doktora o rezervaciji termina
+  notification.sendEmail("appointmentReserved", doctor); //obavijesti doktora o rezervaciji termina
   res.status(300).send("OK")
 });
 
@@ -146,6 +145,7 @@ router.post('/cancel', async function(req, res, next) {
   app.changes_from = undefined
   app.type = undefined
   await app_to.updateDb()
+  notification.sendEmail("appointmentCanceled", app)
   res.status(300).send("OK")
 });
 
@@ -161,6 +161,8 @@ router.post('/change', async function(req, res, next) {
   app_to.changes_from = req.body.from_id
   app_to.patientid = app_from.patientid
   await app_to.updateDb()
+  let patient = await Patient.getById(app_from.patientid);
+  notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
   res.status(300).send("OK")
 });
 
@@ -178,6 +180,7 @@ router.post('/accept_change', async function(req, res, next) {
   app_from.type = undefined
   await app_to.updateDb()
   await app_from.updateDb()
+  notification.sendEmail("appointmentChangeAccept", app_to);
   res.status(300).send("OK")
 });
 
@@ -189,6 +192,7 @@ router.post('/reject_change', async function(req, res, next) {
   app_to.changes_from = undefined
   app_to.patientid = undefined
   await app_to.updateDb()
+  notification.sendEmail("appointmentChangeReject", app_to);
   res.status(300).send("OK")
 });
 
