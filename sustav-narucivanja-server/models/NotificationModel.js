@@ -72,7 +72,7 @@ function getPurposeMessage(purpose, person){ //TODO popravit
         uspješno ste se registrirali na Sustav za naručivanje.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
-        <p style="color: blue"> Web stranica sustava: http://51.103.208.150/ </p>
+        <p style="color: blue"> Web stranica sustava: <a style="color: dark-blue" href="http://51.103.208.150/">http://51.103.208.150/</a></p>
         <p style="color: red; font-style: italic"> Null team 2022. </p>
         <p style="color: #878787; font-style: bold"> Ova poruka je automatski generirana </p>
         
@@ -82,7 +82,7 @@ function getPurposeMessage(purpose, person){ //TODO popravit
         rezerviran Vam je termin u našemu sustavu. Molimo Vas provjerite pojedinosti o terminu na web stranici Sustava za naručivanje.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
-        <p style="color: blue"> Web stranica sustava: http://51.103.208.150/ </p>
+        <p style="color: blue"> Web stranica sustava: <a style="color: dark-blue" href="http://51.103.208.150/">http://51.103.208.150/</a></p>
         <p style="color: red; font-style: italic"> Null team 2022. </p>
         <p style="color: #878787; font-style: bold"> Ova poruka je automatski generirana </p>
         
@@ -92,7 +92,7 @@ function getPurposeMessage(purpose, person){ //TODO popravit
         promijenjen Vam je termin u našemu sustavu. Molimo Vas provjerite pojedinosti promjeni termina na web stranici Sustava za naručivanje.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
-        <p style="color: blue"> Web stranica sustava: http://51.103.208.150/ </p>
+        <p style="color: blue"> Web stranica sustava: <a style="color: dark-blue" href="http://51.103.208.150/">http://51.103.208.150/</a></p>
         <p style="color: red; font-style: italic"> Null team 2022. </p>
         <p style="color: #878787; font-style: bold"> Ova poruka je automatski generirana </p>
         
@@ -102,7 +102,7 @@ function getPurposeMessage(purpose, person){ //TODO popravit
         podsjećamo Vas da imate rezerviran termin u našemu sustavu. Molimo Vas provjerite pojedinosti o terminu na web stranici Sustava za naručivanje.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
-        <p style="color: blue"> Web stranica sustava: http://51.103.208.150/ </p>
+        <p style="color: blue"> Web stranica sustava: <a style="color: dark-blue" href="http://51.103.208.150/">http://51.103.208.150/</a></p>
         <p style="color: red; font-style: italic"> Null team 2022. </p>
         <p style="color: #878787; font-style: bold"> Ova poruka je automatski generirana </p>
         
