@@ -68,32 +68,73 @@ function getPurposeSubject(purpose){    //TODO popravit
 
 function getPurposeMessage(purpose, person){ //TODO popravit
     if(purpose == "registration")
-        return `<p>Poštovani ${person.name} ${person.surname},<br /><br />Uspješno ste se registrirali na Sustav za naručivanje.<br /><br />Lijep pozdrav, Vaš Sustav za naručivanje<br />
-        <img src="sustav-narucivanja\sustav-narucivanja\sustav-narucivanja\src\assets\img\hzzo.jpg">`;
+        return `<p>Poštovani ${person.name} ${person.surname},<br /><br />
+        uspješno ste se registrirali na Sustav za naručivanje.<br /><br />
+        Lijep pozdrav, Vaš Sustav za naručivanje!<br />
+        
+        <p style="color: blue"> Web stranica sustava: http://51.103.208.150/ </p>
+        <p style="color: red; font-style: italic"> Null team 2022. </p>
+        <p style="color: #878787; font-style: bold"> Ova poruka je automatski generirana </p>
+        
+        <img src="https://medicinarada.hr/wp-content/uploads/2020/04/hzzo_logo_posts.jpg" text-align="center" height="100px" alt="hzzo">`;
     else if(purpose == "appointmentBooked")
-        return `<p>Poštovani ${person.name} ${person.surname},<br /><br />Rezerviran Vam je termin. Provjerite na "link aplikacije" kada`;
+        return `<p>Poštovani ${person.name} ${person.surname},<br /><br />
+        rezerviran Vam je termin u našemu sustavu. Molimo Vas provjerite pojedinosti o terminu na web stranici Sustava za naručivanje.<br /><br />
+        Lijep pozdrav, Vaš Sustav za naručivanje!<br />
+        
+        <p style="color: blue"> Web stranica sustava: http://51.103.208.150/ </p>
+        <p style="color: red; font-style: italic"> Null team 2022. </p>
+        <p style="color: #878787; font-style: bold"> Ova poruka je automatski generirana </p>
+        
+        <img src="https://medicinarada.hr/wp-content/uploads/2020/04/hzzo_logo_posts.jpg" text-align="center" height="100px" alt="hzzo">`;
     else if(purpose == "appointmentChanged")
-        return `<p>Poštovani ${person.name} ${person.surname},<br /><br />slicno ka ovo gori</p>`;
+        return `<p>Poštovani ${person.name} ${person.surname},<br /><br />
+        promijenjen Vam je termin u našemu sustavu. Molimo Vas provjerite pojedinosti promjeni termina na web stranici Sustava za naručivanje.<br /><br />
+        Lijep pozdrav, Vaš Sustav za naručivanje!<br />
+        
+        <p style="color: blue"> Web stranica sustava: http://51.103.208.150/ </p>
+        <p style="color: red; font-style: italic"> Null team 2022. </p>
+        <p style="color: #878787; font-style: bold"> Ova poruka je automatski generirana </p>
+        
+        <img src="https://medicinarada.hr/wp-content/uploads/2020/04/hzzo_logo_posts.jpg" text-align="center" height="100px" alt="hzzo">`;
     else if(purpose == "reminder")
-        return `<p>Poštovani ${person.name} ${person.surname},</p><p><br> Podsjećamo Vas da imate termin sutra: provjerite u apliakciji bla bla.<br><br>Lijep pozdrav, Vaš Sustav za naručivanje</p>`;
+        return `<p>Poštovani ${person.name} ${person.surname},<br /><br />
+        podsjećamo Vas da imate rezerviran termin u našemu sustavu. Molimo Vas provjerite pojedinosti o terminu na web stranici Sustava za naručivanje.<br /><br />
+        Lijep pozdrav, Vaš Sustav za naručivanje!<br />
+        
+        <p style="color: blue"> Web stranica sustava: http://51.103.208.150/ </p>
+        <p style="color: red; font-style: italic"> Null team 2022. </p>
+        <p style="color: #878787; font-style: bold"> Ova poruka je automatski generirana </p>
+        
+        <img src="https://medicinarada.hr/wp-content/uploads/2020/04/hzzo_logo_posts.jpg" text-align="center" height="100px" alt="hzzo">`;
     else
         return undefined;
-        
-    
 }
 
 function getPurposeSMS(purpose, person){    //TODO popravit
     if(purpose == "registration")
-        return `registration`;
+        return `Poštovani ${person.name} ${person.surname},
+        uspješno ste rezervirali termin u našemu sustavu. 
+        Lijep pozdrav, Vaš Sustav za naručivanje!
+        Web stranica sustava: http://51.103.208.150/`;
 
     else if(purpose == "appointmentBooked")
-        return `appointmentBooked`;
+        return `Poštovani ${person.name} ${person.surname},
+        rezerviran Vam je termin u našemu sustavu. Molimo Vas provjerite pojedinosti o terminu na web stranici Sustava za naručivanje.
+        Lijep pozdrav, Vaš Sustav za naručivanje!
+        Web stranica sustava: http://51.103.208.150/`;
 
     else if(purpose == "appointmentChanged")
-        return `appointmentChanged`;
+        return `Poštovani ${person.name} ${person.surname},
+        promijenjen Vam je termin u našemu sustavu. Molimo Vas provjerite pojedinosti promjeni termina na web stranici Sustava za naručivanje.
+        Lijep pozdrav, Vaš Sustav za naručivanje!
+        Web stranica sustava: http://51.103.208.150/`;
 
     else if(purpose == "reminder")
-        return `reminder`;
+        return `Poštovani ${person.name} ${person.surname},
+        Podsjećamo Vas da imate rezerviran termin u našemu sustavu. Molimo Vas provjerite pojedinosti o terminu na web stranici Sustava za naručivanje.
+        Lijep pozdrav, Vaš Sustav za naručivanje!
+        Web stranica sustava: http://51.103.208.150/`;
         
     else
         return undefined;
@@ -131,8 +172,10 @@ async function sendSMS(purpose, person){
             .catch(err => { console.log('There was an error sending the messages.'); console.error(err); });
     }
 
-    // sendSms();    //simulacija
+    //sendSms();    //simulacija
+    //sendEmail("appointmentBooked", "bruno.racki@fer.hr");
 }
+
 
 module.exports = {
     sendEmail: sendEmail,
@@ -142,4 +185,3 @@ module.exports = {
 }
 
 //console.log(getPurposeMessage('registration', 'bruno.racki@fer.hr'));
-//sendEmail('registration', 'bruno.racki@fer.hr')
