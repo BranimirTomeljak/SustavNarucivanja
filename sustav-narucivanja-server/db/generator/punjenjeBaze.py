@@ -66,7 +66,7 @@ for i in range (0, broj):
         trenutnoPrezime = random.choice(listaPrezimena)
         SQL.write("('" + trenutnoIme + "', '" + trenutnoPrezime + "', " + "'M'"+ ", " + "'09" + str(random.randint(1,9)) + str(mobitel)+ "', '" +
             trenutnoIme + trenutnoPrezime + str(i) + "@gmail.com'"+ ", '" + lozinka + lozinka2 + "', '" + str(random.randint(1929,2003)) + "-" + 
-            str(random.randint(1,12)) + "-" + str(random.randint(1,28)) + "', '1135454')," + "\n")
+            str(random.randint(1,12)) + "-" + str(random.randint(1,28)) + "')," + "\n")
         mobitel += 1
         id += 1
     else:
@@ -78,7 +78,7 @@ for i in range (0, broj):
         trenutnoPrezime = random.choice(listaPrezimena)
         SQL.write("('" + trenutnoIme + "', '" + trenutnoPrezime + "', " + "'Z'"+ ", " + "'09" + str(random.randint(1,9)) + str(mobitel)+ "', '" +
             trenutnoIme + trenutnoPrezime + str(i) + "@gmail.com'"+ ", '" + lozinka + lozinka2 + "', '" + str(random.randint(1929,2003)) + "-" + 
-            str(random.randint(1,12)) + "-" + str(random.randint(1,28)) + "', '1135454')," + "\n")
+            str(random.randint(1,12)) + "-" + str(random.randint(1,28)) + "')," + "\n")
 
         mobitel += 1
         id += 1

@@ -1,0 +1,7 @@
+<app-main-navigation></app-main-navigation>
+<div *ngIf="teams$ | async as teams" class="container">
+  <a *ngFor="let team of teams" [routerLink]="'/admin/team/' + team.teamid">{{
+    team.name
+  }}</a>
+</div>
+<a routerLink="/admin">Povratak</a>

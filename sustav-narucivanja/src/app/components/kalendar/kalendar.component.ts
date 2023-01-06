@@ -219,6 +219,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   constructor(
     private modal: NgbModal,
     private readonly appointmentsService: AppointmentsService,
+    private readonly router : Router,
     public dialog : MatDialog
     ) {
     this.trigger$.next(null);
@@ -373,10 +374,12 @@ export class KalendarComponent implements OnInit ,OnDestroy {
           const appointmentSubscription = this.appointmentsService
           .cancelAppointment(data)
           .subscribe(() => {
-            //this.router.navigate(['/patient'])
-            this.refresh.next()
+            this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+            this.router.navigate(['/patient']));
+            //this.refresh.next()
           });
           this.subscription.add(appointmentSubscription);
+          
         }
       })
     }

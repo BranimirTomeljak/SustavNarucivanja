@@ -6,7 +6,6 @@ const {Team} = require('../models/TeamModel');
 router.get('/all', async function(req, res, next) {
     let teams = await Team.fetchAllTeams();
     res.json(teams);
-    
 });
 
 router.post('/create', async function(req, res, next) {
@@ -14,31 +13,42 @@ router.post('/create', async function(req, res, next) {
     res.json("Successfully created team")
 });
 
-router.post('/delete', function(req, res, next) {
-    let team = new Team(req.body.teamId);
-    console.log(team);
-    team.removeTeamFromDb();
+router.delete('/delete/:id', function(req, res, next) {
+    try{
+        let team = new Team(req.params.id);
+        console.log(team);
+        team.removeTeamFromDb();
+        res.status(200).json("Successfully deleted team");
+    }
+    catch{
+        res.status(500).json("Error deleting team");
+    }
 });
 
-router.post('/edit', function(req, res, next) {
+router.post('/edit', async function(req, res, next) {
     let team = new Team(req.body.teamId);
-    let doctors = fetchAllDoctorsFromTeam(team);
-    let nurses = fetchAllNursesFromTeam(team);
+    console.log(team.teamId);
+    let doctors = await Team.fetchAllDoctorsFromTeam(team.teamId);
+    let nurses = await Team.fetchAllNursesFromTeam(team.teamId);
 
-    for (let doctorId of doctors) {
-        team.removeDoctorFromTeam(doctorId);
+    for (let doctor of doctors) {
+        await team.removeDoctorFromTeam(doctor.id);
     }
-    for(let nurseId of nurses) {
-        team.removeNurseFromTeam(nurseId);
+    for(let nurse of nurses) {
+        await team.removeNurseFromTeam(nurse.id);
     }
-
+    console.log("removed");
     for (let doctorId of req.body.doctorIds) {
-        team.addDoctorToTeam(doctorId);
+        await team.addDoctorToTeam(doctorId);
     }
     for(let nurseId of req.body.nurseIds) {
-        team.addNurseToTeam(nurseId);
+        await team.addNurseToTeam(nurseId);
     }
-    
+});
+
+router.get('/:id', async function(req, res, next) {
+    let team = await Team.fetchByTeamId(req.params.id);
+    res.json(team);
 });
 
 module.exports = router;

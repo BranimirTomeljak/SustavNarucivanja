@@ -1,9 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminGuard } from './guards/admin/admin.guard';
 import { AnonGuard } from './guards/anon/anon.guard';
 import { AuthGuard } from './guards/auth/auth.guard';
 import { AdminComponent } from './pages/admin/admin.component';
 import { AdminModule } from './pages/admin/admin.module';
+import { AllTeamsComponent } from './pages/admin/all-teams/all-teams.component';
+import { AllTeamsModule } from './pages/admin/all-teams/all-teams.module';
 import { DoctorComponent } from './pages/admin/create/doctor/doctor.component';
 import { DoctorModule } from './pages/admin/create/doctor/doctor.module';
 import { TeamComponent } from './pages/admin/create/team/team.component';
@@ -12,6 +15,8 @@ import { TechComponent } from './pages/admin/create/tech/tech.component';
 import { TechModule } from './pages/admin/create/tech/tech.module';
 import { DoctorPageComponent } from './pages/doctor-page/doctor-page.component';
 import { DoctorPageModule } from './pages/doctor-page/doctor-page.module';
+import { TeamViewComponent } from './pages/admin/team-view/team-view.component';
+import { TeamViewModule } from './pages/admin/team-view/team-view.module';
 import { HomeComponent } from './pages/home/home.component';
 import { HomeModule } from './pages/home/home.module';
 import { LoginComponent } from './pages/login/login.component';
@@ -26,19 +31,27 @@ const routes: Routes = [
   {
     path: '',
     children: [
-      { path: 'admin', component: AdminComponent },
+      {
+        path: 'admin',
+        children: [
+          { path: '', component: AdminComponent },
+          {
+            path: 'create',
+            children: [
+              { path: 'doctor', component: DoctorComponent },
+              { path: 'tech', component: TechComponent },
+              { path: 'team', component: TeamComponent },
+            ],
+          },
+          { path: 'teams', component: AllTeamsComponent },
+          { path: 'team/:id', component: TeamViewComponent },
+        ],
+        canActivate: [AdminGuard],
+      },
       { path: 'patient', component: PatientComponent },
       { path: 'doctor', component: DoctorPageComponent}
     ],
     canActivate: [AuthGuard],
-  },
-  {
-    path: 'create',
-    children: [
-      { path: 'doctor', component: DoctorComponent },
-      { path: 'tech', component: TechComponent },
-      { path: 'team', component: TeamComponent },
-    ],
   },
   {
     path: '',
@@ -63,6 +76,8 @@ const routes: Routes = [
     TechModule,
     TeamModule,
     PatientModule,
+    TeamViewModule,
+    AllTeamsModule,
   ],
   exports: [RouterModule],
 })

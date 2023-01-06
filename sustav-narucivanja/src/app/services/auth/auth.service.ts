@@ -37,17 +37,6 @@ export class AuthService {
     );
   }
 
-  /*
-  public createTeam(data : ITeamData) {
-    return this.http.post('/api/createTeam', data).pipe(
-      tap((resp) => {
-        localStorage.setItem('team', JSON.stringify(resp));
-        this._user$.next(resp);
-      })
-    );
-  }
-  */
-
   public createDoctor(data: IDoctorNurseData) {
     return this.http.post('/api/register/doctor', data).pipe(
       tap((resp) => {
