@@ -2,6 +2,21 @@ const db = require('../db');
 const nodemailer = require("nodemailer");
 const { Patient } = require("../models/UserModel");
 
+const { Vonage } = require('@vonage/server-sdk');
+const vonage = new Vonage({
+    applicationId: 'da9774a8-73a3-4a59-9568-1937558b6b85',
+    privateKey: './private.key',
+    apiKey: "01bf6b5f",
+    apiSecret: "jcfVCTE4UVYOaVfK"
+});
+
+async function sendNotification(method, purpose, mail, phoneNumber){
+    if(method == "mail")
+        sendEmail(purpose, mail);
+    else
+        sendSMS(purpose, phoneNumber);
+}
+
 //patientRegistration - registration
 //appointmentBooking - appointmentBooked
 //appointmentChange - appointmentChanged        TODO
@@ -65,6 +80,23 @@ function getPurposeMessage(purpose){    //TODO popravit
         return undefined;
 }
 
+function getPurposeSMS(purpose){    //TODO popravit
+    if(purpose == "registration")
+        return `registration`;
+
+    else if(purpose == "appointmentBooked")
+        return `appointmentBooked`;
+
+    else if(purpose == "appointmentChanged")
+        return `appointmentChanged`;
+
+    else if(purpose == "reminder")
+        return `reminder`;
+        
+    else
+        return undefined;
+}
+
 async function appointmentReminderEmail() {
     setInterval(async function(){
         const sql = "SELECT * FROM appointment";
@@ -83,10 +115,26 @@ async function appointmentReminderEmail() {
                 sendEmail("reminder", patient.email);
             }
         }
-    }, 60*60*1000); //update svakih sat vremena (da ne trosi resurse) (mozda smanjit interval, sta drugi misle?)
+    }, 60*60*1000);
+}
+
+async function sendSMS(purpose, phoneNumber){
+    const from = "Sustav za naručivanje"
+    const to = phoneNumber
+    const text = getPurposeSMS(purpose);
+
+    async function sendSms() {
+        await vonage.sms.send({to, from, text})
+            .then(resp => { console.log('Message sent successfully'); console.log(resp); })
+            .catch(err => { console.log('There was an error sending the messages.'); console.error(err); });
+    }
+
+    //sendSms();    //simulacija
 }
 
 module.exports = {
     sendEmail: sendEmail,
-    appointmentReminderEmail: appointmentReminderEmail
+    appointmentReminderEmail: appointmentReminderEmail,
+    sendSMS: sendSMS,
+    sendNotification: sendNotification
 }

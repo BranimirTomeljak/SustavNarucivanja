@@ -179,12 +179,12 @@ class Patient extends User {
     mail,
     password,
     dateofbirth,
-    doctorid,
-    nFailedAppointments
+    rest = {}
   ) {
     super(id, name, surname, sex, phonenumber, mail, password, dateofbirth);
-    this.nFailedAppointments = nFailedAppointments;
-    this.doctorid = doctorid;
+    this.nFailedAppointments = rest.nFailedAppointments;
+    this.doctorid = rest.doctorid;
+    this.notificationMethod = rest.notificationMethod;
     this.type = "patient";
   }
 
@@ -193,9 +193,14 @@ class Patient extends User {
     else await this.saveUserToDb();
 
     const sql =
-      "INSERT INTO patient (id, doctorid, nFailedAppointments) VALUES (" +
-      [this.id, this.doctorid, this.nFailedAppointments].join(",") +
-      " )";
+      "INSERT INTO patient (id, doctorid, nFailedAppointments, notificationMethod) VALUES (" +
+      [
+        this.id,
+        this.doctorid,
+        this.nFailedAppointments,
+        "'" + this.notificationMethod + "'",
+      ].join(",") +
+      ")";
     await db.query(sql, [], true);
   }
 
@@ -215,14 +220,15 @@ class Patient extends User {
       user.password,
       user.dateofbirth,
       result[0].doctorid,
-      result[0].nfailedappointments
+      result[0].nfailedappointments,
+      result[0].notificationMethod
     );
   }
 
   static async getAll() {
     //const sql = 'SELECT * FROM patient Natural Join users';  //zakomentirano dok se ne makne doctorid iz users tablice
     const sql =
-      "SELECT users.id, users.name, users.surname, users.sex, users.phonenumber, users.mail, users.password, users.dateOfBirth, patient.doctorid, patient.nFailedAppointments FROM patient Join users on users.id = patient.id";
+      "SELECT users.id, users.name, users.surname, users.sex, users.phonenumber, users.mail, users.password, users.dateOfBirth, patient.doctorid, patient.nFailedAppointments, patient.notificationMethod FROM patient Join users on users.id = patient.id";
     const results = await db.query(sql, []);
     if (results.length === 0) throw "user does not exist";
     let toreturn = [];
@@ -238,7 +244,8 @@ class Patient extends User {
           result.password,
           result.dateofbirth,
           result.doctorid,
-          result.nFailedAppointments
+          result.nFailedAppointments,
+          result.notificationMethod
         )
       );
     return toreturn;
@@ -255,10 +262,10 @@ class Nurse extends User {
     mail,
     password,
     dateofbirth,
-    teamid
+    rest = {}
   ) {
     super(id, name, surname, sex, phonenumber, mail, password, dateofbirth);
-    this.teamid = teamid;
+    this.teamid = undefined;
     this.type = "nurse";
   }
 
@@ -346,7 +353,8 @@ class Doctor extends Nurse {
     phonenumber,
     mail,
     password,
-    dateofbirth
+    dateofbirth,
+    rest = {}
   ) {
     super(id, name, surname, sex, phonenumber, mail, password, dateofbirth);
     this.type = "doctor";
@@ -436,7 +444,8 @@ class Admin extends User {
     phonenumber,
     mail,
     password,
-    dateofbirth
+    dateofbirth,
+    rest = {}
   ) {
     super(id, name, surname, sex, phonenumber, mail, password, dateofbirth);
     this.type = "admin";
