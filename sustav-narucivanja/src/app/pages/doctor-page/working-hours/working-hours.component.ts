@@ -36,24 +36,12 @@ export class WorkingHoursComponent{
   
   private addHoursAndMinutes(date : Date, time: string) : string {
     var newDate : Date = date;
-    var hours = Number(time.split(':')[0]) + 1;
+    var hours = Number(time.split(':')[0]) - 1;
     var minutes = Number(time.split(':')[1]);
     newDate.setHours(hours);
     newDate.setMinutes(minutes);
     return newDate.toISOString();
   }
-
-  private subTimeZone = (date?: Date) : Date => {
-    var endDefined = new Date(0);
-    if(date !== undefined){
-      endDefined = date;
-    }
-    var newDate  = new Date(endDefined);
-
-    newDate.setHours(newDate.getHours() - 1);
-    return newDate;
-  }
-
 
   public onFormSubmit(): void {
    
@@ -74,7 +62,7 @@ export class WorkingHoursComponent{
 
 
     const data: IRangeData = {
-      doctorid: this._user$.doctorid,
+      doctorid: 8,
       nurseid: this._user$.nurseid,
       time_start: this.addHoursAndMinutes((date), startTime),
       time_end: this.addHoursAndMinutes((date), endTime)

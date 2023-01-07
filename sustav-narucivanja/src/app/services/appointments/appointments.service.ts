@@ -12,8 +12,6 @@ import { IUser } from 'src/app/interfaces/user';
   providedIn: 'root'
 })
 export class AppointmentsService {
-  id = localStorage.getItem("id");
-
   constructor(private http: HttpClient) {}
   
   

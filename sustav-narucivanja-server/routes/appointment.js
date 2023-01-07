@@ -153,10 +153,9 @@ router.post('/reserve', async function(req, res, next) {
   app.created_on = curr_date_factory()
   app.type = req.body.type
   await app.updateDb()
-
-  let doctor = await Doctor.getById(app.doctorid);  //dobavit pravi doctor id
-  notification.sendEmail("appointmentBooked", doctor.mail); //obavijesti doktora o rezervaciji termina
-  res.status(300).send("OK")
+  //let doctor = await Doctor.getById(app.doctorid);  //dobavit pravi doctor id
+  //notification.sendEmail("appointmentBooked", doctor.mail); //obavijesti doktora o rezervaciji termina
+  res.status().send("OK")
 });
 
 // if somebody needs to cancel an appointment
@@ -169,7 +168,7 @@ router.post('/cancel', async function(req, res, next) {
   app.created_on = undefined
   app.changes_from = undefined
   app.type = undefined
-  await app_to.updateDb()
+  await app.updateDb()
   res.status(300).send("OK")
 });
 
