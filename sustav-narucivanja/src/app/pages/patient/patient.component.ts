@@ -151,7 +151,9 @@ export class PatientComponent implements OnInit{
     this.doctorAppointments$.subscribe(
       (modelData : IAppointmentData[]) => {
         //console.log(modelData);
-        modelData.filter((app) => app.patientid === null).forEach((app) => {
+        modelData.filter((app) => app.patientid === null)
+        .filter(app => new Date(app.time.slice(0, -1)).getTime() > new Date().getTime())
+        .forEach((app) => {
           this.events.push({
             id: app.id,
             start: new Date(app.time.slice(0, -1)),

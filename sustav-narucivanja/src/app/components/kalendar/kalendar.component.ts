@@ -398,7 +398,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       type : null,
       patient_came : false,
     }
-    if(event.color?.primary == colors['blue'].primary){
+    if(event.color?.primary == colors['blue'].primary && event.start.getTime() > new Date().getTime()){
       const dialogRef = this.dialog.open(ChangeAppointmentDialog, {
         data : { appointment : event.title.toLocaleLowerCase(),
                 date : event.start.toLocaleDateString()}
