@@ -1,5 +1,5 @@
 import { 
-  Component, OnInit,
+  Component, Inject, OnInit,
 } from '@angular/core';
 import { addDays, addHours, endOfMonth, startOfDay, subDays } from 'date-fns';
 import {
@@ -13,6 +13,8 @@ import { BehaviorSubject, Observable, Subject, Subscription, switchMap } from 'r
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
 import { Router } from '@angular/router';
+import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {Form, FormBuilder} from '@angular/forms';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -59,6 +61,7 @@ export class DoctorPageComponent implements OnInit {
   constructor(
     private readonly appointmentsService: AppointmentsService,
     private readonly router: Router,
+    public dialog : MatDialog
   ) {
     this.trigger$.next(null);
    }
@@ -108,12 +111,15 @@ export class DoctorPageComponent implements OnInit {
   
   refresh = new Subject<void>();
 
+  private allAppointments : IAppointmentData[] = [];
+
   fetchAppointments() : void {
     this.events = [];
     this.appointments$.subscribe(
       (modelData : IAppointmentData[]) => {
         console.log(modelData);
         modelData.forEach((app) => {
+          this.allAppointments.push(app);
           this.events.push({
             id: app.id,
             start: new Date(app.time.slice(0, -1)),
@@ -144,7 +150,70 @@ export class DoctorPageComponent implements OnInit {
     );
   }
 
-  odrediVlastitaPravila(){
+  addWorkingHours(){
     this.router.navigate(['/doctor/working-hours'])
+  }
+
+  recordAttendance(){
+    var appointments = this.allAppointments.filter(app => app.patientid != null)
+                .filter(app => app.patient_came == null)
+                .filter(app => new Date(app.time.slice(0,-1)).toLocaleDateString() == new Date().toLocaleDateString())
+                .filter(app => this.addDuration(new Date(app.time.slice(0, -1)), app.duration).getTime() < new Date().getTime());
+    var apps : App[] = [];
+    appointments.forEach(app => apps.push({
+                id : app.id ,
+                title : 'Rezerviran termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
+                    + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
+                selected : undefined}));
+    const dialogRef = this.dialog.open(RecordAttendaceDialog, {
+      data : {
+        appointments : apps,
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        apps.forEach(app => {
+          //console.log(app)
+          if(app.selected != undefined) {
+            var id = app.id;
+            var toRecordApp = appointments.find(a => a.id == id);
+            if(toRecordApp != undefined){
+              toRecordApp.patient_came = app.selected;
+              console.log(toRecordApp);
+              const appointmentSubscription = this.appointmentsService
+                  .recordAttendance(toRecordApp)
+                  .subscribe(() => {
+                  this.router.navigate(['/doctor'])
+                  });
+              this.subscription.add(appointmentSubscription);
+            }
+          }
+        })
+      }
+    })
+  }
+}
+
+type App = {
+  id?: number | string,
+  title: string,
+  selected?: boolean
+}
+
+@Component({
+  selector: 'record-attendance-dialog',
+  templateUrl: 'dialogs/record-attendance-dialog.html',
+})
+export class RecordAttendaceDialog {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data : {appointments : App[]},
+    private _formBuilder: FormBuilder
+  ) {}
+  onChange(appointment : App, attendance : boolean){
+    //console.log(appointment.selected);
+    var app = this.data.appointments.find(a => a == appointment);
+    if(app != undefined){
+      app.selected = attendance;
+    }
   }
 }
