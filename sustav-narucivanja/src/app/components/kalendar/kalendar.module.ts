@@ -8,6 +8,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatRadioModule} from '@angular/material/radio';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import {MatRadioModule} from '@angular/material/radio';
       useFactory: adapterFactory,
     }),
     MatDialogModule,
-    MatRadioModule
+    MatRadioModule,
+    MatButtonModule
   ],
   exports: [KalendarComponent],
 })
