@@ -27,6 +27,8 @@ import { RegisterComponent } from './pages/register/register.component';
 import { RegisterModule } from './pages/register/register.module';
 import { WorkingHoursComponent } from './pages/doctor-page/working-hours/working-hours.component';
 import { WorkingHoursModule } from './pages/doctor-page/working-hours/working-hours.module';
+import { NursePageComponent } from './pages/nurse-page/nurse-page.component';
+import { NursePageModule } from './pages/nurse-page/nurse-page.module';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -56,6 +58,11 @@ const routes: Routes = [
           { path: '', component: DoctorPageComponent },
           { path: 'working-hours', component: WorkingHoursComponent}
         ]},
+        { path: 'nurse',
+        children: [
+          { path: '', component: NursePageComponent },
+          { path: 'working-hours', component: WorkingHoursComponent}
+        ]},
     ],
     canActivate: [AuthGuard],
   },
@@ -79,6 +86,7 @@ const routes: Routes = [
     AdminModule,
     DoctorModule,
     DoctorPageModule,
+    NursePageModule,
     WorkingHoursModule,
     TechModule,
     TeamModule,

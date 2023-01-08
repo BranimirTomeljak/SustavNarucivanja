@@ -43,6 +43,17 @@ export class WorkingHoursComponent{
     return newDate.toISOString();
   }
 
+  private type : string = 'doctor';
+    
+    switchDoctor(){
+      this.type = 'doctor';
+      console.log('doctoro');
+    }
+    switchNurse(){
+      this.type = 'tech';
+      console.log('techo')
+    }
+
   public onFormSubmit(): void {
    
     if (this.form.invalid) {
@@ -56,19 +67,19 @@ export class WorkingHoursComponent{
     var startTime = this.form.get('start')?.value;
     var endTime = this.form.get('end')?.value;
     
-    console.log(date);
-    console.log(startTime)
-    console.log(endTime)
-
+    
 
     const data: IRangeData = {
-      doctorid: 8,
-      nurseid: this._user$.nurseid,
+      //doctorid: this._user$.type == 'doctor' ? this._user$.id : undefined,
+      doctorid: this.type == 'doctor' ? 8 : undefined,
+      //nurseid: this._user$.type == 'nurse' ? this._user$.id : undefined,
+      nurseid: this.type == 'tech' ? 12 : undefined, // 16 je u timu s doktorom 8
       time_start: this.addHoursAndMinutes((date), startTime),
       time_end: this.addHoursAndMinutes((date), endTime)
     };
 
     console.log(data);
+    
     
     const appointmentSubscription = this.appointmentService
       .addRangeAppointment(data)

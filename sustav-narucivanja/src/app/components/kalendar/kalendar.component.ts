@@ -282,7 +282,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       case 'doctor':
         this.handleDoctor(event);
       break;
-      case 'nurse':
+      case 'tech':
         this.handleNurse(event);
         break;
       default:
@@ -386,18 +386,6 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   }
 
   handleDoctor(event : CalendarEvent) : void {
-    const data : IAppointmentData = {
-      id: event.id,
-      patientid : this._user$.id,
-      doctorid : this._user$.doctorid,
-      nurseid : undefined,
-      time : event.start.toISOString(), // ako koristimo addAppointment(data) => this.addTimeZone(event.start).toISOString()
-      duration : this.getDuration(this.addTimeZone(event.start), event.end),
-      created_on : new Date(),
-      pending_accept : false,
-      type : null,
-      patient_came : false,
-    }
     if(event.color?.primary == colors['blue'].primary && event.start.getTime() > new Date().getTime()){
       const dialogRef = this.dialog.open(ChangeAppointmentDialog, {
         data : { appointment : event.title.toLocaleLowerCase(),
@@ -445,6 +433,48 @@ export class KalendarComponent implements OnInit ,OnDestroy {
 
   handleNurse(event : CalendarEvent) : void {
     console.log('Sad je medicinska sestra');
+    if(event.color?.primary == colors['red'].primary && event.start.getTime() > new Date().getTime()){
+      const dialogRef = this.dialog.open(ChangeAppointmentDialog, {
+        data : { appointment : event.title.toLocaleLowerCase(),
+                date : event.start.toLocaleDateString()}
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if(result){
+        //console.log(data);
+        var appointments : string[] = [];
+        var evs : CalendarEvent[] = [];
+        evs = this.events.filter(e => e.color?.primary == colors['yellow'].primary
+        && e.start.toLocaleDateString() == event.start.toLocaleDateString()); 
+        this.events.filter(e => e.color?.primary == colors['yellow'].primary
+                        && e.start.toLocaleDateString() == event.start.toLocaleDateString())
+                        .forEach(e => {
+                          appointments.push(
+                            e.title
+                          )
+                        })
+        const dialogRef = this.dialog.open(FreeAppointmentDialog, {
+          data : {apps : appointments}
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          console.log(result);
+          if(result != false && result != undefined){ 
+            var newEvent = evs.find(e => e.title == result);
+          const data : IChangeAppointmentData = {
+            from_id : event.id,
+            to_id : newEvent?.id
+          }
+          const appointmentSubscription = this.appointmentsService
+          .changeAppointment(data)
+          .subscribe(() => {
+            this.router.navigate(['/nurse'])
+            //this.refresh.next()
+          });
+          this.subscription.add(appointmentSubscription);
+          }
+        })
+        }
+      })
+    }
   }
 
   switchDoctor(){
@@ -454,6 +484,10 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   switchPatient(){
     this.type = 'patient';
     console.log('patiento');
+  }
+  switchNurse(){
+    this.type = 'tech';
+    console.log('techo')
   }
 
 }
