@@ -11,6 +11,9 @@
   <button class="btn btn-primary" (click)="reserveAppointment()">
     Rezerviraj uslugu
   </button>
+  <button class="btn btn-primary" [matBadge]="badgeContent" (click)="acceptChange()">
+    Promjene termina
+  </button>
 </div>
 
 <app-main-footer></app-main-footer>

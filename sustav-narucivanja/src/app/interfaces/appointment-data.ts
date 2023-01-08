@@ -9,6 +9,6 @@ export interface IAppointmentData {
     pending_accept: boolean;
     type: string | null;
     patient_came: boolean;
-    //changes_from? : number;
+    changes_from? : number;
   }
   

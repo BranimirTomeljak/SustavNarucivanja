@@ -49,11 +49,11 @@ export class AppointmentsService {
     return this.http.post('/api/appointment/change', data);
   }
 
-  public acceptChangeAppointment(data : IAppointmentData) {
+  public acceptChangeAppointment(data : IChangeAppointmentData) {
     return this.http.post('/api/appointment/accept_change', data);
   }
 
-  public rejectChangeAppointment(data : IAppointmentData) {
+  public rejectChangeAppointment(data : IChangeAppointmentData) {
     return this.http.post('/api/appointment/reject_change', data);
   }
 

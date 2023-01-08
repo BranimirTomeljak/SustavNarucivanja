@@ -12,6 +12,10 @@ import { EventColor } from 'calendar-utils';
 import { BehaviorSubject, Observable, Subject, Subscription, switchMap } from 'rxjs';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
+import { IChangeAppointmentData } from 'src/app/interfaces/change-appointment-data';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { AcceptChangeDialogComponent } from 'src/app/components/accept-change-dialog/accept-change-dialog.component';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -57,7 +61,8 @@ export class PatientComponent implements OnInit{
 
   constructor(
     private readonly appointmentsService: AppointmentsService,
-   
+    public dialog: MatDialog,
+    private readonly router : Router
     ) {
     this.trigger$.next(null);
   }
@@ -115,6 +120,9 @@ export class PatientComponent implements OnInit{
       (modelData : IAppointmentData[]) => {
         console.log(modelData);
         modelData.forEach((app) => {
+          this.allAppointments.push(app);
+          this.pendingAppointments = this.allAppointments.filter(app => app.changes_from !== null)
+          this.badgeContent = this.pendingAppointments.length;
           this.events.push({
             id: app.id,
             start: new Date(app.time.slice(0, -1)),
@@ -170,4 +178,72 @@ export class PatientComponent implements OnInit{
     )
   }
 
+  badgeContent : number = 0;
+  
+  private allAppointments : IAppointmentData[] = [];
+  private pendingAppointments : IAppointmentData[] = [];
+
+  acceptChange() : void{
+    
+    
+    var apps : AppForChange[] = [];
+    this.pendingAppointments.forEach(app => apps.push({
+                date : new Date(app.time.slice(0, -1)).toLocaleDateString(),
+                id_to : app.id ,
+                id_from: this.allAppointments.find(a => a.id == app.changes_from)?.id,
+                title_to : new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
+                    + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
+                title_from : new Date(this.allAppointments.find(a => a.id == app.changes_from)!.time.slice(0, -1))
+                .toLocaleTimeString().slice(0, -3) + ' - ' +
+                this.addDuration(new Date(this.allAppointments.find(a => a.id == app.changes_from)!.time.slice(0, -1)), app.duration)
+                .toLocaleTimeString().slice(0, -3),
+                selected : undefined}));
+    console.log(apps)
+              
+    const dialogRef = this.dialog.open(AcceptChangeDialogComponent, {
+      data : {
+        appointments : apps,
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        apps.forEach(app => {
+          console.log(app)
+          const data : IChangeAppointmentData = {
+            from_id : app.id_from,
+            to_id : app.id_to
+          }
+          
+          if(app.selected == true) {
+            const appointmentSubscription = this.appointmentsService
+                  .acceptChangeAppointment(data)
+                  .subscribe(() => {
+                    this.router.navigate(['/patient'])
+                  });
+            this.subscription.add(appointmentSubscription);
+          } else if(app.selected == false) {
+            const appointmentSubscription = this.appointmentsService
+                  .rejectChangeAppointment(data)
+                  .subscribe(() => {
+                    this.router.navigate(['/patient'])
+                  });
+            this.subscription.add(appointmentSubscription);
+          }
+          
+        })
+      }
+    })
+    
+  }
+
+
+}
+
+type AppForChange = {
+  date : string,
+  id_from?: number | string,
+  id_to?: number | string,
+  title_from?: string,
+  title_to: string,
+  selected?: boolean
 }
