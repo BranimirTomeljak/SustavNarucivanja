@@ -155,7 +155,7 @@ router.post('/reserve', async function(req, res, next) {
   await app.updateDb()
   //let doctor = await Doctor.getById(app.doctorid);  //dobavit pravi doctor id
   //notification.sendEmail("appointmentBooked", doctor.mail); //obavijesti doktora o rezervaciji termina
-  res.status().send("OK")
+  res.status(300).send("OK")
 });
 
 // if somebody needs to cancel an appointment

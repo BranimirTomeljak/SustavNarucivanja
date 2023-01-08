@@ -35,7 +35,10 @@ import { AppointmentsService } from 'src/app/services/appointments/appointments.
 import { Router } from '@angular/router';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
 import { IChangeAppointmentData } from 'src/app/interfaces/change-appointment-data';
-import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/core';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -165,7 +168,25 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   }
   */
 
+  /*
+  medicalServices : string[] = [
+    'vađenje krvi',
+    'testiranje na COVID',
+    'mjerenje tlaka',
+    'mjerenje šećera',
+    'previjanje',
+  ];
+  */
+  medicalServices : MedicalService[] = [
+    {title : 'vađenje krvi', selected : undefined},
+    {title : 'testiranje na COVID' , selected : undefined},
+    {title : 'mjerenje tlaka',  selected : undefined},
+    {title : 'mjerenje šećera', selected : undefined},
+    {title : 'previjanje' , selected : undefined},
+  ];
+
   //@Input() handleEvent: ((action: string, event: CalendarEvent) => void) | undefined;
+  @Input() typeInput : string = '';
   @Input() events: CalendarEvent[] = [
   //@Input() events: CalendarEvent[] = [
     /*
@@ -340,25 +361,81 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       patient_came : false,
     }
     if(event.color?.primary == colors['yellow'].primary){
-      const dialogRef = this.dialog.open(ReserveAppointmentDialog, {
-        data : { appointment : event.title.toLocaleLowerCase(),
-                date : event.start.toLocaleDateString()}
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if(result){
-          console.log('insertam')
-        console.log(data);
-        // ako baci konflikt napisati neku poruku
-        const appointmentSubscription = this.appointmentsService
-          .reserveAppointment(data)
-          .subscribe(() => {
-            this.router.navigate(['/patient'])
-            //this.refresh.next()
-          });
-          this.subscription.add(appointmentSubscription);
-          //this.refresh.next()
-        }
-      })
+      if(this.typeInput == 'doctor'){
+        const dialogRef = this.dialog.open(ReserveAppointmentDialog, {
+          data : { appointment : event.title.toLocaleLowerCase(),
+                  date : event.start.toLocaleDateString()}
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          if(result){
+            console.log('insertam')
+            console.log(data);
+            // ako baci konflikt napisati neku poruku
+            const appointmentSubscription = this.appointmentsService
+              .reserveAppointment(data)
+              .subscribe(() => {
+                this.router.navigate(['/patient'])
+                //this.refresh.next()
+              });
+              this.subscription.add(appointmentSubscription);
+              //this.refresh.next()
+          }
+        })
+      } else if(this.typeInput == 'tech'){
+        const dialogRef = this.dialog.open(ReserveAppointmentDialog, {
+          data : { appointment : event.title.toLocaleLowerCase(),
+                  date : event.start.toLocaleDateString()}
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          
+          if(result){
+            console.log(this.medicalServices)
+            const dialogRef = this.dialog.open(MedicalServiceDialog, {
+              data : { services: this.medicalServices}
+            });
+            dialogRef.afterClosed().subscribe(result => {
+              if(result){
+                var appType = this.medicalServices.find(s => s.selected == true)?.title;
+                if(appType !== undefined){
+                  const data : IAppointmentData = {
+                    id: event.id,
+                    patientid : this._user$.id,
+                    doctorid : this._user$.doctorid, // kako dobit doctorId => ovo je sad undefiend
+                    nurseid : 16, // kako dobit nurseId
+                    time : event.start.toISOString(), // ako koristimo addAppointment(data) => this.addTimeZone(event.start).toISOString()
+                    duration : this.getDuration(this.addTimeZone(event.start), event.end),
+                    created_on : new Date(),
+                    pending_accept : false,
+                    type : appType,
+                    patient_came : false,
+                  }
+                  const appointmentSubscription = this.appointmentsService
+                  .reserveAppointment(data)
+                  .subscribe(() => {
+                    this.router.navigate(['/patient'])
+                    //this.refresh.next()
+                  });
+                  this.subscription.add(appointmentSubscription);
+                  //this.refresh.next()
+                }
+              }
+            })
+            console.log('insertam')
+            console.log(data);
+            /*
+            // ako baci konflikt napisati neku poruku
+            const appointmentSubscription = this.appointmentsService
+              .reserveAppointment(data)
+              .subscribe(() => {
+                this.router.navigate(['/patient'])
+                //this.refresh.next()
+              });
+              this.subscription.add(appointmentSubscription);
+              //this.refresh.next()
+              */
+          }
+        })
+      }
     }
     if(event.color?.primary == colors['red'].primary || event.color?.primary == colors['blue'].primary){
       const dialogRef = this.dialog.open(CancelAppointmentDialog, {
@@ -492,6 +569,11 @@ export class KalendarComponent implements OnInit ,OnDestroy {
 
 }
 
+interface MedicalService {
+  title : string,
+  selected ?: boolean
+}
+
 @Component({
   selector: 'cancel-appointment-dialog',
   templateUrl: 'dialogs/cancel-appointment-dialog.html',
@@ -523,4 +605,20 @@ export class ChangeAppointmentDialog {
 export class FreeAppointmentDialog {
   constructor(@Inject(MAT_DIALOG_DATA) public data : {apps : string[], events : CalendarEvent[]}) {}
   event : string = '';
+}
+
+@Component({
+  selector: 'medical-service-dialog',
+  templateUrl: 'dialogs/medical-service-dialog.html',
+})
+export class MedicalServiceDialog {
+  constructor(@Inject(MAT_DIALOG_DATA) public data : {services : MedicalService[]}) {}
+
+  onChange(service : MedicalService, isChecked : boolean){
+    //console.log(appointment.selected);
+    var ser = this.data.services.find(s => s == service);
+    if(ser != undefined){
+      ser.selected = isChecked;
+    }
+  }
 }

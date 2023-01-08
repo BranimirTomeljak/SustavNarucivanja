@@ -67,6 +67,7 @@ export class PatientComponent implements OnInit{
     this.trigger$.next(null);
   }
 
+  type : string = "";
   events : CalendarEvent[] = [];
   viewDate : Date = new Date();
 
@@ -123,6 +124,7 @@ export class PatientComponent implements OnInit{
           this.allAppointments.push(app);
           this.pendingAppointments = this.allAppointments.filter(app => app.changes_from !== null)
           this.badgeContent = this.pendingAppointments.length;
+          var type : string = app.type != undefined ? ", vrsta usluge: " + app.type : "";
           this.events.push({
             id: app.id,
             start: new Date(app.time.slice(0, -1)),
@@ -130,6 +132,7 @@ export class PatientComponent implements OnInit{
             title: app.nurseid !== null 
               ? 'Usluga kod medicinske sestre ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                   + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
+                  + type
               : 'Liječnički pregled ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                 + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
             color: app.nurseid !== null ? { ...colors['red'] } : { ...colors['blue'] },
@@ -153,7 +156,8 @@ export class PatientComponent implements OnInit{
     );
   }
 
-  public reserveAppointment() : void{
+  public reserveAppointment(type : string) : void{
+    this.type = type;
     this.events = [];
     this.fetchAppointments();
     this.doctorAppointments$.subscribe(

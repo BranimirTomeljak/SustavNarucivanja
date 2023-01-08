@@ -2,14 +2,16 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { CancelAppointmentDialog, KalendarComponent, ReserveAppointmentDialog, ChangeAppointmentDialog, FreeAppointmentDialog } from './kalendar.component';
+import { CancelAppointmentDialog, KalendarComponent, ReserveAppointmentDialog, ChangeAppointmentDialog, FreeAppointmentDialog, MedicalServiceDialog } from './kalendar.component';
 import { FormsModule } from '@angular/forms';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { MatDialogModule } from '@angular/material/dialog';
-import {MatRadioModule} from '@angular/material/radio';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
-
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,8 @@ import { MatButtonModule } from '@angular/material/button';
     ReserveAppointmentDialog,
     CancelAppointmentDialog,
     ChangeAppointmentDialog,
-    FreeAppointmentDialog
+    FreeAppointmentDialog,
+    MedicalServiceDialog
   ],
   imports: [
     CommonModule,
@@ -30,7 +33,10 @@ import { MatButtonModule } from '@angular/material/button';
     }),
     MatDialogModule,
     MatRadioModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatCheckboxModule
   ],
   exports: [KalendarComponent],
 })

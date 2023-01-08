@@ -1,14 +1,14 @@
 <app-main-navigation></app-main-navigation>
 
-<app-kalendar [events]="events" [refresh]="refresh"></app-kalendar>
+<app-kalendar [events]="events" [refresh]="refresh" [typeInput]="type"></app-kalendar>
 <div class="btn_container">
   <button class="btn btn-primary" (click)="fetchAppointments()">
     Predgled zakazanih termina
   </button>
-  <button class="btn btn-primary" (click)="reserveAppointment()">
+  <button class="btn btn-primary" (click)="reserveAppointment('doctor')">
     Rezerviraj liječnički termin
   </button>
-  <button class="btn btn-primary" (click)="reserveAppointment()">
+  <button class="btn btn-primary" (click)="reserveAppointment('tech')">
     Rezerviraj uslugu
   </button>
   <button class="btn btn-primary" [matBadge]="badgeContent" (click)="acceptChange()">
