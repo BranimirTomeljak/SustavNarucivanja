@@ -8,11 +8,13 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   styleUrls: ['./main-navigation.component.scss'],
 })
 export class MainNavigationComponent {
+  user = JSON.parse(localStorage.getItem('user') || '{}');
+
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router
   ) {
-    if (JSON.parse(localStorage.getItem('user') || '{}').type === 'admin') {
+    if (this.user.type === 'admin') {
       this.links = [
         { title: 'Naslovna', path: '/' },
         { title: 'Admin', path: '/admin' },
