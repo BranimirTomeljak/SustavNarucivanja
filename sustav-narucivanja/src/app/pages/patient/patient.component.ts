@@ -141,18 +141,8 @@ export class PatientComponent implements OnInit{
         });
         this.viewDate = new Date();
         this.refresh.next();
+        this.events.sort((a,b) => (a.title < b.title) ? -1 : 1);
       },
-      // za error
-      /*
-      error => {
-            const res = this.dialogService.ErrorDialog('Server Error', 'Sorry, the system is unavailable at the moment.', 'Close', 'Try again');
-            res.afterClosed().subscribe(dialogResult => {
-              if (dialogResult) {
-                //this.callNext(200);
-              }
-            });
-          }
-      */
     );
   }
 
@@ -178,6 +168,7 @@ export class PatientComponent implements OnInit{
         });
         //this.viewDate = new Date();
         this.refresh.next();
+        this.events.sort((a,b) => (a.title < b.title) ? -1 : 1);
       },
     )
   }

@@ -373,13 +373,13 @@ export class KalendarComponent implements OnInit ,OnDestroy {
             const appointmentSubscription = this.appointmentsService
               .reserveAppointment(data)
               .subscribe(() => {
-                this.router.navigate(['/patient'])
-                //this.refresh.next()
-                
+                this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+                this.router.navigate(['/patient']));
+                //console.log('rezerviram u subscribeu')
               });
               this.subscription.add(appointmentSubscription);
-              this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-              this.router.navigate(['/patient']));
+              //this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+              //this.router.navigate(['/patient']));
           }
         }
         )

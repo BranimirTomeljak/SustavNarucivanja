@@ -136,6 +136,7 @@ export class DoctorPageComponent implements OnInit {
         });
         //this.viewDate = new Date();
         this.refresh.next();
+        this.events.sort((a,b) => (a.title < b.title) ? -1 : 1);
       },
       // za error
       /*
