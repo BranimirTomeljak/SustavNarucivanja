@@ -55,6 +55,20 @@ export class WorkingHoursComponent{
     }
 
   public onFormSubmit(): void {
+
+    if(this.form.get('date')?.value.getTime() < new Date().getTime()) {
+      this.snackBar.open('Radno vrijeme određujete se za buduće dane', 'Zatvori', {
+        duration: 2000,
+      });
+      return;
+    }
+
+    if(this.form.get('start')?.value > this.form.get('end')?.value) {
+      this.snackBar.open('Kraj radnog vremena mora biti nakon početka radnog vremena.', 'Zatvori', {
+        duration: 2000,
+      });
+      return;
+    }
    
     if (this.form.invalid) {
       this.snackBar.open('Unesite sve potrebne podatke', 'Zatvori', {
