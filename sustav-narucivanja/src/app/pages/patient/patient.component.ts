@@ -235,6 +235,8 @@ export class PatientComponent implements OnInit{
           }
           
         })
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+        this.router.navigate(['/patient']));
       }
     })
     

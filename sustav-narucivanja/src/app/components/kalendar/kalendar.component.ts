@@ -368,19 +368,21 @@ export class KalendarComponent implements OnInit ,OnDestroy {
         });
         dialogRef.afterClosed().subscribe(result => {
           if(result){
-            console.log('insertam')
-            console.log(data);
+            //console.log(data);
             // ako baci konflikt napisati neku poruku
             const appointmentSubscription = this.appointmentsService
               .reserveAppointment(data)
               .subscribe(() => {
                 this.router.navigate(['/patient'])
                 //this.refresh.next()
+                
               });
               this.subscription.add(appointmentSubscription);
-              //this.refresh.next()
+              this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+              this.router.navigate(['/patient']));
           }
-        })
+        }
+        )
       } else if(this.typeInput == 'tech'){
         const dialogRef = this.dialog.open(ReserveAppointmentDialog, {
           data : { appointment : event.title.toLocaleLowerCase(),
@@ -418,21 +420,10 @@ export class KalendarComponent implements OnInit ,OnDestroy {
                   this.subscription.add(appointmentSubscription);
                   //this.refresh.next()
                 }
+                this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+                this.router.navigate(['/patient']));
               }
             })
-            console.log('insertam')
-            console.log(data);
-            /*
-            // ako baci konflikt napisati neku poruku
-            const appointmentSubscription = this.appointmentsService
-              .reserveAppointment(data)
-              .subscribe(() => {
-                this.router.navigate(['/patient'])
-                //this.refresh.next()
-              });
-              this.subscription.add(appointmentSubscription);
-              //this.refresh.next()
-              */
           }
         })
       }
@@ -445,8 +436,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       dialogRef.afterClosed().subscribe(result => {
         console.log(`Dialog result: ${result}`);
         if(result){
-          console.log('deletam')
-          console.log(data);
+          //console.log(data);
           // ako baci konflikt napisati neku poruku
           const appointmentSubscription = this.appointmentsService
           .cancelAppointment(data)
@@ -456,8 +446,9 @@ export class KalendarComponent implements OnInit ,OnDestroy {
             //this.refresh.next()
           });
           this.subscription.add(appointmentSubscription);
-          
         }
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+        this.router.navigate(['/patient']));
       })
     }
   }
@@ -500,8 +491,9 @@ export class KalendarComponent implements OnInit ,OnDestroy {
             this.refresh.next()
           });
           this.subscription.add(appointmentSubscription);
-          this.refresh.next()
           }
+          this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+          this.router.navigate(['/doctor']));
         })
         }
       })
@@ -548,6 +540,8 @@ export class KalendarComponent implements OnInit ,OnDestroy {
           });
           this.subscription.add(appointmentSubscription);
           }
+          this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+          this.router.navigate(['/nurse']));
         })
         }
       })

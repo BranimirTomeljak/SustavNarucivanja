@@ -84,10 +84,11 @@ export class WorkingHoursComponent{
     const appointmentSubscription = this.appointmentService
       .addRangeAppointment(data)
       .subscribe(() => {
-        this.router.navigate(['/']);
+       
       });
     this.subscription.add(appointmentSubscription);
-    
+    //this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+    //this.router.navigate(['/nurse']));
   }
 
   ngOnDestroy(): void {
@@ -96,5 +97,19 @@ export class WorkingHoursComponent{
 
   public test() {
     console.log(this.form.value);
+  }
+
+  public return(){
+    switch (this.type) {
+      case 'doctor':
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+        this.router.navigate(['/doctor']));
+        break;
+      case 'tech':
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+        this.router.navigate(['/nurse']));
+        break;
+    }
+    
   }
 }

@@ -50,7 +50,7 @@ export class NursePageComponent implements OnInit {
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public appointments$: Observable<any> = this.trigger$.pipe(
     switchMap(() => {
-      return this.appointmentsService.getAllApointments('nurse', 16);
+      return this.appointmentsService.getAllApointments('nurse', 12);
     })
   );
   
@@ -189,6 +189,8 @@ export class NursePageComponent implements OnInit {
             }
           }
         })
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+        this.router.navigate(['/nurse']));
       }
     })
   }
