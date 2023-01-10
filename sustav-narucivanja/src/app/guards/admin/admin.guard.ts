@@ -6,25 +6,31 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdminGuard implements CanActivate {
-  constructor(private router: Router) {}
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ):
+  constructor(
+    private router: Router,
+    private readonly authService: AuthService
+  ) {}
+
+  public canActivate():
     | Observable<boolean | UrlTree>
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    const user = JSON.parse(localStorage.getItem('user') || '');
-    if (user.type === 'admin') {
-      return true;
-    }
-    return this.router.createUrlTree(['/']);
+    return this.authService.user$.pipe(
+      map((user) => {
+        if (user?.type === 'admin') {
+          return true;
+        }
+
+        return this.router.createUrlTree(['/', 'login']);
+      })
+    );
   }
 }
