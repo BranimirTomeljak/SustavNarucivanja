@@ -9,13 +9,14 @@ import {
   CalendarView,
 } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
-import { BehaviorSubject, Observable, Subject, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, switchMap, tap } from 'rxjs';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
 import { IChangeAppointmentData } from 'src/app/interfaces/change-appointment-data';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AcceptChangeDialogComponent } from 'src/app/components/accept-change-dialog/accept-change-dialog.component';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -39,10 +40,9 @@ const colors: Record<string, EventColor> = {
   styleUrls: ['./patient.component.scss']
 })
 export class PatientComponent implements OnInit{
-  private readonly _user$ = localStorage.getItem('user')
-      ? JSON.parse(localStorage.getItem('user')!)
-      : null
-  
+  public user$ = this.authService.user$;
+  private doctorId?: number;
+  private id = this.authService.id || 0;
 
   private rezervacija : boolean = false;
   private readonly subscription = new Subscription();
@@ -50,17 +50,25 @@ export class PatientComponent implements OnInit{
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public appointments$: Observable<any> = this.trigger$.pipe(
     switchMap(() => {
-      return this.appointmentsService.getAllApointments(this._user$.type, this._user$.id);
-    })
-  );
+      return this.appointmentsService.getAllApointments('patient', this.id);
+    }
+  ))
   public doctorAppointments$: Observable<any> = this.trigger$.pipe(
+    /*switchMap(() => {
+      return this.authService.getPatientDoctorId(); 
+    }), tap((res) => this.doctorId = res),
+    */
     switchMap(() => {
-      return this.appointmentsService.getAllDoctorApointments(8); // ??????????????????????
+      console.log("drid" , this.doctorId)
+      return this.appointmentsService.getAllDoctorApointments(8); 
     })
   );
 
+  
+
   constructor(
     private readonly appointmentsService: AppointmentsService,
+    private readonly authService: AuthService,
     public dialog: MatDialog,
     private readonly router : Router
     ) {

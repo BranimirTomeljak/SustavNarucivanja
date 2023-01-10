@@ -16,7 +16,7 @@ export class AppointmentsService {
   
   
   public getAllApointments(role: string, id: number): Observable<Array<any>> {
-    return this.http.get<Array<any>>(`/api/appointment?role=${role}&id=${id}`);
+    return this.http.get<Array<any>>(`/api/appointment?type=${role}&id=${id}`);
   }
   
   /*
@@ -26,7 +26,8 @@ export class AppointmentsService {
   */
 
   public getAllDoctorApointments(id: number): Observable<Array<any>> {
-    return this.http.get<Array<any>>(`/api/appointment?role=doctor&id=${id}`);
+    console.log('suadasdfsa')
+    return this.http.get<Array<any>>(`/api/appointment?type=doctor&id=${id}`);
   }
 
   public addAppointment(data : IAppointmentData) {

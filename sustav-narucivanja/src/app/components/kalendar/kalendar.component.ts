@@ -32,6 +32,8 @@ import { EventColor } from 'calendar-utils';
 import { BehaviorSubject, EMPTY, Observable, Subscription } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
+import { AuthService } from 'src/app/services/auth/auth.service';
+
 import { Router } from '@angular/router';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
 import { IChangeAppointmentData } from 'src/app/interfaces/change-appointment-data';
@@ -63,9 +65,8 @@ const colors: Record<string, EventColor> = {
   encapsulation: ViewEncapsulation.None
 })
 export class KalendarComponent implements OnInit ,OnDestroy {
-  private readonly _user$ = localStorage.getItem('user')
-  ? JSON.parse(localStorage.getItem('user')!)
-  : null
+  public user$ = this.authService.user$;
+
 
   private type : string = 'patient';
 
@@ -240,6 +241,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   constructor(
     private modal: NgbModal,
     private readonly appointmentsService: AppointmentsService,
+    private readonly authService: AuthService,
     private readonly router : Router,
     public dialog : MatDialog
     ) {
@@ -280,6 +282,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   }
   
   handleEvent(action: string, event: CalendarEvent): void {
+    console.log(action);
     /*
     switch (this._user$.type) {
       case 'patient':
@@ -350,8 +353,8 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   handlePatient(event: CalendarEvent) : void {
     const data : IAppointmentData = {
       id: event.id,
-      patientid : this._user$.id,
-      doctorid : this._user$.doctorid,
+      patientid : this.authService.id,
+      doctorid : 8,
       nurseid : undefined,
       time : event.start.toISOString(), // ako koristimo addAppointment(data) => this.addTimeZone(event.start).toISOString()
       duration : this.getDuration(this.addTimeZone(event.start), event.end),
@@ -401,8 +404,8 @@ export class KalendarComponent implements OnInit ,OnDestroy {
                 if(appType !== undefined){
                   const data : IAppointmentData = {
                     id: event.id,
-                    patientid : this._user$.id,
-                    doctorid : this._user$.doctorid, // kako dobit doctorId => ovo je sad undefiend
+                    patientid : this.authService.id,
+                    doctorid : 8, // kako dobit doctorId => ovo je sad undefiend
                     nurseid : 16, // kako dobit nurseId
                     time : event.start.toISOString(), // ako koristimo addAppointment(data) => this.addTimeZone(event.start).toISOString()
                     duration : this.getDuration(this.addTimeZone(event.start), event.end),
