@@ -1,7 +1,7 @@
-<mat-toolbar>
+<mat-toolbar *ngIf="user$ | async as user" [ngClass]="user.type">
   <h1 routerLink="/">Sustav naručivanja</h1>
 
-  <div *ngIf="user$ | async as user">
+  <div>
     <ng-container *ngIf="user.type === 'admin'; else nonAdmin">
       <button
         *ngFor="let link of links.admin"

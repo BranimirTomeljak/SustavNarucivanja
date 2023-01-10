@@ -8,7 +8,7 @@ import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 })
 export class AllTeamsComponent {
   public teams$ = this.doctorsService.getAllTeams();
-  displayedColumns: string[] = ['teamId', 'name', 'doctor', 'tech', 'action'];
+  displayedColumns: string[] = ['name', 'doctor', 'tech', 'action'];
 
   constructor(private readonly doctorsService: DoctorsService) {}
 }
