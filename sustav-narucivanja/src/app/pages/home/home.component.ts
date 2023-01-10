@@ -10,4 +10,8 @@ export class HomeComponent {
   public user$ = this.authService.user$;
 
   constructor(private readonly authService: AuthService) {}
+
+  public onClick() {
+    this.authService.getPatientDoctorId().subscribe();
+  }
 }

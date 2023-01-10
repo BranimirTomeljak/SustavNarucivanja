@@ -21,16 +21,20 @@ export class AuthService {
   public getUser() {
     return this.http.get<IUser>('/api/user').pipe(
       tap((resp) => {
-        console.log(resp);
         this._user$.next(resp);
       })
     );
   }
 
+  public getPatientDoctorId(): Observable<any> {
+    return this.http
+      .get('/api/user/doctor')
+      .pipe(tap((resp) => console.log(resp)));
+  }
+
   public login(data: ILoginData) {
     return this.http.post<IUser>('/api/login', data).pipe(
       tap((resp) => {
-        console.log(resp);
         this._user$.next(resp);
       })
     );
@@ -39,7 +43,6 @@ export class AuthService {
   public register(data: IRegisterData) {
     return this.http.post<IUser>('/api/register', data).pipe(
       tap((resp) => {
-        console.log(resp);
         this._user$.next(resp);
       })
     );
