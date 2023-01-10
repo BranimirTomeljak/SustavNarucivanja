@@ -199,6 +199,8 @@ class Appointment {
     }
 }
 
+// tu sve pocinje
+   // OVDJE JE IMPORTANJE MODULA ---> DOLJE SU FUNCKIJE
     const cron = require('node-cron');
     const shell = require('shelljs');
     const xml2js = require('xml2js');
@@ -208,13 +210,13 @@ class Appointment {
     const { Patient, Doctor } = require('./UserModel');
 
     async function dailyLog(){
-        const q1 = 'SELECT count(id) FROM appointment where DATE(time) = CURRENT_DATE - 1 ';
+        const q1 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'24 hour'";
         const res1 = await db.query(q1, []);
-        const q2 = 'SELECT count(id) FROM appointment where DATE(time) = CURRENT_DATE - 1 and patient_came';
+        const q2 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'24 hour' and patient_came";
         const res2 = await db.query(q1, []);
     
-        var q3 = 'SELECT * FROM appointment'; // where DATE(time) = CURRENT_DATE - 1
-        var q4 = 'SELECT count(id) FROM appointment'; //where id = 2222
+        var q3 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'24 hour'";
+        var q4 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'24 hour'";
         var res3 = await db.query(q3, []);
         var res4 = await db.query(q4, []);
         let zakazani = JSON.stringify(res1[0].count);
@@ -224,15 +226,13 @@ class Appointment {
         
         const obj = {
             root: {
-    
-                div: 'Dnevno izvješće o sastancima:',
+                section: 'Dnevno izvješće o sastancima:',
             },
             body: {
-                element1: 'U protekla 24 sata ukupno je zakazano ' + zakazani + ' sastanaka.',
-                element2: 'Od toga se ' + dosli + ' pacijenata odazvalo na poziv.'
+                span: 'U protekla 24 sata ukupno je zakazano ' + zakazani + ' sastanaka.',
+                a: 'Od toga se ' + dosli + ' pacijenata odazvalo na poziv.'
             },
             core: {
-                div: 'Informacije o svim sastancima: ',
             },
             body1: {
     
@@ -246,8 +246,69 @@ class Appointment {
         if(numApp == 0){
             obj.core.child = 'Danas nije bilo rezerviranih niti obavljenih sastanaka.'
     
-        } else {
+        } else {/*
             for(let i = 0; i < numApp; i++){
+                obj.body1['div1' + i] = i + 1 + '. sastanak';  
+                let patient = await Patient.fetchById(res3[i].patientid)
+                let doctor = await Doctor.fetchById(res3[i].doctorid)
+                obj.body1['div2' + i]= 'Pacijent: ' + patient.name + ' ' + patient.surname + ' (ID: ' + patient.id + ')';
+                obj.body1['div3' + i] = 'Doktor: ' + doctor.name + ' ' + doctor.surname + ' (ID: ' + doctor.id + ')';
+                if(res3[i].nurseid === null){
+                
+                } else {
+                    obj.body1['div4' + i] = 'Medicinska sestra: ' + res1[i].nurseid;
+                }
+                obj.body1['div5' + i] = 'Vrijeme sastanka: ' + res3[i].time;
+                obj.body1['div6' + i] = 'Trajanje sastanka: '+ res3[i].duration;
+                if(res3[i].patient_came){
+                      obj.body1['div7' + i] = 'Je li pacijent došao na sastanak? Da';
+                }else if (res3[i].patient_came == null)
+                      obj.body1['div7' + i] = 'Je li pacijent došao na sastanak? Nema informacija';
+                else 
+                      obj.body1['div7' + i] = 'Je li pacijent došao na sastanak? Ne';
+                
+            }*/
+        }
+    
+        const builder = new xml2js.Builder();
+        let xml = builder.buildObject(obj);
+        console.log(xml); // SALJI MAIL OVDJE S OVIM XML-om
+    }
+
+    async function monthlyLog(){
+        const q1 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'30 day'";
+        const res1 = await db.query(q1, []);
+        const q2 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'30 day' and patient_came = true";
+        const res2 = await db.query(q2, []);
+        var q3 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'30 day'";
+        var q4 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'30 day'";
+        var res3 = await db.query(q3, []);
+        var res4 = await db.query(q4, []);
+        let zakazani = JSON.stringify(res1[0].count);
+        let dosli = JSON.stringify(res2[0].count);
+        dosli = dosli.substring(1, dosli.length - 1);
+        zakazani = zakazani.substring(1, zakazani.length - 1);
+        
+        const obj = {
+            header: {
+                div: 'Izvješće o sastancima u zadnjih 30 dana:',
+            },
+            body: {
+                span: 'U protekla 30 dana ukupno je zakazano ' + zakazani + ' sastanaka.',
+                a: 'Od toga se ' + dosli + ' pacijenata odazvalo na poziv.'
+            },
+            core: {
+            }
+        };
+    
+      
+        let numApp = JSON.stringify(res4[0].count);
+        numApp = numApp.substring(1, numApp.length - 1);
+        numApp = Number(numApp)
+        if(numApp == 0){
+            obj.core.child = 'Ovaj mjesec nije bilo rezerviranih niti obavljenih sastanaka.'
+        } else {
+            /*for(let i = 0; i < numApp; i++){
                 obj.body1.div = i + 1 + '. sastanak';  
                 let patient = await Patient.fetchById(res3[i].patientid)
                 let doctor = await Doctor.fetchById(res3[i].doctorid)
@@ -266,21 +327,25 @@ class Appointment {
                       obj.body1.div5 = 'Je li pacijent došao na sastanak? Nema informacija';
                 else 
                       obj.body1.div5 = 'Je li pacijent došao na sastanak? Ne';
-                
-            }
+            }*/
         }
-    
         const builder = new xml2js.Builder();
         let xml = builder.buildObject(obj);
-        console.log(xml);
-    }
+        console.log(xml); // OVDJE SALJI MAIL S OVIN XMLOM
+    } 
     
+    // *** OVO SU FUNKCIJE KOJE SE POKREĆU SVAKIH 24 SATA I 30 DANA I U NJIMA SE POZIVA 
+    // ** ASINKRONA FUNKCIJA U KOJOJ SE RADI XML IZVJEŠĆE   
+
     cron.schedule("0 0 0 * * *", async function () { // Daily report about reservations
         await dailyLog();
     })
 
-    cron.schedule("* * 1 * *", async function () { // Daily report about reservations
-        await dailyLog();
+    cron.schedule("0 0 */30 * *", async function () { // Monthly report about reservations
+        await monthlyLog();
     })
+    // TESTING
+    dailyLog()
+    monthlyLog()
 
 module.exports = Appointment
