@@ -55,7 +55,7 @@ export class PatientComponent implements OnInit{
   );
   public doctorAppointments$: Observable<any> = this.trigger$.pipe(
     switchMap(() => {
-      return this.appointmentsService.getAllDoctorApointments(8);
+      return this.appointmentsService.getAllDoctorApointments(8); // ??????????????????????
     })
   );
 

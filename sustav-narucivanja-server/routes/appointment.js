@@ -131,7 +131,7 @@ router.post('/add_range', async function(req, res, next) {
 
   if (await loop_over_appointments(check_errors)){
     await loop_over_appointments(save_to_db)
-    res.status(300).send("OK");
+    res.json();
   }
 });
 

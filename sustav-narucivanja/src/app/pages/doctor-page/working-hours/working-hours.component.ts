@@ -98,7 +98,7 @@ export class WorkingHoursComponent{
     const appointmentSubscription = this.appointmentService
       .addRangeAppointment(data)
       .subscribe(() => {
-       
+        this.router.navigate(['/doctor']);
       });
     this.subscription.add(appointmentSubscription);
     //this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
