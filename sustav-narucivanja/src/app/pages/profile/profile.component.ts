@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
 })
-export class ProfileComponent implements OnInit {
-  public user = JSON.parse(localStorage.getItem('user') || '{}');
+export class ProfileComponent {
+  public user$ = this.authService.user$;
 
-  constructor() {}
-
-  ngOnInit(): void {}
+  constructor(private readonly authService: AuthService) {}
 }
