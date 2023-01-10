@@ -57,13 +57,19 @@
     mat-raised-button
     *ngIf="!editMode; else editButton"
     type="submit"
+    class="submit"
     [disabled]="!form.valid"
   >
     Stvori tim
   </button>
 
   <ng-template #editButton>
-    <button mat-raised-button type="submit" [disabled]="!form.valid">
+    <button
+      mat-raised-button
+      type="submit"
+      class="submit"
+      [disabled]="!form.valid"
+    >
       Spremi promjene
     </button>
   </ng-template>
