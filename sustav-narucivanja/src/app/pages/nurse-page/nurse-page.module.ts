@@ -5,9 +5,10 @@ import { MainNavigationModule } from 'src/app/components/main-navigation/main-na
 import { KalendarModule } from 'src/app/components/kalendar/kalendar.module';
 import { NursePageComponent } from './nurse-page.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
-import {MatRadioModule} from '@angular/material/radio';
+import { MatRadioModule} from '@angular/material/radio';
+import { MatBadgeModule } from '@angular/material/badge';
 import { RecordAttendanceDialogModule } from 'src/app/components/record-attendance-dialog/record-attendance-dialog.module';
 
 
@@ -22,7 +23,8 @@ import { RecordAttendanceDialogModule } from 'src/app/components/record-attendan
     MatCheckboxModule,
     MatButtonModule,
     MatRadioModule,
-    RecordAttendanceDialogModule
+    RecordAttendanceDialogModule,
+    MatBadgeModule
   ],
   exports: [NursePageComponent],
 })

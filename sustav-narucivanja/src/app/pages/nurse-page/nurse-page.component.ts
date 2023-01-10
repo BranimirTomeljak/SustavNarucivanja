@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Form, FormBuilder} from '@angular/forms';
 import { RecordAttendanceDialogComponent } from 'src/app/components/record-attendance-dialog/record-attendance-dialog.component';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -39,24 +40,21 @@ const colors: Record<string, EventColor> = {
   styleUrls: ['./nurse-page.component.scss']
 })
 export class NursePageComponent implements OnInit {
-  private readonly _user$ = localStorage.getItem('user')
-      ? JSON.parse(localStorage.getItem('user')!)
-      : null
-  
+  private id = this.authService.id || 0;
 
-  private rezervacija : boolean = false;
   private readonly subscription = new Subscription();
   // dohvacanje appointmenta
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public appointments$: Observable<any> = this.trigger$.pipe(
     switchMap(() => {
-      return this.appointmentsService.getAllApointments('nurse', 16);
+      return this.appointmentsService.getAllApointments('nurse', this.id);
     })
   );
   
 
   constructor(
     private readonly appointmentsService: AppointmentsService,
+    private readonly authService: AuthService,
     private readonly router: Router,
     public dialog : MatDialog
   ) {
@@ -68,6 +66,7 @@ export class NursePageComponent implements OnInit {
   }
 
   events : CalendarEvent[] = [];
+  badgeContent : number = 0;
 
   private addDuration = (date: Date, obj: object): Date => {
     const result = new Date(date);
@@ -108,7 +107,9 @@ export class NursePageComponent implements OnInit {
   
   refresh = new Subject<void>();
 
+
   private allAppointments : IAppointmentData[] = [];
+  private pendingAppointments : IAppointmentData[] = [];
 
   fetchAppointments() : void {
     this.events = [];
@@ -117,7 +118,12 @@ export class NursePageComponent implements OnInit {
         console.log(modelData);
         modelData.forEach((app) => {
           this.allAppointments.push(app);
+          this.pendingAppointments = this.allAppointments.filter(app => app.patientid != null)
+              .filter(app => app.patient_came == null)
+              .filter(app => new Date(app.time.slice(0,-1)).toLocaleDateString() == new Date().toLocaleDateString())
+              .filter(app => this.addDuration(new Date(app.time.slice(0, -1)), app.duration).getTime() < new Date().getTime());
           var type : string = app.type != undefined ? ", vrsta usluge: " + app.type : "";
+          this.badgeContent = this.pendingAppointments.length;
           this.events.push({
             id: app.id,
             start: new Date(app.time.slice(0, -1)),
@@ -139,18 +145,9 @@ export class NursePageComponent implements OnInit {
     );
   }
 
-  addWorkingHours(){
-    this.router.navigate(['/nurse/working-hours'])
-  }
-
   recordAttendance(){
-    var appointments = this.allAppointments.filter(app => app.patientid != null)
-                .filter(app => app.patient_came == null)
-                .filter(app => new Date(app.time.slice(0,-1)).toLocaleDateString() == new Date().toLocaleDateString())
-                .filter(app => this.addDuration(new Date(app.time.slice(0, -1)), app.duration).getTime() < new Date().getTime());
     var apps : App[] = [];
-    console.log(appointments)
-    appointments.forEach(app => apps.push({
+    this.pendingAppointments.forEach(app => apps.push({
                 id : app.id ,
                 title : 'Rezerviran termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                     + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
@@ -166,21 +163,20 @@ export class NursePageComponent implements OnInit {
           //console.log(app)
           if(app.selected != undefined) {
             var id = app.id;
-            var toRecordApp = appointments.find(a => a.id == id);
+            var toRecordApp = this.pendingAppointments.find(a => a.id == id);
             if(toRecordApp != undefined){
               toRecordApp.patient_came = app.selected;
               console.log(toRecordApp);
               const appointmentSubscription = this.appointmentsService
                   .recordAttendance(toRecordApp)
                   .subscribe(() => {
-                  this.router.navigate(['/doctor'])
+                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+                    this.router.navigate(['/nurse']));
                   });
               this.subscription.add(appointmentSubscription);
             }
           }
         })
-        this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-        this.router.navigate(['/nurse']));
       }
     })
   }

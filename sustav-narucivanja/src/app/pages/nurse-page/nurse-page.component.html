@@ -2,10 +2,7 @@
 
 <app-kalendar [events]="events" [refresh]="refresh"></app-kalendar>
 <div class="btn_container">
-    <button class="btn btn-primary" (click)="addWorkingHours()">
-      Određivanje radnog vremena
-    </button>
-    <button class="btn btn-primary" (click)="recordAttendance()">
+    <button class="btn btn-primary" [matBadge]="badgeContent" (click)="recordAttendance()">
       Potvrđivanje dolaznosti pacijenata
     </button>
 </div>

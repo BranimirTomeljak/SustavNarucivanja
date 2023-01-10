@@ -60,11 +60,7 @@ const routes: Routes = [
           { path: '', component: DoctorPageComponent },
           { path: 'working-hours', component: WorkingHoursComponent}
         ]},
-        { path: 'nurse',
-        children: [
-          { path: '', component: NursePageComponent },
-          { path: 'working-hours', component: WorkingHoursComponent}
-        ]},
+      { path: 'nurse', component: NursePageComponent },
       { path: 'profile', component: ProfileComponent },
     ],
     canActivate: [AuthGuard],
