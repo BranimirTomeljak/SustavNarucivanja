@@ -28,7 +28,6 @@ export class AuthService {
     return this.http.post<IUser>('/api/login', data).pipe(
       tap((resp) => {
         console.log(resp);
-        localStorage.setItem('user', JSON.stringify(resp));
         this._user$.next(resp);
       })
     );
@@ -38,7 +37,6 @@ export class AuthService {
     return this.http.post<IUser>('/api/register', data).pipe(
       tap((resp) => {
         console.log(resp);
-        localStorage.setItem('user', JSON.stringify(resp));
         this._user$.next(resp);
       })
     );
@@ -47,7 +45,6 @@ export class AuthService {
   public createDoctor(data: IDoctorNurseData) {
     return this.http.post<IUser>('/api/register/doctor', data).pipe(
       tap((resp) => {
-        localStorage.setItem('user', JSON.stringify(resp));
         this._user$.next(resp);
       })
     );
@@ -56,7 +53,6 @@ export class AuthService {
   public createNurse(data: IDoctorNurseData) {
     return this.http.post<IUser>('/api/register/nurse', data).pipe(
       tap((resp) => {
-        localStorage.setItem('user', JSON.stringify(resp));
         this._user$.next(resp);
       })
     );
@@ -65,7 +61,6 @@ export class AuthService {
   public logout() {
     return this.http.get('/api/logout').pipe(
       tap(() => {
-        localStorage.removeItem('user');
         this._user$.next(null);
       })
     );

@@ -10,26 +10,25 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 })
 export class MainNavigationComponent implements OnDestroy {
   private readonly subscription = new Subscription();
+  public user$ = this.authService.user$;
+
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router
-  ) {
-    if (JSON.parse(localStorage.getItem('user') || '{}').type === 'admin') {
-      this.links = [
-        { title: 'Naslovna', path: '/' },
-        { title: 'Admin', path: '/admin' },
-        { title: 'Profil', path: '/profile' },
-      ];
-    } else {
-      this.links = [
-        { title: 'Naslovna', path: '/' },
-        { title: 'Kalendar', path: '/patient' },
-        { title: 'Profil', path: '/profile' },
-      ];
-    }
-  }
+  ) {}
 
-  public links: Array<{ title: string; path: string }> = [];
+  public links = {
+    admin: [
+      { title: 'Naslovna', path: '/' },
+      { title: 'Admin', path: '/admin' },
+      { title: 'Profil', path: '/profile' },
+    ],
+    nonAdmin: [
+      { title: 'Naslovna', path: '/' },
+      { title: 'Kalendar', path: '/patient' },
+      { title: 'Profil', path: '/profile' },
+    ],
+  };
 
   public onLogoutClick() {
     const logoutSubscription = this.authService
