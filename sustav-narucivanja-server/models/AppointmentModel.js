@@ -199,8 +199,7 @@ class Appointment {
     }
 }
 
-// tu sve pocinje
-   // OVDJE JE IMPORTANJE MODULA ---> DOLJE SU FUNCKIJE
+
     const cron = require('node-cron');
     const shell = require('shelljs');
     const xml2js = require('xml2js');
@@ -245,29 +244,6 @@ class Appointment {
         numApp = Number(numApp)
         if(numApp == 0){
             obj.core.child = 'Danas nije bilo rezerviranih niti obavljenih sastanaka.'
-    
-        } else {/*
-            for(let i = 0; i < numApp; i++){
-                obj.body1['div1' + i] = i + 1 + '. sastanak';  
-                let patient = await Patient.fetchById(res3[i].patientid)
-                let doctor = await Doctor.fetchById(res3[i].doctorid)
-                obj.body1['div2' + i]= 'Pacijent: ' + patient.name + ' ' + patient.surname + ' (ID: ' + patient.id + ')';
-                obj.body1['div3' + i] = 'Doktor: ' + doctor.name + ' ' + doctor.surname + ' (ID: ' + doctor.id + ')';
-                if(res3[i].nurseid === null){
-                
-                } else {
-                    obj.body1['div4' + i] = 'Medicinska sestra: ' + res1[i].nurseid;
-                }
-                obj.body1['div5' + i] = 'Vrijeme sastanka: ' + res3[i].time;
-                obj.body1['div6' + i] = 'Trajanje sastanka: '+ res3[i].duration;
-                if(res3[i].patient_came){
-                      obj.body1['div7' + i] = 'Je li pacijent došao na sastanak? Da';
-                }else if (res3[i].patient_came == null)
-                      obj.body1['div7' + i] = 'Je li pacijent došao na sastanak? Nema informacija';
-                else 
-                      obj.body1['div7' + i] = 'Je li pacijent došao na sastanak? Ne';
-                
-            }*/
         }
     
         const builder = new xml2js.Builder();
@@ -301,33 +277,11 @@ class Appointment {
             }
         };
     
-      
         let numApp = JSON.stringify(res4[0].count);
         numApp = numApp.substring(1, numApp.length - 1);
         numApp = Number(numApp)
         if(numApp == 0){
             obj.core.child = 'Ovaj mjesec nije bilo rezerviranih niti obavljenih sastanaka.'
-        } else {
-            /*for(let i = 0; i < numApp; i++){
-                obj.body1.div = i + 1 + '. sastanak';  
-                let patient = await Patient.fetchById(res3[i].patientid)
-                let doctor = await Doctor.fetchById(res3[i].doctorid)
-                obj.body1.div1 = 'Pacijent: ' + patient.name + ' ' + patient.surname + ' (ID: ' + patient.id + ')';
-                obj.body1.div2 = 'Doktor: ' + doctor.name + ' ' + doctor.surname + ' (ID: ' + doctor.id + ')';
-                if(res3[i].nurseid === null){
-    
-                } else {
-                    obj.body1.div3 = 'Medicinska sestra: ' + res1[i].nurseid;
-                }
-                obj.body1.div4 = 'Vrijeme sastanka: ' + res3[i].time;
-                obj.body1.div6 = 'Trajanje sastanka: '+ res3[i].duration;
-                if(res3[i].patient_came){
-                      obj.body1.div5 = 'Je li pacijent došao na sastanak? Da';
-                }else if (res3[i].patient_came == null)
-                      obj.body1.div5 = 'Je li pacijent došao na sastanak? Nema informacija';
-                else 
-                      obj.body1.div5 = 'Je li pacijent došao na sastanak? Ne';
-            }*/
         }
         const builder = new xml2js.Builder();
         let xml = builder.buildObject(obj);
@@ -344,8 +298,5 @@ class Appointment {
     cron.schedule("0 0 */30 * *", async function () { // Monthly report about reservations
         await monthlyLog();
     })
-    // TESTING
-    dailyLog()
-    monthlyLog()
 
 module.exports = Appointment
