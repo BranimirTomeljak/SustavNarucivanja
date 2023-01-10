@@ -11,7 +11,10 @@ import { IUser } from 'src/app/interfaces/user';
 })
 export class AuthService {
   private readonly _user$ = new BehaviorSubject<IUser | null>(null);
-  public user$ = this._user$.asObservable();
+  public user$ = this._user$
+    .asObservable()
+    .pipe(tap((user) => (this.id = user?.id)));
+  public id?: number;
 
   constructor(private http: HttpClient) {}
 
