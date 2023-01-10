@@ -262,25 +262,17 @@ async function sendSMS(purpose, reference){
             .then(resp => { console.log('Message sent successfully'); console.log(resp); })
             .catch(err => { console.log('There was an error sending the messages.'); console.error(err); });
     }
-
-    //sendSms();
 }
 
-async function dailyLog(){
+async function dailyReport(){
     const q1 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'24 hour'";
     const res1 = await db.query(q1, []);
-    const q2 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'24 hour' and patient_came";
+    const q2 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'24 hour' and patient_came = true";
     const res2 = await db.query(q2, []);
-
-    var q3 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'24 hour'";
-    var q4 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'24 hour'";
-    var res3 = await db.query(q3, []);
-    var res4 = await db.query(q4, []);
     let zakazani = JSON.stringify(res1[0].count);
     let dosli = JSON.stringify(res2[0].count);
     dosli = dosli.substring(1, dosli.length - 1);
     zakazani = zakazani.substring(1, zakazani.length - 1);
-    
     var obj = {
         root: {
             section: 'Dnevno izvješće o sastancima:',
@@ -296,7 +288,7 @@ async function dailyLog(){
         }
     };
     
-    let numApp = JSON.stringify(res4[0].count);
+    let numApp = JSON.stringify(res1[0].count);
     numApp = numApp.substring(1, numApp.length - 1);
     numApp = Number(numApp)
     if(numApp == 0)
@@ -307,15 +299,11 @@ async function dailyLog(){
     console.log(xml); // SALJI MAIL OVDJE S OVIM XML-om
 }
 
-async function monthlyLog(){
+async function monthlyReport(){
     const q1 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'30 day'";
     const res1 = await db.query(q1, []);
     const q2 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'30 day' and patient_came = true";
     const res2 = await db.query(q2, []);
-    var q3 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'30 day'";
-    var q4 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'30 day'";
-    var res3 = await db.query(q3, []);
-    var res4 = await db.query(q4, []);
     let zakazani = JSON.stringify(res1[0].count);
     let dosli = JSON.stringify(res2[0].count);
     dosli = dosli.substring(1, dosli.length - 1);
@@ -333,11 +321,11 @@ async function monthlyLog(){
         }
     };
 
-    let numApp = JSON.stringify(res4[0].count);
+    let numApp = JSON.stringify(res1[0].count); // conversion " 5 " string to number 5 fex.
     numApp = numApp.substring(1, numApp.length - 1);
     numApp = Number(numApp)
     if(numApp == 0)
-        obj.core.child = 'Ovaj mjesec nije bilo rezerviranih niti obavljenih sastanaka.'
+        obj.core.child = 'Posljednjih 30 dana nije bilo rezerviranih niti obavljenih sastanaka.'
     const builder = new xml2js.Builder();
     let xml = builder.buildObject(obj);
     console.log(xml); // OVDJE SALJI MAIL S OVIN XMLOM
@@ -347,14 +335,14 @@ async function monthlyLog(){
 // ** ASINKRONA FUNKCIJA U KOJOJ SE RADI XML IZVJEŠĆE   
 
 cron.schedule("0 0 0 * * *", async function () { // Daily report about reservations
-    await dailyLog();
+    await dailyReport();
 })
 
 cron.schedule("0 0 */30 * *", async function () { // Monthly report about reservations
-    await monthlyLog();
+    await monthlyReport();
 })
-
-monthlyLog();
+dailyReport()
+monthlyReport()
 
 module.exports = {
     sendEmail: sendEmail,
