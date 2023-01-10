@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
@@ -7,30 +8,36 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   templateUrl: './main-navigation.component.html',
   styleUrls: ['./main-navigation.component.scss'],
 })
-export class MainNavigationComponent {
+export class MainNavigationComponent implements OnDestroy {
+  private readonly subscription = new Subscription();
+  public user$ = this.authService.user$;
+
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router
-  ) {
-    if (JSON.parse(localStorage.getItem('user') || '{}').type === 'admin') {
-      this.links = [
-        { title: 'Naslovna', path: '/' },
-        { title: 'Admin', path: '/admin' },
-      ];
-    } else {
-      this.links = [
-        { title: 'Naslovna', path: '/' },
-        { title: 'Profil', path: '/patient' },
-      ];
-    }
-  }
-  public links = [
-    { title: 'Naslovna', path: '/' },
-    { title: 'Profil', path: '/patient' },
-  ];
+  ) {}
+
+  public links = {
+    admin: [
+      { title: 'Naslovna', path: '/' },
+      { title: 'Admin', path: '/admin' },
+      { title: 'Profil', path: '/profile' },
+    ],
+    nonAdmin: [
+      { title: 'Naslovna', path: '/' },
+      { title: 'Kalendar', path: '/patient' },
+      { title: 'Profil', path: '/profile' },
+    ],
+  };
 
   public onLogoutClick() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    const logoutSubscription = this.authService
+      .logout()
+      .subscribe(() => this.router.navigate(['/login']));
+    this.subscription.add(logoutSubscription);
+  }
+
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

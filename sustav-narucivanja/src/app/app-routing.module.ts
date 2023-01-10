@@ -23,6 +23,8 @@ import { LoginComponent } from './pages/login/login.component';
 import { LoginModule } from './pages/login/login.module';
 import { PatientComponent } from './pages/patient/patient.component';
 import { PatientModule } from './pages/patient/patient.module';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { ProfileModule } from './pages/profile/profile.module';
 import { RegisterComponent } from './pages/register/register.component';
 import { RegisterModule } from './pages/register/register.module';
 import { WorkingHoursComponent } from './pages/doctor-page/working-hours/working-hours.component';
@@ -63,6 +65,7 @@ const routes: Routes = [
           { path: '', component: NursePageComponent },
           { path: 'working-hours', component: WorkingHoursComponent}
         ]},
+      { path: 'profile', component: ProfileComponent },
     ],
     canActivate: [AuthGuard],
   },
@@ -93,6 +96,7 @@ const routes: Routes = [
     PatientModule,
     TeamViewModule,
     AllTeamsModule,
+    ProfileModule,
   ],
   exports: [RouterModule],
 })

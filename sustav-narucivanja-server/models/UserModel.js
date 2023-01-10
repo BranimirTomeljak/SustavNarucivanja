@@ -80,20 +80,20 @@ class User {
     return this.password ? this.password === password : false;
   }
 
-  isAdmin() {
-    return this._checkIsIn("admin");
+  async isAdmin() {
+    return await this._checkIsIn("admin");
   }
 
-  isPatient() {
-    return this._checkIsIn("patient");
+  async isPatient() {
+    return await this._checkIsIn("patient");
   }
 
-  isNurse() {
-    return this._checkIsIn("nurse");
+  async isNurse() {
+    return await this._checkIsIn("nurse");
   }
 
-  isDoctor() {
-    return this._checkIsIn("doctor");
+  async isDoctor() {
+    return await this._checkIsIn("doctor");
   }
 
   async _checkIsIn(where) {
@@ -209,7 +209,7 @@ class Patient extends User {
     let user = users[0];
     const sql = "SELECT * FROM patient WHERE id = " + id;
     const result = await db.query(sql, []);
-    if (result.length === 0) throw "user does not exist";
+    if (result.length === 0) throw "patient does not exist";
     return new Patient(
       user.id,
       user.name,
@@ -230,7 +230,7 @@ class Patient extends User {
     const sql =
       "SELECT users.id, users.name, users.surname, users.sex, users.phonenumber, users.mail, users.password, users.dateOfBirth, patient.doctorid, patient.nFailedAppointments, patient.notificationMethod FROM patient Join users on users.id = patient.id";
     const results = await db.query(sql, []);
-    if (results.length === 0) throw "user does not exist";
+    if (results.length === 0) throw "patient all does not exist";
     let toreturn = [];
     for (let result of results)
       toreturn.push(
@@ -249,6 +249,12 @@ class Patient extends User {
         )
       );
     return toreturn;
+  }
+
+  static async getDoctorId(id) {
+    const sql = "SELECT doctorId FROM patient WHERE id = " + id;
+    const result = await db.query(sql, []);
+    return result[0].doctorid;
   }
 }
 
@@ -285,7 +291,7 @@ class Nurse extends User {
     let user = users[0];
     const sql = "SELECT * FROM nurse WHERE id = " + id;
     const result = await db.query(sql, []);
-    if (result.length === 0) throw "user does not exist";
+    if (result.length === 0) throw "nurse does not exist";
     return new Nurse(
       user.id,
       user.name,
@@ -302,7 +308,7 @@ class Nurse extends User {
   static async getAll() {
     const sql = "SELECT * FROM nurse Natural Join users";
     const results = await db.query(sql, []);
-    if (results.length === 0) throw "user does not exist";
+    if (results.length === 0) throw "nusrse all does not exist";
     let toreturn = [];
     for (let result of results)
       toreturn.push(
@@ -376,7 +382,7 @@ class Doctor extends Nurse {
     let user = users[0];
     const sql = "SELECT * FROM doctor WHERE id = " + id;
     const result = await db.query(sql, []);
-    if (result.length === 0) throw "user does not exist";
+    if (result.length === 0) throw "doctor does not exist";
     return new Doctor(
       user.id,
       user.name,
@@ -393,7 +399,7 @@ class Doctor extends Nurse {
   static async getAll() {
     const sql = "SELECT * FROM doctor Natural Join users";
     const results = await db.query(sql, []);
-    if (results.length === 0) throw "user does not exist";
+    if (results.length === 0) throw "doctor all does not exist";
     let toreturn = [];
     for (let result of results)
       toreturn.push(

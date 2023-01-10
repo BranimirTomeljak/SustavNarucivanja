@@ -90,6 +90,17 @@
       </mat-select>
     </mat-form-field>
 
+    <mat-form-field>
+      <mat-select
+        placeholder="Preferirani način obavijesti"
+        formControlName="notificationMethod"
+      >
+        <mat-option *ngFor="let option of ['email', 'sms']" [value]="option">
+          {{ option }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <button type="submit" mat-raised-button>Potvrdi</button>
 
     <div class="info">

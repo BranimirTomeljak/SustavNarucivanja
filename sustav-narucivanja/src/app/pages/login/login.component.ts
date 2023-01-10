@@ -31,15 +31,6 @@ export class LoginComponent implements OnDestroy {
   });
 
   public onFormSubmit(): void {
-    if (
-      this.form.get('email')?.value === 'admin' &&
-      this.form.get('password')?.value === 'admin'
-    ) {
-      localStorage.setItem('user', JSON.stringify({ type: 'admin' }));
-      this.router.navigate(['/admin']);
-      return;
-    }
-
     if (this.form.invalid) {
       this.snackbar.open('Pogrešni podaci', 'Zatvori', { duration: 2000 });
       return;
