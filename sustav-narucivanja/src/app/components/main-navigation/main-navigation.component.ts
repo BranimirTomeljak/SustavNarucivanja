@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
@@ -7,7 +8,8 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   templateUrl: './main-navigation.component.html',
   styleUrls: ['./main-navigation.component.scss'],
 })
-export class MainNavigationComponent {
+export class MainNavigationComponent implements OnDestroy {
+  private readonly subscription = new Subscription();
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router
@@ -30,7 +32,13 @@ export class MainNavigationComponent {
   public links: Array<{ title: string; path: string }> = [];
 
   public onLogoutClick() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    const logoutSubscription = this.authService
+      .logout()
+      .subscribe(() => this.router.navigate(['/login']));
+    this.subscription.add(logoutSubscription);
+  }
+
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }
