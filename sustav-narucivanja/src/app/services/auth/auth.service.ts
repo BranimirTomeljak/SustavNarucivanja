@@ -16,7 +16,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   public getUser() {
-    return this.http.get('/api/user').pipe(
+    return this.http.get<IUser>('/api/user').pipe(
       tap((resp) => {
         console.log(resp);
         this._user$.next(resp);
@@ -25,7 +25,7 @@ export class AuthService {
   }
 
   public login(data: ILoginData) {
-    return this.http.post('/api/login', data).pipe(
+    return this.http.post<IUser>('/api/login', data).pipe(
       tap((resp) => {
         console.log(resp);
         localStorage.setItem('user', JSON.stringify(resp));
@@ -35,7 +35,7 @@ export class AuthService {
   }
 
   public register(data: IRegisterData) {
-    return this.http.post('/api/register', data).pipe(
+    return this.http.post<IUser>('/api/register', data).pipe(
       tap((resp) => {
         console.log(resp);
         localStorage.setItem('user', JSON.stringify(resp));
@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   public createDoctor(data: IDoctorNurseData) {
-    return this.http.post('/api/register/doctor', data).pipe(
+    return this.http.post<IUser>('/api/register/doctor', data).pipe(
       tap((resp) => {
         localStorage.setItem('user', JSON.stringify(resp));
         this._user$.next(resp);
@@ -54,7 +54,7 @@ export class AuthService {
   }
 
   public createNurse(data: IDoctorNurseData) {
-    return this.http.post('/api/register/nurse', data).pipe(
+    return this.http.post<IUser>('/api/register/nurse', data).pipe(
       tap((resp) => {
         localStorage.setItem('user', JSON.stringify(resp));
         this._user$.next(resp);
