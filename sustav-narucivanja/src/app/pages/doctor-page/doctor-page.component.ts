@@ -180,11 +180,34 @@ export class DoctorPageComponent implements OnInit {
       }
     })
   }
+
+  defineRules(){
+    console.log('Definiraj pravila')
+    const dialogRef = this.dialog.open(DefineRulesDialog, {
+      data : {
+        rule : 100,
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        console.log(result);
+      }
+    })
+  }
 }
 
 type App = {
   id?: number | string,
   title: string,
   selected?: boolean
+}
+
+@Component({
+  selector: 'define-rules-dialog',
+  templateUrl: 'dialogs/define-rules-dialog.html',
+})
+export class DefineRulesDialog {
+  constructor(@Inject(MAT_DIALOG_DATA) public data : {rule : number}) {}
+  newRule : number = 0;
 }
 
