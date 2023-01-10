@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "seed": "node db/seed.js"
+    "seed": "node db/seed.js",
+    "test": "npx jest"
   },
   "dependencies": {
     "@vonage/server-sdk": "^3.0.12",
@@ -25,5 +26,8 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pg": "8.6.0"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1"
   }
 }

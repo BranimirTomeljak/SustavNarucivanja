@@ -1,29 +1,30 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  Router,
-  RouterStateSnapshot,
-  UrlTree,
-} from '@angular/router';
-import { Observable } from 'rxjs';
+import { CanActivate, Router, UrlTree } from '@angular/router';
+import { map, Observable } from 'rxjs';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AnonGuard implements CanActivate {
-  constructor(private router: Router) {}
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ):
+  constructor(
+    private router: Router,
+    private readonly authService: AuthService
+  ) {}
+
+  public canActivate():
     | Observable<boolean | UrlTree>
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    if (!localStorage.getItem('user')) {
-      return true;
-    }
-    return this.router.createUrlTree(['/']);
+    return this.authService.user$.pipe(
+      map((user) => {
+        if (!user) {
+          return true;
+        }
+
+        return this.router.createUrlTree(['/']);
+      })
+    );
   }
 }
