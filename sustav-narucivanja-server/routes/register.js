@@ -151,7 +151,7 @@ const check_and_put = async (req, res, where) =>{
   )
   try{
     await person.addToDb();
-    notification.sendNotification(notificationMethod, "registration", person);
+    //notification.sendNotification(notificationMethod, "registration", person);
     res.json(person);
   }
   catch{

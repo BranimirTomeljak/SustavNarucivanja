@@ -166,7 +166,8 @@ router.post('/change', async function(req, res, next) {
   await app_to.updateDb()
   let patient = await Patient.getById(app_from.patientid);
   //notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
-  res.status(300).send("OK")
+  //res.status(300).send("OK")
+  res.json();
 });
 
 // if the doctor moves the appointment the patient has to accept
@@ -184,7 +185,8 @@ router.post('/accept_change', async function(req, res, next) {
   await app_to.updateDb()
   await app_from.updateDb()
   //notification.sendEmail("appointmentChangeAccept", app_to);
-  res.status(300).send("OK")
+  //res.status(300).send("OK")
+  res.json();
 });
 
 // if the doctor moves the appointment the patient can reject
@@ -196,7 +198,8 @@ router.post('/reject_change', async function(req, res, next) {
   app_to.patientid = undefined
   await app_to.updateDb()
   notification.sendEmail("appointmentChangeReject", app_to);
-  res.status(300).send("OK")
+  //res.status(300).send("OK")
+  res.json();
 });
 
 // at the end of the day nurse/doctor has to record did the patiend come
@@ -208,7 +211,7 @@ router.post('/record_attendance', async function(req, res, next) {
   app = (await Appointment.fetchBy('id', req.body.id))[0]
   app.patient_came = JSON.parse(req.body.patient_came)
   await app.updateDb()
-  res.status(300).send("OK")
+  res.json(app);
 });
 
 
@@ -230,7 +233,8 @@ router.post('/delete', async function(req, res, next) {
     res.status(500).send('Does not exist in the database.')
   else{
     app.removeFromDb()
-    res.status(300).send("OK");
+    //res.status(300).send("OK");
+    res.json();
   }
 
 });

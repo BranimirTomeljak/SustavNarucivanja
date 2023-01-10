@@ -462,6 +462,25 @@ class Admin extends User {
     const sql = "INSERT INTO admin (id) VALUES (" + this.id + " )";
     await db.query(sql, []);
   }
+
+  static async getById(id) {
+    let users = await Admin.dbGetUserBy("id", id, "users");
+    let user = users[0];
+    const sql = "SELECT * FROM admin WHERE id = " + id;
+    const result = await db.query(sql, []);
+    if (result.length === 0) throw "admin does not exist";
+    return new Admin(
+      user.id,
+      user.name,
+      user.surname,
+      user.sex,
+      user.phonenumber,
+      user.mail,
+      user.password,
+      user.dateofbirth,
+    );
+  }
+
 }
 
 module.exports = {
