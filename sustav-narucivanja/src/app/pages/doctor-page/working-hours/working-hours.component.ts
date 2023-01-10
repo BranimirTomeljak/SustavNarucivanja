@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { IRangeData } from 'src/app/interfaces/range-data';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-working-hours',
@@ -12,9 +13,7 @@ import { IRangeData } from 'src/app/interfaces/range-data';
   styleUrls: ['./working-hours.component.scss']
 })
 export class WorkingHoursComponent{
-  private readonly _user$ = localStorage.getItem('user')
-      ? JSON.parse(localStorage.getItem('user')!)
-      : null
+  private id = this.authService.id || 0;
 
   private readonly subscription = new Subscription();
   private readonly trigger$ = new BehaviorSubject<any>(null);
@@ -23,6 +22,7 @@ export class WorkingHoursComponent{
     private readonly router: Router,
     private readonly appointmentService: AppointmentsService,
     private readonly snackBar: MatSnackBar,
+    private readonly authService: AuthService
   ) {
     this.trigger$.next(null);
   }
@@ -43,16 +43,6 @@ export class WorkingHoursComponent{
     return newDate.toISOString();
   }
 
-  private type : string = 'doctor';
-    
-    switchDoctor(){
-      this.type = 'doctor';
-      console.log('doctoro');
-    }
-    switchNurse(){
-      this.type = 'tech';
-      console.log('techo')
-    }
 
   public onFormSubmit(): void {
 
@@ -84,10 +74,8 @@ export class WorkingHoursComponent{
     
 
     const data: IRangeData = {
-      //doctorid: this._user$.type == 'doctor' ? this._user$.id : undefined,
-      doctorid: this.type == 'doctor' ? 8 : undefined,
-      //nurseid: this._user$.type == 'nurse' ? this._user$.id : undefined,
-      nurseid: this.type == 'tech' ? 12 : undefined, // 16 je u timu s doktorom 8
+      doctorid: this.id,
+      nurseid: undefined,
       time_start: this.addHoursAndMinutes((date), startTime),
       time_end: this.addHoursAndMinutes((date), endTime)
     };
@@ -101,8 +89,7 @@ export class WorkingHoursComponent{
         this.router.navigate(['/doctor']);
       });
     this.subscription.add(appointmentSubscription);
-    //this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-    //this.router.navigate(['/nurse']));
+    
   }
 
   ngOnDestroy(): void {
@@ -113,17 +100,4 @@ export class WorkingHoursComponent{
     console.log(this.form.value);
   }
 
-  public return(){
-    switch (this.type) {
-      case 'doctor':
-        this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-        this.router.navigate(['/doctor']));
-        break;
-      case 'tech':
-        this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-        this.router.navigate(['/nurse']));
-        break;
-    }
-    
-  }
 }

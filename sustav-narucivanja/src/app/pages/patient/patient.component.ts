@@ -44,9 +44,8 @@ export class PatientComponent implements OnInit{
   private doctorId?: number;
   private id = this.authService.id || 0;
 
-  private rezervacija : boolean = false;
   private readonly subscription = new Subscription();
-  // dohvacanje appointmenta
+ 
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public appointments$: Observable<any> = this.trigger$.pipe(
     switchMap(() => {
@@ -54,13 +53,11 @@ export class PatientComponent implements OnInit{
     }
   ))
   public doctorAppointments$: Observable<any> = this.trigger$.pipe(
-    /*switchMap(() => {
+    switchMap(() => {
       return this.authService.getPatientDoctorId(); 
     }), tap((res) => this.doctorId = res),
-    */
     switchMap(() => {
-      console.log("drid" , this.doctorId)
-      return this.appointmentsService.getAllDoctorApointments(8); 
+      return this.appointmentsService.getAllDoctorApointments(this.doctorId as number); 
     })
   );
 
@@ -77,11 +74,9 @@ export class PatientComponent implements OnInit{
 
   type : string = "";
   events : CalendarEvent[] = [];
-  viewDate : Date = new Date();
 
   public ngOnInit() : void {
     this.fetchAppointments();
-    //this.reserveAppointment();
   }
 
   private addDuration = (date: Date, obj: object): Date => {
@@ -144,10 +139,8 @@ export class PatientComponent implements OnInit{
               : 'Liječnički pregled ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                 + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
             color: app.nurseid !== null ? { ...colors['red'] } : { ...colors['blue'] },
-            //actions: this.actions
           })
         });
-        this.viewDate = new Date();
         this.refresh.next();
         this.events.sort((a,b) => (a.title < b.title) ? -1 : 1);
       },
@@ -174,7 +167,6 @@ export class PatientComponent implements OnInit{
             //actions: this.actions
           })
         });
-        //this.viewDate = new Date();
         this.refresh.next();
         this.events.sort((a,b) => (a.title < b.title) ? -1 : 1);
       },
@@ -187,8 +179,6 @@ export class PatientComponent implements OnInit{
   private pendingAppointments : IAppointmentData[] = [];
 
   acceptChange() : void{
-    
-    
     var apps : AppForChange[] = [];
     this.pendingAppointments.forEach(app => apps.push({
                 date : new Date(app.time.slice(0, -1)).toLocaleDateString(),
@@ -221,21 +211,20 @@ export class PatientComponent implements OnInit{
             const appointmentSubscription = this.appointmentsService
                   .acceptChangeAppointment(data)
                   .subscribe(() => {
-                    this.router.navigate(['/patient'])
+                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+                    this.router.navigate(['/patient']));
                   });
             this.subscription.add(appointmentSubscription);
           } else if(app.selected == false) {
             const appointmentSubscription = this.appointmentsService
                   .rejectChangeAppointment(data)
                   .subscribe(() => {
-                    this.router.navigate(['/patient'])
+                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+                    this.router.navigate(['/patient']));
                   });
             this.subscription.add(appointmentSubscription);
           }
-          
         })
-        this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-        this.router.navigate(['/patient']));
       }
     })
     

@@ -30,7 +30,7 @@ import {
 } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
 import { BehaviorSubject, EMPTY, Observable, Subscription } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
@@ -66,12 +66,15 @@ const colors: Record<string, EventColor> = {
 })
 export class KalendarComponent implements OnInit ,OnDestroy {
   public user$ = this.authService.user$;
-
-
-  private type : string = 'patient';
-
+  private doctorId?: number;
   private readonly subscription = new Subscription();
   private readonly trigger$ = new BehaviorSubject<any>(null);
+
+  public doctorAppointments$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.authService.getPatientDoctorId(); 
+    }), tap((res) => this.doctorId = res),
+  );
  
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
@@ -80,33 +83,12 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   CalendarView = CalendarView;
 
   viewDate: Date = new Date();
-  //@Input() viewDate : Date = new Date();
 
   modalData!: {
     action: string;
     event: CalendarEvent;
   };
 
-  
-  /*
-  actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-      a11yLabel: 'Edit',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      },
-    },
-    {
-      label: '<i class="fas fa-fw fa-trash-alt"></i>',
-      a11yLabel: 'Delete',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      },
-    },
-  ];
-  */
 
   @Input() refresh = new Subject<void>();
 
@@ -156,28 +138,12 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   
   ngOnInit(): void {
     this.events.forEach(e => this.refresh.next());
-    //this.refresh.next();
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
-  /* u patientComponentu
-  fetchAppointments() : void {
-   
-  }
-  */
-
-  /*
-  medicalServices : string[] = [
-    'vađenje krvi',
-    'testiranje na COVID',
-    'mjerenje tlaka',
-    'mjerenje šećera',
-    'previjanje',
-  ];
-  */
   medicalServices : MedicalService[] = [
     {title : 'vađenje krvi', selected : undefined},
     {title : 'testiranje na COVID' , selected : undefined},
@@ -186,60 +152,13 @@ export class KalendarComponent implements OnInit ,OnDestroy {
     {title : 'previjanje' , selected : undefined},
   ];
 
-  //@Input() handleEvent: ((action: string, event: CalendarEvent) => void) | undefined;
+  
   @Input() typeInput : string = '';
-  @Input() events: CalendarEvent[] = [
-  //@Input() events: CalendarEvent[] = [
-    /*
-    {
-      start: subDays(startOfDay(new Date()), 1),
-      end: addDays(new Date(), 1),
-      title: 'A 3 day event',
-      color: { ...colors['red'] },
-      //actions: this.actions,
-      allDay: true,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-    {
-      //start: startOfDay(new Date()),
-      //start: new Date(this.starts[1]),
-      //start : new Date('2023-01-10T22:00:14.000Z'),
-      start: new Date(this.starts[0]),
-      end : new Date(this.ends[0]),
-      title: 'An event with no end date',
-      color: { ...colors['yellow'] },
-      //actions: this.actions,
-    },
-    {
-      start: subDays(endOfMonth(new Date()), 3),
-      end: addDays(endOfMonth(new Date()), 3),
-      title: 'A long event that spans 2 months',
-      color: { ...colors['blue'] },
-      allDay: true,
-    },
-    {
-      start: addHours(startOfDay(new Date()), 2),
-      end: addHours(new Date(), 2),
-      title: 'A draggable and resizable event',
-      color: { ...colors['yellow'] },
-      //actions: this.actions,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-    */
-  ];
+  @Input() events: CalendarEvent[] = [];
 
   activeDayIsOpen: boolean = false;
 
   constructor(
-    private modal: NgbModal,
     private readonly appointmentsService: AppointmentsService,
     private readonly authService: AuthService,
     private readonly router : Router,
@@ -281,10 +200,8 @@ export class KalendarComponent implements OnInit ,OnDestroy {
     this.handleEvent('Dropped or resized', event);
   }
   
-  handleEvent(action: string, event: CalendarEvent): void {
-    console.log(action);
-    /*
-    switch (this._user$.type) {
+  handleEvent(type: string, event: CalendarEvent): void {
+    switch (type) {
       case 'patient':
         this.handlePatient(event);
         break;
@@ -297,22 +214,6 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       default:
         break;
     }
-    */
-   
-    switch (this.type) {
-      case 'patient':
-        this.handlePatient(event);
-        break;
-      case 'doctor':
-        this.handleDoctor(event);
-      break;
-      case 'tech':
-        this.handleNurse(event);
-        break;
-      default:
-        break;
-    }
-    
   }
 
   addEvent(): void {
@@ -344,17 +245,11 @@ export class KalendarComponent implements OnInit ,OnDestroy {
     this.activeDayIsOpen = false;
   }
 
-  /* u patientComponent
-  public reserveAppointment() : void{
-    
-  }
-  */
-
   handlePatient(event: CalendarEvent) : void {
     const data : IAppointmentData = {
       id: event.id,
       patientid : this.authService.id,
-      doctorid : 8,
+      doctorid : this.doctorId,
       nurseid : undefined,
       time : event.start.toISOString(), // ako koristimo addAppointment(data) => this.addTimeZone(event.start).toISOString()
       duration : this.getDuration(this.addTimeZone(event.start), event.end),
@@ -371,18 +266,13 @@ export class KalendarComponent implements OnInit ,OnDestroy {
         });
         dialogRef.afterClosed().subscribe(result => {
           if(result){
-            //console.log(data);
-            // ako baci konflikt napisati neku poruku
             const appointmentSubscription = this.appointmentsService
               .reserveAppointment(data)
               .subscribe(() => {
                 this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
                 this.router.navigate(['/patient']));
-                //console.log('rezerviram u subscribeu')
               });
               this.subscription.add(appointmentSubscription);
-              //this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-              //this.router.navigate(['/patient']));
           }
         }
         )
@@ -405,9 +295,9 @@ export class KalendarComponent implements OnInit ,OnDestroy {
                   const data : IAppointmentData = {
                     id: event.id,
                     patientid : this.authService.id,
-                    doctorid : 8, // kako dobit doctorId => ovo je sad undefiend
+                    doctorid : this.doctorId, 
                     nurseid : 16, // kako dobit nurseId
-                    time : event.start.toISOString(), // ako koristimo addAppointment(data) => this.addTimeZone(event.start).toISOString()
+                    time : event.start.toISOString(),
                     duration : this.getDuration(this.addTimeZone(event.start), event.end),
                     created_on : new Date(),
                     pending_accept : false,
@@ -423,10 +313,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
                     this.router.navigate(['/patient']));
                   });
                   this.subscription.add(appointmentSubscription);
-                  //this.refresh.next()
                 }
-                //this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-                //this.router.navigate(['/patient']));
               }
             })
           }
@@ -441,19 +328,14 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       dialogRef.afterClosed().subscribe(result => {
         console.log(`Dialog result: ${result}`);
         if(result){
-          //console.log(data);
-          // ako baci konflikt napisati neku poruku
           const appointmentSubscription = this.appointmentsService
           .cancelAppointment(data)
           .subscribe(() => {
             this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
             this.router.navigate(['/patient']));
-            //this.refresh.next()
           });
           this.subscription.add(appointmentSubscription);
         }
-        this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-        this.router.navigate(['/patient']));
       })
     }
   }
@@ -466,7 +348,6 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       });
       dialogRef.afterClosed().subscribe(result => {
         if(result){
-        //console.log(data);
         var appointments : string[] = [];
         var evs : CalendarEvent[] = [];
         evs = this.events.filter(e => e.color?.primary == colors['yellow'].primary
@@ -492,13 +373,11 @@ export class KalendarComponent implements OnInit ,OnDestroy {
           const appointmentSubscription = this.appointmentsService
           .changeAppointment(data)
           .subscribe(() => {
-            //this.router.navigate(['/patient'])
-            this.refresh.next()
+            this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+            this.router.navigate(['/doctor']));
           });
           this.subscription.add(appointmentSubscription);
           }
-          this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-          this.router.navigate(['/doctor']));
         })
         }
       })
@@ -514,7 +393,6 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       });
       dialogRef.afterClosed().subscribe(result => {
         if(result){
-        //console.log(data);
         var appointments : string[] = [];
         var evs : CalendarEvent[] = [];
         evs = this.events.filter(e => e.color?.primary == colors['yellow'].primary
@@ -540,32 +418,17 @@ export class KalendarComponent implements OnInit ,OnDestroy {
           const appointmentSubscription = this.appointmentsService
           .changeAppointment(data)
           .subscribe(() => {
-            this.router.navigate(['/nurse'])
-            //this.refresh.next()
+            //this.router.navigate(['/nurse'])
+            this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+            this.router.navigate(['/nurse']));
           });
           this.subscription.add(appointmentSubscription);
           }
-          this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-          this.router.navigate(['/nurse']));
         })
         }
       })
     }
   }
-
-  switchDoctor(){
-    this.type = 'doctor';
-    console.log('doctoro');
-  }
-  switchPatient(){
-    this.type = 'patient';
-    console.log('patiento');
-  }
-  switchNurse(){
-    this.type = 'tech';
-    console.log('techo')
-  }
-
 }
 
 interface MedicalService {
@@ -614,7 +477,6 @@ export class MedicalServiceDialog {
   constructor(@Inject(MAT_DIALOG_DATA) public data : {services : MedicalService[]}) {}
 
   onChange(service : MedicalService, isChecked : boolean){
-    //console.log(appointment.selected);
     var ser = this.data.services.find(s => s == service);
     if(ser != undefined){
       ser.selected = isChecked;

@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Form, FormBuilder} from '@angular/forms';
 import { RecordAttendanceDialogComponent } from 'src/app/components/record-attendance-dialog/record-attendance-dialog.component';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -39,30 +40,22 @@ const colors: Record<string, EventColor> = {
   styleUrls: ['./doctor-page.component.scss']
 })
 export class DoctorPageComponent implements OnInit {
-  private readonly _user$ = localStorage.getItem('user')
-      ? JSON.parse(localStorage.getItem('user')!)
-      : null
-  
+  private id = this.authService.id || 0;
 
-  private rezervacija : boolean = false;
   private readonly subscription = new Subscription();
   // dohvacanje appointmenta
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public appointments$: Observable<any> = this.trigger$.pipe(
     switchMap(() => {
-      return this.appointmentsService.getAllApointments('doctor', 8);
+      return this.appointmentsService.getAllApointments('doctor', this.id);
     })
   );
-  public doctorAppointments$: Observable<any> = this.trigger$.pipe(
-    switchMap(() => {
-      return this.appointmentsService.getAllDoctorApointments(8);
-    })
-  );
-
+  
   constructor(
     private readonly appointmentsService: AppointmentsService,
     private readonly router: Router,
-    public dialog : MatDialog
+    public dialog : MatDialog,
+    private readonly authService: AuthService
   ) {
     this.trigger$.next(null);
    }
@@ -72,6 +65,7 @@ export class DoctorPageComponent implements OnInit {
   }
 
   events : CalendarEvent[] = [];
+  badgeContent : number = 0;
 
   private addDuration = (date: Date, obj: object): Date => {
     const result = new Date(date);
@@ -113,14 +107,21 @@ export class DoctorPageComponent implements OnInit {
   refresh = new Subject<void>();
 
   private allAppointments : IAppointmentData[] = [];
+  private pendingAppointments : IAppointmentData[] = [];
 
   fetchAppointments() : void {
     this.events = [];
     this.appointments$.subscribe(
       (modelData : IAppointmentData[]) => {
         console.log(modelData);
+        this.badgeContent = this.pendingAppointments.length;
         modelData.forEach((app) => {
           this.allAppointments.push(app);
+          this.pendingAppointments = this.allAppointments.filter(app => app.patientid != null)
+              .filter(app => app.patient_came == null)
+              .filter(app => new Date(app.time.slice(0,-1)).toLocaleDateString() == new Date().toLocaleDateString())
+              .filter(app => this.addDuration(new Date(app.time.slice(0, -1)), app.duration).getTime() < new Date().getTime());
+          this.badgeContent = this.pendingAppointments.length;
           this.events.push({
             id: app.id,
             start: new Date(app.time.slice(0, -1)),
@@ -131,24 +132,12 @@ export class DoctorPageComponent implements OnInit {
               : 'Slobodan termin ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                 + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
             color: app.patientid !== null ? { ...colors['blue'] } : { ...colors['yellow'] },
-            //actions: this.actions
           })
         });
-        //this.viewDate = new Date();
         this.refresh.next();
         this.events.sort((a,b) => (a.title < b.title) ? -1 : 1);
       },
-      // za error
-      /*
-      error => {
-            const res = this.dialogService.ErrorDialog('Server Error', 'Sorry, the system is unavailable at the moment.', 'Close', 'Try again');
-            res.afterClosed().subscribe(dialogResult => {
-              if (dialogResult) {
-                //this.callNext(200);
-              }
-            });
-          }
-      */
+      
     );
   }
 
@@ -157,12 +146,8 @@ export class DoctorPageComponent implements OnInit {
   }
 
   recordAttendance(){
-    var appointments = this.allAppointments.filter(app => app.patientid != null)
-                .filter(app => app.patient_came == null)
-                .filter(app => new Date(app.time.slice(0,-1)).toLocaleDateString() == new Date().toLocaleDateString())
-                .filter(app => this.addDuration(new Date(app.time.slice(0, -1)), app.duration).getTime() < new Date().getTime());
     var apps : App[] = [];
-    appointments.forEach(app => apps.push({
+    this.pendingAppointments.forEach(app => apps.push({
                 id : app.id ,
                 title : 'Rezerviran termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                     + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
@@ -178,21 +163,20 @@ export class DoctorPageComponent implements OnInit {
           //console.log(app)
           if(app.selected != undefined) {
             var id = app.id;
-            var toRecordApp = appointments.find(a => a.id == id);
+            var toRecordApp = this.pendingAppointments.find(a => a.id == id);
             if(toRecordApp != undefined){
               toRecordApp.patient_came = app.selected;
               console.log(toRecordApp);
               const appointmentSubscription = this.appointmentsService
                   .recordAttendance(toRecordApp)
                   .subscribe(() => {
-                  this.router.navigate(['/doctor'])
+                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+                    this.router.navigate(['/doctor']));
                   });
               this.subscription.add(appointmentSubscription);
             }
           }
         })
-        this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-        this.router.navigate(['/doctor']));
       }
     })
   }
@@ -204,22 +188,3 @@ type App = {
   selected?: boolean
 }
 
-/*
-@Component({
-  selector: 'record-attendance-dialog',
-  templateUrl: 'dialogs/record-attendance-dialog.html',
-})
-export class RecordAttendaceDialog {
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data : {appointments : App[]},
-    private _formBuilder: FormBuilder
-  ) {}
-  onChange(appointment : App, attendance : boolean){
-    //console.log(appointment.selected);
-    var app = this.data.appointments.find(a => a == appointment);
-    if(app != undefined){
-      app.selected = attendance;
-    }
-  }
-}
-*/

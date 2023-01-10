@@ -8,6 +8,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import {MatRadioModule} from '@angular/material/radio';
+import {MatBadgeModule} from '@angular/material/badge';
 import { RecordAttendanceDialogModule } from 'src/app/components/record-attendance-dialog/record-attendance-dialog.module';
 
 @NgModule({
@@ -21,7 +22,8 @@ import { RecordAttendanceDialogModule } from 'src/app/components/record-attendan
     MatCheckboxModule,
     MatButtonModule,
     MatRadioModule,
-    RecordAttendanceDialogModule
+    RecordAttendanceDialogModule,
+    MatBadgeModule
   ],
   exports: [DoctorPageComponent],
 })
