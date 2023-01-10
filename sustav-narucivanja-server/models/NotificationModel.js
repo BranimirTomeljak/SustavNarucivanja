@@ -28,20 +28,33 @@ async function sendEmail(purpose, reference){
         }
     });
   
-    if(reference.mail == null){ //onda je appointment
+    if(reference.time != null){ //onda je appointment
         let patient = await Patient.getById(reference.patientid);
         var mailToSend = patient.mail;
     }
     else{
         var mailToSend = reference.mail;
     }
-    const options = {
-        from: "sustavzanarucivanje@outlook.com",
-        to: mailToSend,
-        subject: getPurposeSubject(purpose),
-        html: await getPurposeMessage(purpose, reference),
-    };
-  
+    
+    if(reference.mail != null || reference.time != null)
+        var options = {
+            from: "sustavzanarucivanje@outlook.com",
+            to: mailToSend,
+            subject: getPurposeSubject(purpose),
+            html: await getPurposeMessage(purpose, reference),
+        };
+    else{
+        var options = {
+            from: "sustavzanarucivanje@outlook.com",
+            to: "mailadresahzzo@hzzo100posto.hr",
+            subject: getPurposeSubject(purpose),
+            attachments: [{
+                filename: "xmlIzvjesce",
+                content: reference,
+                contentType: 'text/xml'
+            }]
+        };
+    }
     transporter.sendMail(options, function (err, info) {
         if (err) {
             console.log(err);
@@ -72,6 +85,12 @@ function getPurposeSubject(purpose){
 
     else if(purpose == "reminder")
         return "Podsjetnik za termin pregleda";
+
+    else if(purpose == "xmlDay")
+        return "Dnevno izvješće Sustava za naručivanje";
+
+    else if(purpose == "xmlMonth")
+        return "Mjesečno izvješće Sustava za naručivanje";
 
     else
         return undefined;
@@ -228,9 +247,7 @@ async function appointmentReminderEmail() {
         const appointments = await db.query(sql, []);
 
         for (let app of appointments) {
-            const currentDate = new Date();                                 //program cita vremena sva sat unazad
-            //const testDate = new Date("2022-12-18 10:04:00");
-            //let difference = testDate.getTime() - currentDate.getTime();
+            const currentDate = new Date();
             let difference = app.time.getTime() - currentDate.getTime();
             let daysDifference = Math.ceil(difference / (1000*60*60*24));
             let hoursDifference = difference / (1000*60*60) - 24;
@@ -246,9 +263,9 @@ async function appointmentReminderEmail() {
 async function sendSMS(purpose, reference){
     const from = "Sustav za naručivanje";
 
-    if(reference.phoneNumber == null){ //onda je appointment
+    if(reference.phonenumber == null){ //onda je appointment
         let patient = await Patient.getById(reference.patientid);
-        var numberToSend = patient.phoneNumber;
+        var numberToSend = patient.phonenumber;
     }
     else{
         var numberToSend = reference.phoneNumber;
@@ -262,6 +279,8 @@ async function sendSMS(purpose, reference){
             .then(resp => { console.log('Message sent successfully'); console.log(resp); })
             .catch(err => { console.log('There was an error sending the messages.'); console.error(err); });
     }
+
+    //sendSms();
 }
 
 async function dailyReport(){
@@ -281,11 +300,8 @@ async function dailyReport(){
             span: 'U protekla 24 sata ukupno je zakazano ' + zakazani + ' sastanaka.',
             a: 'Od toga se ' + dosli + ' pacijenata odazvalo na poziv.'
         },
-        core: {
-        },
-        body1: {
-
-        }
+        core: {},
+        body1: {}
     };
     
     let numApp = JSON.stringify(res1[0].count);
@@ -296,7 +312,7 @@ async function dailyReport(){
 
     const builder = new xml2js.Builder();
     let xml = builder.buildObject(obj);
-    console.log(xml); // SALJI MAIL OVDJE S OVIM XML-om
+    sendEmail("xmlDay", xml);
 }
 
 async function monthlyReport(){
@@ -317,32 +333,26 @@ async function monthlyReport(){
             span: 'U protekla 30 dana ukupno je zakazano ' + zakazani + ' sastanaka.',
             a: 'Od toga se ' + dosli + ' pacijenata odazvalo na poziv.'
         },
-        core: {
-        }
+        core: {}
     };
 
-    let numApp = JSON.stringify(res1[0].count); // conversion " 5 " string to number 5 fex.
+    let numApp = JSON.stringify(res1[0].count);
     numApp = numApp.substring(1, numApp.length - 1);
     numApp = Number(numApp)
     if(numApp == 0)
         obj.core.child = 'Posljednjih 30 dana nije bilo rezerviranih niti obavljenih sastanaka.'
     const builder = new xml2js.Builder();
     let xml = builder.buildObject(obj);
-    console.log(xml); // OVDJE SALJI MAIL S OVIN XMLOM
-} 
+    sendEmail("xmlMonth", xml);
+}   
 
-// *** OVO SU FUNKCIJE KOJE SE POKREĆU SVAKIH 24 SATA I 30 DANA I U NJIMA SE POZIVA 
-// ** ASINKRONA FUNKCIJA U KOJOJ SE RADI XML IZVJEŠĆE   
-
-cron.schedule("0 0 0 * * *", async function () { // Daily report about reservations
+cron.schedule("0 0 0 * * *", async function () { // Daily report
     await dailyReport();
 })
 
-cron.schedule("0 0 */30 * *", async function () { // Monthly report about reservations
+cron.schedule("0 0 */30 * *", async function () { // Monthly report
     await monthlyReport();
 })
-dailyReport()
-monthlyReport()
 
 module.exports = {
     sendEmail: sendEmail,
