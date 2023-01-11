@@ -10,18 +10,17 @@
 			
 			\eject 
 		
-	
+
 		\section{Ispitivanje programskog rješenja}
 	
 			
 			\subsection{Ispitivanje komponenti}
-			\textit{Ispitivanje komponenti ostvareno je korištenjem Jest alata za ispi-
-                    tivanje. U nastavku su opisani provedeni testovi te priložene funkcija za tesriranje te izlaz koji se dobije testiranjem. Prikazani testovi pokrivaju klase UserModel i AppointmentModel koje implementiraju najvažnije funkcionalnosti aplikacije
+			\textit{Ispitivanje komponenti ostvareno je korištenjem Jest alata za ispitivanje. U nastavku su opisani provedeni testovi te priložene funkcija za tesriranje te izlaz koji se dobije testiranjem. Prikazani testovi pokrivaju klase UserModel i AppointmentModel koje implementiraju najvažnije funkcionalnosti aplikacije
                     }
-
+    
             \begin{figure}[H]
                     \includegraphics[width=300pt]{slike/usermodel_tests_code.png} %veličina u odnosu na širinu linije
-                    \caption{Prikazani testovi testiraju dohvachanje usera iz baze podataka te njegovo ubacivanje i izbacivanje iz baze podataka. Navedene funkcionalnosti su nuzhne za pravilnu registraciju i login korisnika aplikacije.}
+                    \caption{Prikazani testovi testiraju dohvačanje usera iz baze podataka te njegovo ubacivanje i izbacivanje iz baze podataka. Navedene funkcionalnosti su nužne za pravilnu registraciju i login korisnika aplikacije.}
                     \label{fig:struktura} %label mora biti drugaciji za svaku sliku
                 \end{figure}
 
@@ -33,7 +32,7 @@
 
             \begin{figure}[H]
                     \includegraphics[width=300pt]{slike/appointment_tests_code.png} %veličina u odnosu na širinu linije
-                    \caption{Prikazani testovi testiraju dohvachanje odredzenog termina iz baze podataka, testiranje postoji li odredzeni termin koji je u vremenskom konfliktu s odabranim terminom te testiranje updateanja termina. Testiranje konflikata ima vise rubnih sluchajeva, naime isti termin mogli smo vecz dohvatiti iz baze podataka te tada nebi trebalo biti konflikata, zatim mogucze je da se termin nalazi unutar drugoga, potpuno izvan...}
+                    \caption{Prikazani testovi testiraju dohvačanje određenog termina iz baze podataka, testiranje postoji li određeni termin koji je u vremenskom konfliktu s odabranim terminom te testiranje updateanja termina. Testiranje konflikata ima vise rubnih slučajeva, naime isti termin mogli smo već dohvatiti iz baze podataka te tada nebi trebalo biti konflikata, zatim moguće je da se termin nalazi unutar drugoga, potpuno izvan...}
                     \label{fig:struktura} %label mora biti drugaciji za svaku sliku
                 \end{figure}
 
@@ -44,82 +43,130 @@
                 \end{figure}
 			
 			
-			
 			\subsection{Ispitivanje sustava}
 			
-			 \textit{Ispitivanje sustava provedeno je koristeczi radni okvir Selenium\footnote{\url{https://www.seleniumhq.org/}} u obliku dodataka za preglednik \textbf{Selenium IDE} - preko kojeg se izvodilo snimanje korisnikovih akcija radi automatskog ponavljanja ispita. Razradzeno je \textbf{7 ispitnih slučajeva} u kojima se redovni slučajevi, rubni uvjeti te poziv funkcionalnosti koja nije implementirana/izaziva pogrešku. U nastavku su prikazani ispitni sluchajevi za funkcije logiranje i registriranja. Prikazani su sljedeczi testovi:
+			 \textit{Ispitivanje sustava provedeno je koristeći radni okvir Selenium\footnote{\url{https://www.seleniumhq.org/}} u obliku dodataka za preglednik \textbf{Selenium IDE} - preko kojeg se izvodilo snimanje korisnikovih akcija radi automatskog ponavljanja ispita. Razrađeno je \textbf{7 ispitnih slučajeva} u kojima su redovni slučajevi, rubni uvjeti te poziv funkcionalnosti koja nije implementirana/izaziva pogrešku. U nastavku su prikazani ispitni slučajevi za funkcije logiranje i registriranja. Prikazani su sljedeći testovi:}
     	\begin{itemize}
 		\item 	\textit{logiranje u aplikaciju ukoliko je sve ispravno naravljeno}
 		\item 	\textit{logiranje u aplikaciju ukoliko je kriv e-mail}
 		\item 	\textit{logiranje u aplikaciju ukoliko je kriva lozinka}
 		\item 	\textit{logiranje u aplikaciju ukoliko je su i lozinka i e-mail krivi}
 		\item 	\textit{registracija korisnika gdje je sve ispravno napravljeno}
-		\item 	\textit{registracija korisnika koji je vecz registriran}
+		\item 	\textit{registracija korisnika koji je već registriran}
 		\item 	\textit{registracija korisnika gdje je e-mail zadan u krivom formatu}
 	\end{itemize}
 
-        Svaki od testova prikazan je slikom te se potrebni ulaz te oczekivani izlaz nalaze ispod slike.
+        Svaki od testova prikazan je slikom te se potrebni ulaz te očekivani izlaz nalaze ispod slike.
         
 			\eject 
 
            \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/login_all_ok.png} %veličina u odnosu na širinu linije
-                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je sve ispravno naravljeno. Korishteni e-mail je "test@case.com" te lozinka "password". Ochekivani rezultat je preusmjeravanje na home page, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
+                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je sve ispravno naravljeno. Korišteni e-mail je "test@case.com" te lozinka "password". Očekivani rezultat je preusmjeravanje na home page, što se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postiže očekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 
             \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/login_wrong_email.png} %veličina u odnosu na širinu linije
-                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je kriv e-mail. Korishteni e-mail je "test@notcase.com" te lozinka "password". Ochekivani rezultat je ostajanje na login stranici, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
+                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je kriv e-mail. Korišteni e-mail je "test@notcase.com" te lozinka "password". Očekivani rezultat je ostajanje na login stranici, što se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postiže očekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 
             \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/login_wrong_password.png} %veličina u odnosu na širinu linije
-                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je kriva lozinka. Korishteni e-mail je "test@case.com" te lozinka "password2". Ochekivani rezultat je ostajanje na login stranici, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
+                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je kriva lozinka. Korišteni e-mail je "test@case.com" te lozinka "password2". Očekivani rezultat je ostajanje na login stranici, što se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postiže očekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 
             \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/login_wrong_email_and_password.png} %veličina u odnosu na širinu linije
-                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je kriva lozinka i e-mail. Korishteni e-mail je "test@notcase.com" te lozinka "password2". Ochekivani rezultat je ostajanje na login stranici, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
+                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je kriva lozinka i e-mail. Korišteni e-mail je "test@notcase.com" te lozinka "password2". Očekivani rezultat je ostajanje na login stranici, što se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postiže očekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 
             \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/register_wrong_format.png} %veličina u odnosu na širinu linije
-                \caption{Prikazani su koraci testiranja gdje se testira registracija korisnika gdje je sve ispravno napravljeno. Korishteni e-mail je "testcase.com", lozinka i ponovljena lozinka "password", ime "test", prezime "case", broj mobitela "123456789" te datum rodzenja izabran putem date selectora. Ochekivani rezultat je ostajanje na register stranici, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
+                \caption{Prikazani su koraci testiranja gdje se testira registracija korisnika gdje je sve ispravno napravljeno. Korišteni e-mail je "testcase.com", lozinka i ponovljena lozinka "password", ime "test", prezime "case", broj mobitela "123456789" te datum rođenja izabran putem date selectora. Očekivani rezultat je ostajanje na register stranici, što se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postiže očekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 
             \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/register_already_existing.png} %veličina u odnosu na širinu linije
-                \caption{Prikazani su koraci testiranja gdje se testira registracija korisnika gdje je sve ispravno napravljeno. Korishteni e-mail je "test@case.com", lozinka i ponovljena lozinka "password", ime "test", prezime "case", broj mobitela "123456789" te datum rodzenja izabran putem date selectora. User s prikazanim e-mailom je vecz registriran. Ochekivani rezultat je ostajanje na register stranici, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
+                \caption{Prikazani su koraci testiranja gdje se testira registracija korisnika gdje je sve ispravno napravljeno. Korišteni e-mail je "test@case.com", lozinka i ponovljena lozinka "password", ime "test", prezime "case", broj mobitela "123456789" te datum rođenja izabran putem date selectora. User s prikazanim e-mailom je već registriran. Očekivani rezultat je ostajanje na register stranici, što se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postiže očekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 
             \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/register_new.png} %veličina u odnosu na širinu linije
-                \caption{Prikazani su koraci testiranja gdje se testira registracija korisnika gdje je sve ispravno napravljeno. Korishteni e-mail je "test@case.com", lozinka i ponovljena lozinka "password", ime "test", prezime "case", broj mobitela "123456789" te datum rodzenja izabran putem date selectora. Ochekivani rezultat je preusmjeravanje na home stranicu, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
+                \caption{Prikazani su koraci testiranja gdje se testira registracija korisnika gdje je sve ispravno napravljeno. Korišteni e-mail je "test@case.com", lozinka i ponovljena lozinka "password", ime "test", prezime "case", broj mobitela "123456789" te datum rođenja izabran putem date selectora. Očekivani rezultat je preusmjeravanje na home stranicu, što se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postiže očekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
+            
+            \eject
 		
 		\section{Dijagram razmještaja}
 			
-			\textbf{\textit{dio 2. revizije}}
+			%\textbf{\textit{dio 2. revizije}}
 			
-			 \textit{Potrebno je umetnuti \textbf{specifikacijski} dijagram razmještaja i opisati ga. Moguće je umjesto specifikacijskog dijagrama razmještaja umetnuti dijagram razmještaja instanci, pod uvjetom da taj dijagram bolje opisuje neki važniji dio sustava.}
+			 %\textit{Potrebno je umetnuti %\textbf{specifikacijski} dijagram razmještaja i opisati ga. Moguće je umjesto specifikacijskog dijagrama razmještaja umetnuti dijagram razmještaja instanci, pod uvjetom da taj dijagram bolje opisuje neki važniji dio sustava.}
+			 
+			 Na slici 5.12 prikazan je dijagram razmještaja. Sustav je baziran na arhitekturi ”klijent-poslužitelj”. Korisnici pristupaju aplikaciji korištenjem web preglednika. Na platformi Microsoft Azure u VM-u (virtualnom stroju) se nalaze poslužitelji za frontend, backend i bazu podataka. Komunikacija između korisnika i poslužitelja za frontend, poslužitelja za frontend i poslužitelja za backend, ostvaruje se korištenjem protokola HTTP.
+			 
+			 
+			 
+			 \begin{figure}[H]
+			            \includegraphics[width=\textwidth]{slike/dijagram razmjeÅ¡taja(1).vpd.jpg} %veličina u odnosu na širinu linije
+			          \caption{Dijagram razmještanja}
+			            \label{fig:dijagram_razmjestanja} %label mora biti drugaciji za svaku sliku
+		      \end{figure}
 			
 			\eject 
 		
 		\section{Upute za puštanje u pogon}
-		
-			\textbf{\textit{dio 2. revizije}}\\
-		
-			 \textit{U ovom poglavlju potrebno je dati upute za puštanje u pogon (engl. deployment) ostvarene aplikacije. Na primjer, za web aplikacije, opisati postupak kojim se od izvornog kôda dolazi do potpuno postavljene baze podataka i poslužitelja koji odgovara na upite korisnika. Za mobilnu aplikaciju, postupak kojim se aplikacija izgradi, te postavi na neku od trgovina. Za stolnu (engl. desktop) aplikaciju, postupak kojim se aplikacija instalira na računalo. Ukoliko mobilne i stolne aplikacije komuniciraju s poslužiteljem i/ili bazom podataka, opisati i postupak njihovog postavljanja. Pri izradi uputa preporučuje se \textbf{naglasiti korake instalacije uporabom natuknica} te koristiti što je više moguće \textbf{slike ekrana} (engl. screenshots) kako bi upute bile jasne i jednostavne za slijediti.}
+				
+			 \textit{Puštanje u pogon sastoji se od nekoliko koraka:}
+    \begin{itemize}
+		\item 	\textit{Izrada koričkog računa na Microsoftovom Azure servisu}
+		\item 	\textit{Zauzimanje nove virtualne mašine}
+		\item 	\textit{Logiranje u novu virtualnu mašinu}
+		\item 	\textit{Instaliranje potrebnih knjižnica i programa te downloadanje programa}
+		\item 	\textit{Punjenje Postgres baze podataka}
+		\item 	\textit{Pokretanje aplikacije s pripadajućom skriptom}
+	\end{itemize}
+
+    \subsection{Izrada koričkog računa na Microsoftovom Azure servisu}
+    \textit{Potrebno je posjetiti stranicu azure.com te napraviti korisnichki račun.}
+
+    \subsection{Zauzimanje nove virtualne mašine}
+    \textit{Potrebno je na svojem home pageu na Azureovom servisu zauzeti novu virtualnu mašinu. Za to je potrebno pritisnuti na "Virtual Machine" te pratiti potrebne korake koji automatski dolaze jedan iza drugoga. Također je potrebno dopustiti konekciju na port 80.}
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{slike/deploy/create_vm.png} %veličina u odnosu na širinu linije
+        \caption{Prikaz stanja stranice kada se odabere kreiranje virtualne mašine.}
+        \label{fig:struktura} %label mora biti drugaciji za svaku sliku
+    \end{figure}
+
+    \subsection{Logiranje u novu virtualnu mašinu}
+    \textit{Na home pageu potrebno je odabrati virtualnu mašinu te stisnuti na "Start" te zatim "Connect" i izabrati ssh. Zatim pratiti upute koje Azure navodi.}
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{slike/deploy/connect.png} %veličina u odnosu na širinu linije
+        \caption{Prikaz opcija koje su vidljive na vrhu ekrana nakon što je odabrana virtualna mašina. Potrebno je stisnuti "Start", a zatim i "Connect", odabrati SSH i pratiti upute.}
+        \label{fig:struktura} %label mora biti drugaciji za svaku sliku
+    \end{figure}
+
+    \subsection{Instaliranje potrebnih knjižnica i programa te downloadanje programa}
+    \textit{Potrebno je klonirati program backenda i frontenda na virtualnu mašinu, za što treba imati ovlasti za to kloniranje. To napravimo tako da na virtualnu mašinu stavimo ssh kljuc za gitlab. Nadalje trebamo instalirati sve potrebno za rad kloniranoga repozitorija. To postižemo s "sudo apt install nodejs" za nodejs, "npm install -g @angular/cli" za angular, "sudo apt install postgresql postgresql-contrib" za Postgres. Također da smo sigurni da je Postgres upaljen treba provesti još "sudo systemctl start postgresql.service". Ostali dijelovi se dobivaju preko "npm install" u frontend i backend direktorijima.}
+
+    \subsection{Punjenje Postgres baze podataka}
+    \textit{Potrebno je dodati u bazu podataka tablice koje se dalje koriste u backendu. Pozicionirati se u direktorij backenda ("cd sustav-narucivanja/sustav-narucivanja-server") te zatim "node db/seed.js"}
+    \begin{figure}[H]
+        \includegraphics[width=\textwidth]{slike/deploy/seed.png} %veličina u odnosu na širinu linije
+        \caption{Očekivani ispis prilikom pokretanja "seed.js". Imati na umu da je ovo samo krajnji dio ispisa, postoji i dio prije ovoga koji je izbačen iz slike u svrhu sažetosti.}
+        \label{fig:struktura} %label mora biti drugaciji za svaku sliku
+    \end{figure}
+
+    \subsection{Pokretanje aplikacije}
+    \textit{Potrebno je pokreniti restart skriptu koja se nalazi u root dijelu. Za to joj je potrebno dati ovlasti za pokretanje i onda je pokrenuti "sudo ./restart.sh" }
 			
-			
-			 \textit{Dovršenu aplikaciju potrebno je pokrenuti na javno dostupnom poslužitelju. Studentima se preporuča korištenje neke od sljedećih besplatnih usluga: \href{https://aws.amazon.com/}{Amazon AWS}, \href{https://azure.microsoft.com/en-us/}{Microsoft Azure} ili \href{https://www.heroku.com/}{Heroku}. Mobilne aplikacije trebaju biti objavljene na F-Droid, Google Play ili Amazon App trgovini.}
-			
+
 			
 			\eject 
