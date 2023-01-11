@@ -9,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import {MatRadioModule} from '@angular/material/radio';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AcceptChangeDialogModule } from 'src/app/components/accept-change-dialog/accept-change-dialog.module';
 
 
@@ -21,7 +22,8 @@ import { AcceptChangeDialogModule } from 'src/app/components/accept-change-dialo
     KalendarModule,
     MatBadgeModule,
     MatDialogModule,
-    AcceptChangeDialogModule
+    AcceptChangeDialogModule,
+    MatSnackBarModule
   ],
   exports: [PatientComponent],
 })

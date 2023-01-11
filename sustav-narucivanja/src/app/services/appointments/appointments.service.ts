@@ -24,7 +24,7 @@ export class AppointmentsService {
   }
 
   public getNumFutureAppointments() : Observable<any> {
-    return this.http.get<Array<any>>(`/api/num_future_appointments`);
+    return this.http.get<any>(`/api/appointment/num_future_appointments`);
   }
 
   public addAppointment(data : IAppointmentData) {

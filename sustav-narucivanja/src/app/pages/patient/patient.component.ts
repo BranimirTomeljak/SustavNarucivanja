@@ -17,6 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AcceptChangeDialogComponent } from 'src/app/components/accept-change-dialog/accept-change-dialog.component';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -42,23 +43,32 @@ const colors: Record<string, EventColor> = {
 export class PatientComponent implements OnInit{
   public user$ = this.authService.user$;
   private doctorId?: number;
+  private nurseId?: number;
   private numFutureAppointments?: number;
+  private numFailedAppointments?: number;
   private id = this.authService.id || 0;
-  private numFailedAppointments = this.authService.id || 0;
-  
   
   private readonly subscription = new Subscription();
  
   private readonly trigger$ = new BehaviorSubject<any>(null);
+
+
   public appointments$: Observable<any> = this.trigger$.pipe(
-    /*switchMap(() => {
-      return this.appointmentsService.getNumFutureAppointments(this.id); 
-    }), tap((res) => this.numFutureAppointments = res),*/
+    switchMap(() => {
+      return this.appointmentsService.getNumFutureAppointments(); 
+    }), tap((res) => this.numFutureAppointments = res),
     switchMap(() => {
       return this.appointmentsService.getAllApointments('patient', this.id);
     }
   ))
+
   public doctorAppointments$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.authService.getPatientNFailedAppointments(); 
+    }), tap((res) => this.numFailedAppointments = res),
+    switchMap(() => {
+      return this.authService.getPatientNurseId(); 
+    }), tap((res) => this.nurseId = res),
     switchMap(() => {
       return this.authService.getPatientDoctorId(); 
     }), tap((res) => this.doctorId = res),
@@ -67,13 +77,13 @@ export class PatientComponent implements OnInit{
     })
   );
 
-  
 
   constructor(
     private readonly appointmentsService: AppointmentsService,
     private readonly authService: AuthService,
     public dialog: MatDialog,
-    private readonly router : Router
+    private readonly router : Router,
+    private readonly snackBar: MatSnackBar,
     ) {
     this.trigger$.next(null);
   }
@@ -82,7 +92,6 @@ export class PatientComponent implements OnInit{
   events : CalendarEvent[] = [];
 
   public ngOnInit() : void {
-    console.log(this.numFutureAppointments)
     this.fetchAppointments();
   }
 
@@ -129,7 +138,7 @@ export class PatientComponent implements OnInit{
     this.events = [];
     this.appointments$.subscribe(
       (modelData : IAppointmentData[]) => {
-        console.log(modelData);
+        //console.log(modelData);
         modelData.forEach((app) => {
           this.allAppointments.push(app);
           this.pendingAppointments = this.allAppointments.filter(app => app.changes_from !== null)
@@ -149,18 +158,21 @@ export class PatientComponent implements OnInit{
           })
         });
         this.refresh.next();
-        this.events.sort((a,b) => (a.title < b.title) ? -1 : 1);
+        this.events.sort((a,b) => (a.title.split(' ')[2] < b.title.split(' ')[2]) ? -1 : 1);
       },
     );
   }
 
   public reserveAppointment(type : string) : void{
-    if(this.numFutureAppointments as number >= 3) {
-      console.log('tak ti je to')
-    }
-    if(this.numFailedAppointments >= 3){
-      console.log('tak ti je to')
-    }
+    if(this.numFutureAppointments as number <= 5) {
+      this.snackBar.open('Imate previše zakazanih termina, dođite izravno na dogovor', 'Zatvori', {
+        duration: 5000,
+      });
+    } else if(this.numFailedAppointments as number >= 5){
+      this.snackBar.open('Imate previše propuštenih termina, dođite izravno na dogovor', 'Zatvori', {
+        duration: 5000,
+      });
+    } else {
     this.type = type;
     this.events = [];
     this.fetchAppointments();
@@ -181,10 +193,11 @@ export class PatientComponent implements OnInit{
           })
         });
         this.refresh.next();
-        this.events.sort((a,b) => (a.title < b.title) ? -1 : 1);
+        this.events.sort((a,b) => (a.title.split(' ')[2] < b.title.split(' ')[2]) ? -1 : 1);
       },
     )
   }
+}
 
   badgeContent : number = 0;
   
@@ -204,7 +217,7 @@ export class PatientComponent implements OnInit{
                 this.addDuration(new Date(this.allAppointments.find(a => a.id == app.changes_from)!.time.slice(0, -1)), app.duration)
                 .toLocaleTimeString().slice(0, -3),
                 selected : undefined}));
-    console.log(apps)
+    //console.log(apps)
               
     const dialogRef = this.dialog.open(AcceptChangeDialogComponent, {
       data : {
@@ -214,7 +227,7 @@ export class PatientComponent implements OnInit{
     dialogRef.afterClosed().subscribe(result => {
       if(result){
         apps.forEach(app => {
-          console.log(app)
+          //console.log(app)
           const data : IChangeAppointmentData = {
             from_id : app.id_from,
             to_id : app.id_to
@@ -243,6 +256,12 @@ export class PatientComponent implements OnInit{
     
   }
 
+  test(){
+    console.log('nurse' , this.nurseId);
+    console.log('doctor', this.doctorId as number);
+    console.log('failed', this.numFailedAppointments);
+    console.log('future',this.numFutureAppointments);
+  }
 
 }
 
