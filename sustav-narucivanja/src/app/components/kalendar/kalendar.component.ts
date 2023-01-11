@@ -91,6 +91,8 @@ export class KalendarComponent implements OnInit ,OnDestroy {
 
 
   @Input() refresh = new Subject<void>();
+  @Input() typeInput : string = '';
+  @Input() events: CalendarEvent[] = [];
 
   private addDuration = (date: Date, obj: object): Date => {
     const result = new Date(date);
@@ -151,10 +153,6 @@ export class KalendarComponent implements OnInit ,OnDestroy {
     {title : 'mjerenje šećera', selected : undefined},
     {title : 'previjanje' , selected : undefined},
   ];
-
-  
-  @Input() typeInput : string = '';
-  @Input() events: CalendarEvent[] = [];
 
   activeDayIsOpen: boolean = false;
 

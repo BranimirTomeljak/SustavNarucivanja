@@ -19,10 +19,6 @@ export class AppointmentsService {
     return this.http.get<Array<any>>(`/api/appointment?type=${role}&id=${id}`);
   }
   
-  public getAllDoctorApointments(id: number): Observable<Array<any>> {
-    return this.http.get<Array<any>>(`/api/appointment?type=doctor&id=${id}`);
-  }
-
   public getNumFutureAppointments() : Observable<any> {
     return this.http.get<any>(`/api/appointment/num_future_appointments`);
   }

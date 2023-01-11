@@ -67,15 +67,22 @@ export class PatientComponent implements OnInit{
       return this.authService.getPatientNFailedAppointments(); 
     }), tap((res) => this.numFailedAppointments = res),
     switchMap(() => {
-      return this.authService.getPatientNurseId(); 
-    }), tap((res) => this.nurseId = res),
-    switchMap(() => {
       return this.authService.getPatientDoctorId(); 
     }), tap((res) => this.doctorId = res),
     switchMap(() => {
-      return this.appointmentsService.getAllDoctorApointments(this.doctorId as number); 
+      return this.appointmentsService.getAllApointments('doctor', this.doctorId as number); 
     })
   );
+
+  public nurseAppointments$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.authService.getPatientNurseId(); 
+    }), tap((res) => this.nurseId = res),
+    switchMap(() => {
+      return this.appointmentsService.getAllApointments('nurse', this.nurseId as number); 
+    })
+  );
+
 
 
   constructor(
@@ -140,8 +147,8 @@ export class PatientComponent implements OnInit{
       (modelData : IAppointmentData[]) => {
         //console.log(modelData);
         modelData.forEach((app) => {
-          this.allAppointments.push(app);
-          this.pendingAppointments = this.allAppointments.filter(app => app.changes_from !== null)
+          this.patientAppointments.push(app);
+          this.pendingAppointments = this.patientAppointments.filter(app => app.changes_from !== null)
           this.badgeContent = this.pendingAppointments.length;
           var type : string = app.type != undefined ? ", vrsta usluge: " + app.type : "";
           this.events.push({
@@ -149,7 +156,7 @@ export class PatientComponent implements OnInit{
             start: new Date(app.time.slice(0, -1)),
             end: this.addDuration(new Date(app.time.slice(0, -1)), app.duration),
             title: app.nurseid !== null 
-              ? 'Usluga kod medicinske sestre ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
+              ? 'Medicinska usluga ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                   + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
                   + type
               : 'Liječnički pregled ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
@@ -176,32 +183,60 @@ export class PatientComponent implements OnInit{
     this.type = type;
     this.events = [];
     this.fetchAppointments();
-    this.doctorAppointments$.subscribe(
-      (modelData : IAppointmentData[]) => {
-        //console.log(modelData);
-        modelData.filter((app) => app.patientid === null)
-        .filter(app => new Date(app.time.slice(0, -1)).getTime() > new Date().getTime())
-        .forEach((app) => {
-          this.events.push({
-            id: app.id,
-            start: new Date(app.time.slice(0, -1)),
-            end: this.addDuration(new Date(app.time.slice(0, -1)), app.duration),
-            title: 'Slobodan termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
-            + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
-            color: colors['yellow'] ,
-            //actions: this.actions
-          })
-        });
-        this.refresh.next();
-        this.events.sort((a,b) => (a.title.split(' ')[2] < b.title.split(' ')[2]) ? -1 : 1);
-      },
-    )
+    if(type == 'doctor'){
+      this.doctorAppointments$.subscribe(
+        (modelData : IAppointmentData[]) => {
+          //console.log(modelData);
+          modelData.filter((app) => app.patientid === null)
+          .filter((app) => !this.patientAppointments.find((a) => a.time == app.time))
+          .filter(app => new Date(app.time.slice(0, -1)).getTime() > new Date().getTime())
+          .forEach((app) => {
+            this.events.push({
+              id: app.id,
+              start: new Date(app.time.slice(0, -1)),
+              end: this.addDuration(new Date(app.time.slice(0, -1)), app.duration),
+              title: 'Slobodan termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
+              + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
+              color: colors['yellow'] ,
+              //actions: this.actions
+            })
+          });
+          this.refresh.next();
+          this.events.sort((a,b) => (a.title.split(' ')[2] < b.title.split(' ')[2]) ? -1 : 1);
+        },
+      )
+    } else if(type == 'tech') {
+      this.nurseAppointments$.subscribe(
+        (modelData : IAppointmentData[]) => {
+          console.log(modelData);
+          console.log(this.patientAppointments);
+
+          modelData.filter((app) => app.patientid === null)
+          .filter(app => new Date(app.time.slice(0, -1)).getTime() > new Date().getTime())
+          .filter((app) => !this.patientAppointments.find(a => a.time == app.time))
+          .forEach((app) => {
+            this.events.push({
+              id: app.id,
+              start: new Date(app.time.slice(0, -1)),
+              end: this.addDuration(new Date(app.time.slice(0, -1)), app.duration),
+              title: 'Slobodan termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
+              + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
+              color: colors['yellow'] ,
+              //actions: this.actions
+            })
+          });
+          this.refresh.next();
+          this.events.sort((a,b) => (a.title.split(' ')[2] < b.title.split(' ')[2]) ? -1 : 1);
+        },
+      )
+    }
+    
   }
 }
 
   badgeContent : number = 0;
   
-  private allAppointments : IAppointmentData[] = [];
+  private patientAppointments : IAppointmentData[] = [];
   private pendingAppointments : IAppointmentData[] = [];
 
   acceptChange() : void{
@@ -209,12 +244,12 @@ export class PatientComponent implements OnInit{
     this.pendingAppointments.forEach(app => apps.push({
                 date : new Date(app.time.slice(0, -1)).toLocaleDateString(),
                 id_to : app.id ,
-                id_from: this.allAppointments.find(a => a.id == app.changes_from)?.id,
+                id_from: this.patientAppointments.find(a => a.id == app.changes_from)?.id,
                 title_to : new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                     + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
-                title_from : new Date(this.allAppointments.find(a => a.id == app.changes_from)!.time.slice(0, -1))
+                title_from : new Date(this.patientAppointments.find(a => a.id == app.changes_from)!.time.slice(0, -1))
                 .toLocaleTimeString().slice(0, -3) + ' - ' +
-                this.addDuration(new Date(this.allAppointments.find(a => a.id == app.changes_from)!.time.slice(0, -1)), app.duration)
+                this.addDuration(new Date(this.patientAppointments.find(a => a.id == app.changes_from)!.time.slice(0, -1)), app.duration)
                 .toLocaleTimeString().slice(0, -3),
                 selected : undefined}));
     //console.log(apps)
