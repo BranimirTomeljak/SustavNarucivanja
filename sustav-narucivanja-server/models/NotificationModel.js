@@ -268,10 +268,10 @@ async function sendSMS(purpose, reference){
         var numberToSend = patient.phonenumber;
     }
     else{
-        var numberToSend = reference.phoneNumber;
+        var numberToSend = reference.phonenumber;
     }
 
-    const to = numberToSend;
+    const to = "385".contact(numberToSend.substring(1));
     const text = await getPurposeSMS(purpose, reference);
 
     async function sendSms() {
