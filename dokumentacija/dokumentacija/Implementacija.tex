@@ -12,36 +12,34 @@
 		
 	
 		\section{Ispitivanje programskog rješenja}
-			
-			\textbf{\textit{dio 2. revizije}}\\
-			
-			 \textit{U ovom poglavlju je potrebno opisati provedbu ispitivanja implementiranih funkcionalnosti na razini komponenti i na razini cijelog sustava s prikazom odabranih ispitnih slučajeva. Studenti trebaju ispitati temeljnu funkcionalnost i rubne uvjete.}
 	
 			
 			\subsection{Ispitivanje komponenti}
-			\textit{Potrebno je provesti ispitivanje jedinica (engl. unit testing) nad razredima koji implementiraju temeljne funkcionalnosti. Razraditi \textbf{minimalno 6 ispitnih slučajeva} u kojima će se ispitati redovni slučajevi, rubni uvjeti te izazivanje pogreške (engl. exception throwing). Poželjno je stvoriti i ispitni slučaj koji koristi funkcionalnosti koje nisu implementirane. Potrebno je priložiti izvorni kôd svih ispitnih slučajeva te prikaz rezultata izvođenja ispita u razvojnom okruženju (prolaz/pad ispita). }
+			\textit{Ispitivanje komponenti ostvareno je korištenjem Jest alata za ispi-
+                    tivanje. U nastavku su opisani provedeni testovi te priložene funkcija za tesriranje te izlaz koji se dobije testiranjem. Prikazani testovi pokrivaju klase UserModel i AppointmentModel koje implementiraju najvažnije funkcionalnosti aplikacije
+                    }
 
             \begin{figure}[H]
-                    \includegraphics[width=\textwidth]{slike/usermodel_tests_code.png} %veličina u odnosu na širinu linije
-                    \caption{Program za testiranje.}
+                    \includegraphics[width=300]{slike/usermodel_tests_code.png} %veličina u odnosu na širinu linije
+                    \caption{Prikazani testovi testiraju dohvachanje usera iz baze podataka te njegovo ubacivanje i izbacivanje iz baze podataka. Navedene funkcionalnosti su nuzhne za pravilnu registraciju i login korisnika aplikacije.}
                     \label{fig:struktura} %label mora biti drugaciji za svaku sliku
                 \end{figure}
 
                 \begin{figure}[H]
                     \includegraphics[width=\textwidth]{slike/usermodel_tests_out.png} %veličina u odnosu na širinu linije
-                    \caption{Program za testiranje.}
+                    \caption{Izlaz programa za testiranje klase UserModel s 2 testna primjera. Sa slike je vidljivo da klasa prolazi testne primjere.}
                     \label{fig:struktura} %label mora biti drugaciji za svaku sliku
                 \end{figure}
 
             \begin{figure}[H]
-                    \includegraphics[width=\textwidth]{slike/appointment_tests_code.png} %veličina u odnosu na širinu linije
-                    \caption{Program za testiranje.}
+                    \includegraphics[width=300]{slike/appointment_tests_code.png} %veličina u odnosu na širinu linije
+                    \caption{Prikazani testovi testiraju dohvachanje odredzenog termina iz baze podataka, testiranje postoji li odredzeni termin koji je u vremenskom konfliktu s odabranim terminom te testiranje updateanja termina. Testiranje konflikata ima vise rubnih sluchajeva, naime isti termin mogli smo vecz dohvatiti iz baze podataka te tada nebi trebalo biti konflikata, zatim mogucze je da se termin nalazi unutar drugoga, potpuno izvan...}
                     \label{fig:struktura} %label mora biti drugaciji za svaku sliku
                 \end{figure}
 
                 \begin{figure}[H]
                     \includegraphics[width=\textwidth]{slike/appointment_tests_out.png} %veličina u odnosu na širinu linije
-                    \caption{Program za testiranje.}
+                    \caption{Izlaz programa za testiranje klase AppointmentModel s 6 testnih primjera. Sa slike je vidljivo da klasa prolazi testne primjere.}
                     \label{fig:struktura} %label mora biti drugaciji za svaku sliku
                 \end{figure}
 			
@@ -79,7 +77,7 @@
             \end{figure}
 
             \begin{figure}[H]
-                \includegraphics[width=\textwidth]{slike/tests_system/register_wrong_format.png.png} %veličina u odnosu na širinu linije
+                \includegraphics[width=\textwidth]{slike/tests_system/register_wrong_format.png} %veličina u odnosu na širinu linije
                 \caption{Program za testiranje.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
