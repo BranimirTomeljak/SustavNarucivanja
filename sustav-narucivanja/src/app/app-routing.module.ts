@@ -31,6 +31,9 @@ import { WorkingHoursComponent } from './pages/doctor-page/working-hours/working
 import { WorkingHoursModule } from './pages/doctor-page/working-hours/working-hours.module';
 import { NursePageComponent } from './pages/nurse-page/nurse-page.component';
 import { NursePageModule } from './pages/nurse-page/nurse-page.module';
+import { DoctorGuard } from './guards/doctor/doctor.guard';
+import { NurseGuard } from './guards/nurse/nurse.guard';
+import { PatientGuard } from './guards/patient/patient.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -54,13 +57,24 @@ const routes: Routes = [
         ],
         canActivate: [AdminGuard],
       },
-      { path: 'patient', component: PatientComponent },
-      { path: 'doctor',
+      {
+        path: 'patient',
+        component: PatientComponent,
+        canActivate: [PatientGuard],
+      },
+      {
+        path: 'doctor',
         children: [
           { path: '', component: DoctorPageComponent },
-          { path: 'working-hours', component: WorkingHoursComponent}
-        ]},
-      { path: 'nurse', component: NursePageComponent },
+          { path: 'working-hours', component: WorkingHoursComponent },
+        ],
+        canActivate: [DoctorGuard],
+      },
+      {
+        path: 'nurse',
+        component: NursePageComponent,
+        canActivate: [NurseGuard],
+      },
       { path: 'profile', component: ProfileComponent },
     ],
     canActivate: [AuthGuard],

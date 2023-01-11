@@ -2,7 +2,7 @@
   <h1 routerLink="/">Sustav naručivanja</h1>
 
   <div>
-    <ng-container *ngIf="user.type === 'admin'; else nonAdmin">
+    <ng-container *ngIf="user.type === 'admin'">
       <button
         *ngFor="let link of links.admin"
         mat-button
@@ -11,15 +11,33 @@
         {{ link.title }}
       </button>
     </ng-container>
-    <ng-template #nonAdmin>
+    <ng-container *ngIf="user.type === 'patient'">
       <button
-        *ngFor="let link of links.nonAdmin"
+        *ngFor="let link of links.patient"
         mat-button
         [routerLink]="link.path"
       >
         {{ link.title }}
       </button>
-    </ng-template>
+    </ng-container>
+    <ng-container *ngIf="user.type === 'doctor'">
+      <button
+        *ngFor="let link of links.doctor"
+        mat-button
+        [routerLink]="link.path"
+      >
+        {{ link.title }}
+      </button>
+    </ng-container>
+    <ng-container *ngIf="user.type === 'nurse'">
+      <button
+        *ngFor="let link of links.nurse"
+        mat-button
+        [routerLink]="link.path"
+      >
+        {{ link.title }}
+      </button>
+    </ng-container>
     <button mat-button (click)="onLogoutClick()">Odjavite se</button>
   </div>
 </mat-toolbar>
