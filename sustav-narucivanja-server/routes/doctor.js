@@ -13,4 +13,9 @@ router.get("/:id", async function (req, res) {
     res.json(doctor);
 });
 
+router.post("/set", async function (req, res, next) {
+    await Doctor.setRule(req.body.id, req.body.hours);
+    res.json("success");
+});
+ 
 module.exports = router;
