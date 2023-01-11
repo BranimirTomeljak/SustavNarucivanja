@@ -271,7 +271,7 @@ async function sendSMS(purpose, reference){
         var numberToSend = reference.phonenumber;
     }
 
-    const to = "385".contact(numberToSend.substring(1));
+    const to = "385".concat(numberToSend.substring(1));
     const text = await getPurposeSMS(purpose, reference);
 
     async function sendSms() {
