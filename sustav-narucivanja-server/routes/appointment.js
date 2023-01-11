@@ -53,8 +53,8 @@ needed in the query:
 router.post('/add_range', async function(req, res, next) {
   const loop_over_appointments = async (func) => {
     // Parse the start and end times as Date objects
-    const startTime = add_hour(add_hour(new Date(Date.parse(req.body.time_start))));
-    const endTime   = add_hour(add_hour(new Date(Date.parse(req.body.time_end))));
+    const startTime = add_hour(new Date(Date.parse(req.body.time_start)));
+    const endTime   = add_hour(new Date(Date.parse(req.body.time_end)));
     console.log(" OVO JE  ENDTIME: " + endTime)
     let date = new Date()
     console.log(" OVO JE DATE: " + date.getTime())
