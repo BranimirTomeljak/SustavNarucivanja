@@ -179,6 +179,12 @@ class Appointment {
         return toreturn
     }
 
+    static async fetchNumOfFutureAppointments(patientid) {
+        const sql = 'SELECT * FROM appointment where patientid = ' + patientid + ' and time > CURRENT_TIMESTAMP';
+        const result = await db.query(sql, []);
+        return Object.keys(result).length;
+    }
+
     // for example can fetch by patientid, doctorid
     async updateDb() {
         let f = Appointment._stringify_all
