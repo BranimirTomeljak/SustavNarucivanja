@@ -32,6 +32,7 @@ import { WorkingHoursModule } from './pages/doctor-page/working-hours/working-ho
 import { NursePageComponent } from './pages/nurse-page/nurse-page.component';
 import { NursePageModule } from './pages/nurse-page/nurse-page.module';
 import { DoctorGuard } from './guards/doctor/doctor.guard';
+import { NurseGuard } from './guards/nurse/nurse.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -64,7 +65,11 @@ const routes: Routes = [
         ],
         canActivate: [DoctorGuard],
       },
-      { path: 'nurse', component: NursePageComponent },
+      {
+        path: 'nurse',
+        component: NursePageComponent,
+        canActivate: [NurseGuard],
+      },
       { path: 'profile', component: ProfileComponent },
     ],
     canActivate: [AuthGuard],
