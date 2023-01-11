@@ -146,7 +146,7 @@ const check_and_put = async (req, res, where) =>{
       // this is very important, the frontent uses 'doctorId' while database uses 'doctorid'
       doctorid:doctorId,
       notificationMethod:notificationMethod,
-      nFailedAppointments:0
+      nFailedAppointments:0,
     },
   )
   try{

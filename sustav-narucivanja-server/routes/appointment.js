@@ -2,6 +2,7 @@ var express = require('express');
 const notification = require("../models/NotificationModel");
 var Appointment = require('../models/AppointmentModel');
 var { Doctor, Patient } = require("../models/UserModel");
+var { Team } = require("../models/TeamModel");
 
 var router = express.Router();
 const appointment_duration = 30;
@@ -48,8 +49,6 @@ needed in the query:
     nurseid or doctorid: int
 */
 router.post('/add_range', async function(req, res, next) {
-  console.log('the date is ' + req.body.time_start )
-  
   const loop_over_appointments = async (func) => {
     // Parse the start and end times as Date objects
     const startTime = add_hour(add_hour(new Date(Date.parse(req.body.time_start))));
@@ -72,13 +71,7 @@ router.post('/add_range', async function(req, res, next) {
     return true
   }
 
-  const appointment_factory = (time) => {
-    let doctorid = undefined
-    if (req.session.user.type === 'doctor')
-      doctorid = req.session.user.id
-    let nurseid = undefined
-    if (req.session.user.type === 'nurse')
-      nurseid = req.session.user.id
+  const appointment_factory = (time, doctorid, nurseid) => {
     return new Appointment(
       undefined,
       undefined,
@@ -89,9 +82,7 @@ router.post('/add_range', async function(req, res, next) {
     )
   }
   
-  const check_errors = async(time) => {
-    let app = appointment_factory(time)
-  
+  const check_errors = async(app) => {  
     if (await app.conflictsWithDb()){
       res.status(500).send('Appointment overlaps.')
       return true
@@ -104,17 +95,28 @@ router.post('/add_range', async function(req, res, next) {
     return false
   }
 
-  const save_to_db = async(time) => {
-    console.log('making' + time)
-    let app = appointment_factory(time)
-    await app.saveToDb()
+  const multiply_appointment_over_team = async (time, func) => {
+    let app = appointment_factory(time, req.session.user.id, undefined)
+    let res = await func(app)
+    let nurses = await Team.dbGetNursesByTeamId(req.session.user.teamid)
+    for (let nurse of nurses){
+      app = appointment_factory(time, undefined, nurse.id)
+      res = res && await func(app)
+    }
+    return res
+  }
+
+  const save_to_db = async(app) => {
+      await app.saveToDb()   
+      return true 
   }
   console.log('here')
 
-  if (await loop_over_appointments(check_errors)){
-    await loop_over_appointments(save_to_db)
+  if (await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, check_errors)})){
+    await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, save_to_db)})
     res.json();
   }
+
 });
 
 
