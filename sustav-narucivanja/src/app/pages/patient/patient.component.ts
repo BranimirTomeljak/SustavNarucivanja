@@ -43,7 +43,9 @@ export class PatientComponent implements OnInit{
   public user$ = this.authService.user$;
   private doctorId?: number;
   private id = this.authService.id || 0;
+  private nFailedAppointments = this.authService.id || 0;
 
+  
   private readonly subscription = new Subscription();
  
   private readonly trigger$ = new BehaviorSubject<any>(null);
@@ -148,6 +150,9 @@ export class PatientComponent implements OnInit{
   }
 
   public reserveAppointment(type : string) : void{
+    if(this.nFailedAppointments >= 0) {
+      console.log('tak ti je to')
+    }
     this.type = type;
     this.events = [];
     this.fetchAppointments();
