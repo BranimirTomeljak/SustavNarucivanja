@@ -138,7 +138,7 @@ class Appointment {
         let beg = "('" + this.time + "'::timestamp)"
         let end = "(" + beg + "+ ('" + this.duration + "'::interval))"
         let constraint_list = []
-
+        
         if (this.doctorid !== undefined)
             constraint_list.push("doctorid = " + this.doctorid)
         if (this.nurseid !== undefined)

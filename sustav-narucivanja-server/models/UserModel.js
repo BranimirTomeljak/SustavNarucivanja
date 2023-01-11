@@ -289,7 +289,7 @@ class Nurse extends User {
     rest = {}
   ) {
     super(id, name, surname, sex, phonenumber, mail, password, dateofbirth);
-    this.teamid = undefined;
+    this.teamid = rest.teamid
     this.type = "nurse";
   }
 
@@ -319,8 +319,8 @@ class Nurse extends User {
       user.mail,
       user.password,
       user.dateofbirth,
-      result.teamid
-    );
+      {teamid:result[0].teamid},
+      );
   }
 
   static async getAll() {
@@ -339,7 +339,7 @@ class Nurse extends User {
           result.mail,
           result.password,
           result.dateofbirth,
-          result.teamid
+          {teamid:result[0].teamid},
         )
       );
     return toreturn;
@@ -382,6 +382,8 @@ class Doctor extends Nurse {
   ) {
     super(id, name, surname, sex, phonenumber, mail, password, dateofbirth);
     this.type = "doctor";
+    this.teamid = rest.teamid
+    console.log('hello' + this.teamid)
   }
 
   async addToDb() {
@@ -401,6 +403,8 @@ class Doctor extends Nurse {
     const sql = "SELECT * FROM doctor WHERE id = " + id;
     const result = await db.query(sql, []);
     if (result.length === 0) throw "doctor does not exist";
+    console.log(result)
+    console.log('sorry')
     return new Doctor(
       user.id,
       user.name,
@@ -410,8 +414,8 @@ class Doctor extends Nurse {
       user.mail,
       user.password,
       user.dateofbirth,
-      result.teamid
-    );
+      {teamid:result[0].teamid}
+      );
   }
 
   static async getAll() {
@@ -430,8 +434,8 @@ class Doctor extends Nurse {
           result.mail,
           result.password,
           result.dateofbirth,
-          result.teamid
-        )
+          {teamid:result[0].teamid}
+          )
       );
     return toreturn;
   }

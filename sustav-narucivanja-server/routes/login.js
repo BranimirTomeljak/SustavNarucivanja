@@ -31,6 +31,7 @@ router.post( "/",
       req.session.user = await Nurse.getById(id)
     else if (await user.isAdmin())
       req.session.user = await Admin.getById(id)
+    req.session.save()
     res.json(req.session.user);
 
   }
