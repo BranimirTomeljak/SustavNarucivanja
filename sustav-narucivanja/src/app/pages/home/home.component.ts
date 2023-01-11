@@ -14,9 +14,4 @@ export class HomeComponent {
   public onClick() {
     this.authService.getPatientDoctorId().subscribe();
   }
-
-  public test() {
-    this.authService.getPatientNurseId().subscribe();
-    this.authService.getPatientNFailedAppointments().subscribe();
-  }
 }
