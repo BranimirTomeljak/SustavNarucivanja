@@ -23,6 +23,13 @@ router.get('/', async function(req, res, next) {
   res.json(apps);
 });
 
+// get number of pending future appointements of logged in patient
+router.get('/num_future_appointments', async function(req, res, next) {
+  let id = req.session.user.id;
+  var result = await Appointment.fetchNumOfFutureAppointments(id);
+  res.json(result);
+});
+
 /*
 Makes a block of appointments between `time_start` and `time_end` of
 length `appointment_duration`.
