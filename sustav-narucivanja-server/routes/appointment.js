@@ -68,7 +68,7 @@ router.post('/add_range', async function(req, res, next) {
     let currentTime = startTime;
 
     // Loop until the current time is past the end time
-    while (currentTime.getTime() + appointment_duration * 60 * 1000 < endTime.getTime()) {
+    while (currentTime.getTime() + appointment_duration * 60 * 1000 <= endTime.getTime()) {
       console.log(currentTime.toISOString())
       let dateString = currentTime.toISOString().slice(0, 19).replace('T', ' ');
       console.log(dateString)
