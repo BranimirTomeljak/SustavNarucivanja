@@ -1,5 +1,7 @@
 const db = require('../db');
 const nodemailer = require("nodemailer");
+const cron = require('node-cron');
+const xml2js = require('xml2js');
 const { Patient, Doctor } = require("../models/UserModel");
 
 const { Vonage } = require('@vonage/server-sdk');
@@ -26,20 +28,33 @@ async function sendEmail(purpose, reference){
         }
     });
   
-    if(reference.mail == null){ //onda je appointment
+    if(reference.time != null){ //onda je appointment
         let patient = await Patient.getById(reference.patientid);
         var mailToSend = patient.mail;
     }
     else{
         var mailToSend = reference.mail;
     }
-    const options = {
-        from: "sustavzanarucivanje@outlook.com",
-        to: mailToSend,
-        subject: getPurposeSubject(purpose),
-        html: await getPurposeMessage(purpose, reference),
-    };
-  
+    
+    if(reference.mail != null || reference.time != null)
+        var options = {
+            from: "sustavzanarucivanje@outlook.com",
+            to: mailToSend,
+            subject: getPurposeSubject(purpose),
+            html: await getPurposeMessage(purpose, reference),
+        };
+    else{
+        var options = {
+            from: "sustavzanarucivanje@outlook.com",
+            to: "mailadresahzzo@hzzo100posto.hr",
+            subject: getPurposeSubject(purpose),
+            attachments: [{
+                filename: "xmlIzvjesce",
+                content: reference,
+                contentType: 'text/xml'
+            }]
+        };
+    }
     transporter.sendMail(options, function (err, info) {
         if (err) {
             console.log(err);
@@ -70,6 +85,12 @@ function getPurposeSubject(purpose){
 
     else if(purpose == "reminder")
         return "Podsjetnik za termin pregleda";
+
+    else if(purpose == "xmlDay")
+        return "Dnevno izvješće Sustava za naručivanje";
+
+    else if(purpose == "xmlMonth")
+        return "Mjesečno izvješće Sustava za naručivanje";
 
     else
         return undefined;
@@ -226,9 +247,7 @@ async function appointmentReminderEmail() {
         const appointments = await db.query(sql, []);
 
         for (let app of appointments) {
-            const currentDate = new Date();                                 //program cita vremena sva sat unazad
-            //const testDate = new Date("2022-12-18 10:04:00");
-            //let difference = testDate.getTime() - currentDate.getTime();
+            const currentDate = new Date();
             let difference = app.time.getTime() - currentDate.getTime();
             let daysDifference = Math.ceil(difference / (1000*60*60*24));
             let hoursDifference = difference / (1000*60*60) - 24;
@@ -244,9 +263,9 @@ async function appointmentReminderEmail() {
 async function sendSMS(purpose, reference){
     const from = "Sustav za naručivanje";
 
-    if(reference.phoneNumber == null){ //onda je appointment
+    if(reference.phonenumber == null){ //onda je appointment
         let patient = await Patient.getById(reference.patientid);
-        var numberToSend = patient.phoneNumber;
+        var numberToSend = patient.phonenumber;
     }
     else{
         var numberToSend = reference.phoneNumber;
@@ -264,6 +283,76 @@ async function sendSMS(purpose, reference){
     //sendSms();
 }
 
+async function dailyReport(){
+    const q1 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'24 hour'";
+    const res1 = await db.query(q1, []);
+    const q2 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'24 hour' and patient_came = true";
+    const res2 = await db.query(q2, []);
+    let zakazani = JSON.stringify(res1[0].count);
+    let dosli = JSON.stringify(res2[0].count);
+    dosli = dosli.substring(1, dosli.length - 1);
+    zakazani = zakazani.substring(1, zakazani.length - 1);
+    var obj = {
+        root: {
+            section: 'Dnevno izvješće o sastancima:',
+        },
+        body: {
+            span: 'U protekla 24 sata ukupno je zakazano ' + zakazani + ' sastanaka.',
+            a: 'Od toga se ' + dosli + ' pacijenata odazvalo na poziv.'
+        },
+        core: {},
+        body1: {}
+    };
+    
+    let numApp = JSON.stringify(res1[0].count);
+    numApp = numApp.substring(1, numApp.length - 1);
+    numApp = Number(numApp)
+    if(numApp == 0)
+        obj.core.child = 'Danas nije bilo rezerviranih niti obavljenih sastanaka.'
+
+    const builder = new xml2js.Builder();
+    let xml = builder.buildObject(obj);
+    sendEmail("xmlDay", xml);
+}
+
+async function monthlyReport(){
+    const q1 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'30 day'";
+    const res1 = await db.query(q1, []);
+    const q2 = "SELECT count(id) FROM appointment where time >= NOW() - INTERVAL'30 day' and patient_came = true";
+    const res2 = await db.query(q2, []);
+    let zakazani = JSON.stringify(res1[0].count);
+    let dosli = JSON.stringify(res2[0].count);
+    dosli = dosli.substring(1, dosli.length - 1);
+    zakazani = zakazani.substring(1, zakazani.length - 1);
+    
+    var obj = {
+        header: {
+            div: 'Izvješće o sastancima u zadnjih 30 dana:',
+        },
+        body: {
+            span: 'U protekla 30 dana ukupno je zakazano ' + zakazani + ' sastanaka.',
+            a: 'Od toga se ' + dosli + ' pacijenata odazvalo na poziv.'
+        },
+        core: {}
+    };
+
+    let numApp = JSON.stringify(res1[0].count);
+    numApp = numApp.substring(1, numApp.length - 1);
+    numApp = Number(numApp)
+    if(numApp == 0)
+        obj.core.child = 'Posljednjih 30 dana nije bilo rezerviranih niti obavljenih sastanaka.'
+    const builder = new xml2js.Builder();
+    let xml = builder.buildObject(obj);
+    sendEmail("xmlMonth", xml);
+}   
+
+cron.schedule("0 0 0 * * *", async function () { // Daily report
+    await dailyReport();
+})
+
+cron.schedule("0 0 */30 * *", async function () { // Monthly report
+    await monthlyReport();
+})
 
 module.exports = {
     sendEmail: sendEmail,
