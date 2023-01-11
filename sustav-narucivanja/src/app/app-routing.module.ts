@@ -33,6 +33,7 @@ import { NursePageComponent } from './pages/nurse-page/nurse-page.component';
 import { NursePageModule } from './pages/nurse-page/nurse-page.module';
 import { DoctorGuard } from './guards/doctor/doctor.guard';
 import { NurseGuard } from './guards/nurse/nurse.guard';
+import { PatientGuard } from './guards/patient/patient.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -56,7 +57,11 @@ const routes: Routes = [
         ],
         canActivate: [AdminGuard],
       },
-      { path: 'patient', component: PatientComponent },
+      {
+        path: 'patient',
+        component: PatientComponent,
+        canActivate: [PatientGuard],
+      },
       {
         path: 'doctor',
         children: [
