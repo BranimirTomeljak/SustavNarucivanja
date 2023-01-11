@@ -49,19 +49,11 @@ export class AuthService {
   }
 
   public createDoctor(data: IDoctorNurseData) {
-    return this.http.post<IUser>('/api/register/doctor', data).pipe(
-      tap((resp) => {
-        this._user$.next(resp);
-      })
-    );
+    return this.http.post<IUser>('/api/register/doctor', data);
   }
 
   public createNurse(data: IDoctorNurseData) {
-    return this.http.post<IUser>('/api/register/nurse', data).pipe(
-      tap((resp) => {
-        this._user$.next(resp);
-      })
-    );
+    return this.http.post<IUser>('/api/register/nurse', data);
   }
 
   public logout() {
