@@ -20,7 +20,7 @@
                     }
 
             \begin{figure}[H]
-                    \includegraphics[width=300]{slike/usermodel_tests_code.png} %veličina u odnosu na širinu linije
+                    \includegraphics[width=300pt]{slike/usermodel_tests_code.png} %veličina u odnosu na širinu linije
                     \caption{Prikazani testovi testiraju dohvachanje usera iz baze podataka te njegovo ubacivanje i izbacivanje iz baze podataka. Navedene funkcionalnosti su nuzhne za pravilnu registraciju i login korisnika aplikacije.}
                     \label{fig:struktura} %label mora biti drugaciji za svaku sliku
                 \end{figure}
@@ -32,7 +32,7 @@
                 \end{figure}
 
             \begin{figure}[H]
-                    \includegraphics[width=300]{slike/appointment_tests_code.png} %veličina u odnosu na širinu linije
+                    \includegraphics[width=300pt]{slike/appointment_tests_code.png} %veličina u odnosu na širinu linije
                     \caption{Prikazani testovi testiraju dohvachanje odredzenog termina iz baze podataka, testiranje postoji li odredzeni termin koji je u vremenskom konfliktu s odabranim terminom te testiranje updateanja termina. Testiranje konflikata ima vise rubnih sluchajeva, naime isti termin mogli smo vecz dohvatiti iz baze podataka te tada nebi trebalo biti konflikata, zatim mogucze je da se termin nalazi unutar drugoga, potpuno izvan...}
                     \label{fig:struktura} %label mora biti drugaciji za svaku sliku
                 \end{figure}
@@ -47,50 +47,60 @@
 			
 			\subsection{Ispitivanje sustava}
 			
-			 \textit{Potrebno je provesti i opisati ispitivanje sustava koristeći radni okvir Selenium\footnote{\url{https://www.seleniumhq.org/}}. Razraditi \textbf{minimalno 4 ispitna slučaja} u kojima će se ispitati redovni slučajevi, rubni uvjeti te poziv funkcionalnosti koja nije implementirana/izaziva pogrešku kako bi se vidjelo na koji način sustav reagira kada nešto nije u potpunosti ostvareno. Ispitni slučaj se treba sastojati od ulaza (npr. korisničko ime i lozinka), očekivanog izlaza ili rezultata, koraka ispitivanja i dobivenog izlaza ili rezultata.\\ }
-			 
-			 \textit{Izradu ispitnih slučajeva pomoću radnog okvira Selenium moguće je provesti pomoću jednog od sljedeća dva alata:}
-			 \begin{itemize}
-			 	\item \textit{dodatak za preglednik \textbf{Selenium IDE} - snimanje korisnikovih akcija radi automatskog ponavljanja ispita	}
-			 	\item \textit{\textbf{Selenium WebDriver} - podrška za pisanje ispita u jezicima Java, C\#, PHP koristeći posebno programsko sučelje.}
-			 \end{itemize}
-		 	\textit{Detalji o korištenju alata Selenium bit će prikazani na posebnom predavanju tijekom semestra.}
-			
+			 \textit{Ispitivanje sustava provedeno je koristeczi radni okvir Selenium\footnote{\url{https://www.seleniumhq.org/}} u obliku dodataka za preglednik \textbf{Selenium IDE} - preko kojeg se izvodilo snimanje korisnikovih akcija radi automatskog ponavljanja ispita. Razradzeno je \textbf{7 ispitnih slučajeva} u kojima se redovni slučajevi, rubni uvjeti te poziv funkcionalnosti koja nije implementirana/izaziva pogrešku. U nastavku su prikazani ispitni sluchajevi za funkcije logiranje i registriranja. Prikazani su sljedeczi testovi:
+    	\begin{itemize}
+		\item 	\textit{logiranje u aplikaciju ukoliko je sve ispravno naravljeno}
+		\item 	\textit{logiranje u aplikaciju ukoliko je kriv e-mail}
+		\item 	\textit{logiranje u aplikaciju ukoliko je kriva lozinka}
+		\item 	\textit{logiranje u aplikaciju ukoliko je su i lozinka i e-mail krivi}
+		\item 	\textit{registracija korisnika gdje je sve ispravno napravljeno}
+		\item 	\textit{registracija korisnika koji je vecz registriran}
+		\item 	\textit{registracija korisnika gdje je e-mail zadan u krivom formatu}
+	\end{itemize}
+
+        Svaki od testova prikazan je slikom te se potrebni ulaz te oczekivani izlaz nalaze ispod slike.
+        
 			\eject 
 
            \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/login_all_ok.png} %veličina u odnosu na širinu linije
-                \caption{Program za testiranje.}
+                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je sve ispravno naravljeno. Korishteni e-mail je "test@case.com" te lozinka "password". Ochekivani rezultat je preusmjeravanje na home page, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 
             \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/login_wrong_email.png} %veličina u odnosu na širinu linije
-                \caption{Program za testiranje.}
+                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je kriv e-mail. Korishteni e-mail je "test@notcase.com" te lozinka "password". Ochekivani rezultat je ostajanje na login stranici, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
+                \label{fig:struktura} %label mora biti drugaciji za svaku sliku
+            \end{figure}
+
+            \begin{figure}[H]
+                \includegraphics[width=\textwidth]{slike/tests_system/login_wrong_password.png} %veličina u odnosu na širinu linije
+                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je kriva lozinka. Korishteni e-mail je "test@case.com" te lozinka "password2". Ochekivani rezultat je ostajanje na login stranici, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 
             \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/login_wrong_email_and_password.png} %veličina u odnosu na širinu linije
-                \caption{Program za testiranje.}
+                \caption{Prikazani su koraci testiranja gdje se testira logiranje u aplikaciju ukoliko je kriva lozinka i e-mail. Korishteni e-mail je "test@notcase.com" te lozinka "password2". Ochekivani rezultat je ostajanje na login stranici, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 
             \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/register_wrong_format.png} %veličina u odnosu na širinu linije
-                \caption{Program za testiranje.}
+                \caption{Prikazani su koraci testiranja gdje se testira registracija korisnika gdje je sve ispravno napravljeno. Korishteni e-mail je "testcase.com", lozinka i ponovljena lozinka "password", ime "test", prezime "case", broj mobitela "123456789" te datum rodzenja izabran putem date selectora. Ochekivani rezultat je ostajanje na register stranici, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 
             \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/register_already_existing.png} %veličina u odnosu na širinu linije
-                \caption{Program za testiranje.}
+                \caption{Prikazani su koraci testiranja gdje se testira registracija korisnika gdje je sve ispravno napravljeno. Korishteni e-mail je "test@case.com", lozinka i ponovljena lozinka "password", ime "test", prezime "case", broj mobitela "123456789" te datum rodzenja izabran putem date selectora. User s prikazanim e-mailom je vecz registriran. Ochekivani rezultat je ostajanje na register stranici, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 
             \begin{figure}[H]
                 \includegraphics[width=\textwidth]{slike/tests_system/register_new.png} %veličina u odnosu na širinu linije
-                \caption{Program za testiranje.}
+                \caption{Prikazani su koraci testiranja gdje se testira registracija korisnika gdje je sve ispravno napravljeno. Korishteni e-mail je "test@case.com", lozinka i ponovljena lozinka "password", ime "test", prezime "case", broj mobitela "123456789" te datum rodzenja izabran putem date selectora. Ochekivani rezultat je preusmjeravanje na home stranicu, shto se prepoznaje i verificira putem elemenata stranice. Sa slike je vidljivo da se postizhe ochekivai rezultat.}
                 \label{fig:struktura} %label mora biti drugaciji za svaku sliku
             \end{figure}
 		
