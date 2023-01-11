@@ -237,11 +237,23 @@
 			\eject 
 		\section{Dijagram aktivnosti}
   
-			 \includegraphics[width=0.93\textwidth]{slike/dijagram_aktivnosti.jpg}
+			 \begin{figure}[H]
+			            \includegraphics[width=\textwidth]{slike/dijagram_aktivnosti.jpg} %veličina u odnosu na širinu linije
+			          \caption{Dijagram aktivnosti}
+			            \label{fig:act} %label mora biti drugaciji za svaku sliku
+		      \end{figure}
 			
 			\eject
 		\section{Dijagram komponenti}
 		
-			\textbf{\textit{dio 2. revizije}}\\
+			%\textbf{\textit{dio 2. revizije}}\\
 		
-			 \textit{Potrebno je priložiti dijagram komponenti s pripadajućim opisom. Dijagram komponenti treba prikazivati strukturu cijele aplikacije.}
+			 %\textit{Potrebno je priložiti dijagram komponenti s pripadajućim opisom. Dijagram komponenti treba prikazivati strukturu cijele aplikacije.}
+			 
+			 Na slici 4.8 prikazan je dijagram komponenti. Korisnik iz web preglednika pristupa aplikaciji korištenjem REST API-ja. Sama aplikacija se sastoji od dvije komponente. Prva komponenta odgovara frontendu i izgrđena je korištenjem Angular biblioteke. Druga komponenta odgovara backendu i izgradena je korištenjem radnog okvira Express. Frontend i backend komuniciraju korištenjem REST API-ja. Baza podataka je relacijska i backend joj pristupa slanjem SQL upita.
+			 
+			 \begin{figure}[H]
+			            \includegraphics[width=\textwidth]{slike/komponenti.vpd_1.png} %veličina u odnosu na širinu linije
+			          \caption{Dijagram komponenti}
+			            \label{fig:comp} %label mora biti drugaciji za svaku sliku
+		      \end{figure}

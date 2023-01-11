@@ -3,9 +3,13 @@
 		
 		\section{Korištene tehnologije i alati}
 		
-			\textbf{\textit{dio 2. revizije}}
-			
-			 \textit{Detaljno navesti sve tehnologije i alate koji su primijenjeni pri izradi dokumentacije i aplikacije. Ukratko ih opisati, te navesti njihovo značenje i mjesto primjene. Za svaki navedeni alat i tehnologiju je potrebno \textbf{navesti internet poveznicu} gdje se mogu preuzeti ili više saznati o njima}.
+		    \texttt{}{
+               Komunikacija u timu postignuta je izradom Discord servera NULL grupe 2022./2023. i WhatsApp grupe kojima su pristup imali svi članovi tima. Ova dva kanala komunikacije omogućavali su nam brzu i jednostavnu komunikaciju, te spremnost svakog člana na pomoć drugome u nevolji u kratkom vremenu. Za izradu UML dijagrama koristili smo Draw.io, Astah Professional, Visual Paradigm, Microsoft Paint itd... Sustav za upravljanje, upravljan je izvornim kodom Git. Repozitorij projekta dostupan je na web platformi GitLab. 
+
+               Razvojno okruženje korišteno pri izradi je Visual Studio Code, integrirano razvojno okruženje tvrtke Microsoft. 
+
+               Prvenstveno se koristi za razvoj računalnih programa za operacijski sustav Windows, kao i za web-stranice, web-aplikacije, web-usluge i mobilne aplikacije. Visual Studio za razvoj softvera koristi Microsoft-ove platforme kao sto su Windows API, Windows Forms, Windows Presentation Foundation, Windows Store i Microsoft Silverlight. Backend domena izrađena je pomoću radnog okvira Node.js i jezika Javascript, a frontend domena korištenjem Angular okvira, te jezikom Typescript. 
+            }
 			
 			
 			\eject 
@@ -123,50 +127,50 @@
 			\eject 
 		
 		\section{Upute za puštanje u pogon}
-		
-			\textbf{\textit{dio 2. revizije}}\\
-		
-			 \textit{Pusztanje u pogon sastoji se od nekoliko koraka:}
+				
+			 \textit{Puštanje u pogon sastoji se od nekoliko koraka:}
     \begin{itemize}
-		\item 	\textit{Izrada korichchkog rachchuna na Microsoftovom Azure servisu}
-		\item 	\textit{Zauzimanje nove virtualne maszszine}
-		\item 	\textit{Logiranje u novu virtualnu maszszinu}
-		\item 	\textit{Instaliranje potrebnih knjizhzhnica i programa}
-		\item 	\textit{Pokretanje Postgres baze podataka}
-		\item 	\textit{Pokretanje aplikacije s pripadajuczczom skriptom}
+		\item 	\textit{Izrada koričkog računa na Microsoftovom Azure servisu}
+		\item 	\textit{Zauzimanje nove virtualne mašine}
+		\item 	\textit{Logiranje u novu virtualnu mašinu}
+		\item 	\textit{Instaliranje potrebnih knjižnica i programa te downloadanje programa}
+		\item 	\textit{Punjenje Postgres baze podataka}
+		\item 	\textit{Pokretanje aplikacije s pripadajućom skriptom}
 	\end{itemize}
 
-    \subsection{Izrada korichchkog rachchuna na Microsoftovom Azure servisu}
-    \textit{Potrebno je posjetiti stranicu azure.com te napraviti korisnichki rachchun.}
+    \subsection{Izrada koričkog računa na Microsoftovom Azure servisu}
+    \textit{Potrebno je posjetiti stranicu azure.com te napraviti korisnichki račun.}
 
-    \subsection{Zauzimanje nove virtualne maszszine}
-    \textit{Potrebno je na svojem home pageu na Azureovom servisu zauzeti novu virtualnu machchinu. Za to je potrebno pritisnuti na "Virtual Machine" te pratiti potrebne korake koji automatski dolaze jedan iza drugoga. Takodzer potrebno je dopustiti konekciju na port 80.}
+    \subsection{Zauzimanje nove virtualne mašine}
+    \textit{Potrebno je na svojem home pageu na Azureovom servisu zauzeti novu virtualnu mašinu. Za to je potrebno pritisnuti na "Virtual Machine" te pratiti potrebne korake koji automatski dolaze jedan iza drugoga. Također je potrebno dopustiti konekciju na port 80.}
     \begin{figure}[H]
-        \includegraphics[width=\textwidth]{slike/tests_system/login_wrong_email_and_password.png} %veličina u odnosu na širinu linije
-        \caption{Prikaz home pagea na Azureovom servisu}
+        \includegraphics[width=\textwidth]{slike/deploy/create_vm.png} %veličina u odnosu na širinu linije
+        \caption{Prikaz stanja stranice kada se odabere kreiranje virtualne mašine.}
         \label{fig:struktura} %label mora biti drugaciji za svaku sliku
     \end{figure}
 
-    \subsection{Instaliranje potrebnih knjizhzhnica i programa}
-    \textit{Potrebno je instalirati sve potrebno za .}
+    \subsection{Logiranje u novu virtualnu mašinu}
+    \textit{Na home pageu potrebno je odabrati virtualnu mašinu te stisnuti na "Start" te zatim "Connect" i izabrati ssh. Zatim pratiti upute koje Azure navodi.}
     \begin{figure}[H]
-        \includegraphics[width=\textwidth]{slike/tests_system/login_wrong_email_and_password.png} %veličina u odnosu na širinu linije
-        \caption{Prikaz home pagea na Azureovom servisu}
+        \includegraphics[width=\textwidth]{slike/deploy/connect.png} %veličina u odnosu na širinu linije
+        \caption{Prikaz opcija koje su vidljive na vrhu ekrana nakon što je odabrana virtualna mašina. Potrebno je stisnuti "Start", a zatim i "Connect", odabrati SSH i pratiti upute.}
         \label{fig:struktura} %label mora biti drugaciji za svaku sliku
     \end{figure}
 
-    \subsection{Instaliranje potrebnih knjizhzhnica i programa}
-    \textit{Potrebno je instalirati sve potrebno za .}
+    \subsection{Instaliranje potrebnih knjižnica i programa te downloadanje programa}
+    \textit{Potrebno je klonirati program backenda i frontenda na virtualnu mašinu, za što treba imati ovlasti za to kloniranje. To napravimo tako da na virtualnu mašinu stavimo ssh kljuc za gitlab. Nadalje trebamo instalirati sve potrebno za rad kloniranoga repozitorija. To postižemo s "sudo apt install nodejs" za nodejs, "npm install -g @angular/cli" za angular, "sudo apt install postgresql postgresql-contrib" za Postgres. Također da smo sigurni da je Postgres upaljen treba provesti još "sudo systemctl start postgresql.service". Ostali dijelovi se dobivaju preko "npm install" u frontend i backend direktorijima.}
+
+    \subsection{Punjenje Postgres baze podataka}
+    \textit{Potrebno je dodati u bazu podataka tablice koje se dalje koriste u backendu. Pozicionirati se u direktorij backenda ("cd sustav-narucivanja/sustav-narucivanja-server") te zatim "node db/seed.js"}
     \begin{figure}[H]
-        \includegraphics[width=\textwidth]{slike/tests_system/login_wrong_email_and_password.png} %veličina u odnosu na širinu linije
-        \caption{Prikaz home pagea na Azureovom servisu}
+        \includegraphics[width=\textwidth]{slike/deploy/seed.png} %veličina u odnosu na širinu linije
+        \caption{Očekivani ispis prilikom pokretanja "seed.js". Imati na umu da je ovo samo krajnji dio ispisa, postoji i dio prije ovoga koji je izbačen iz slike u svrhu sažetosti.}
         \label{fig:struktura} %label mora biti drugaciji za svaku sliku
     \end{figure}
 
-    \textit{U ovom poglavlju potrebno je dati upute za puštanje u pogon (engl. deployment) ostvarene aplikacije. Na primjer, za web aplikacije, opisati postupak kojim se od izvornog kôda dolazi do potpuno postavljene baze podataka i poslužitelja koji odgovara na upite korisnika. Za mobilnu aplikaciju, postupak kojim se aplikacija izgradi, te postavi na neku od trgovina. Za stolnu (engl. desktop) aplikaciju, postupak kojim se aplikacija instalira na računalo. Ukoliko mobilne i stolne aplikacije komuniciraju s poslužiteljem i/ili bazom podataka, opisati i postupak njihovog postavljanja. Pri izradi uputa preporučuje se \textbf{naglasiti korake instalacije uporabom natuknica} te koristiti što je više moguće \textbf{slike ekrana} (engl. screenšots) kako bi upute bile jasne i jednostavne za slijediti.}
+    \subsection{Pokretanje aplikacije}
+    \textit{Potrebno je pokreniti restart skriptu koja se nalazi u root dijelu. Za to joj je potrebno dati ovlasti za pokretanje i onda je pokrenuti "sudo ./restart.sh" }
 			
-			
-			 \textit{Dovršenu aplikaciju potrebno je pokrenuti na javno dostupnom poslužitelju. Studentima se preporuča korištenje neke od sljedećih besplatnih usluga: \href{https://aws.amazon.com/}{Amazon AWS}, \href{https://azure.microsoft.com/en-us/}{Microsoft Azure} ili \href{https://www.heroku.com/}{Heroku}. Mobilne aplikacije trebaju biti objavljene na F-Droid, Google Play ili Amazon App trgovini.}
-			
+
 			
 			\eject 
