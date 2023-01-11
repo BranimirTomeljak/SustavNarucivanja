@@ -256,6 +256,24 @@ class Patient extends User {
     const result = await db.query(sql, []);
     return result[0].doctorid;
   }
+
+  static async getNurseId(id) {
+    const sql =
+      "SELECT nurse.id FROM patient JOIN doctor ON patient.doctorid=doctor.id NATURAL JOIN team JOIN nurse ON nurse.teamid=team.teamid WHERE patient.id=" +
+      id;
+    const result = await db.query(sql, []);
+    console.log("result", result);
+    if (result.length === 0) {
+      return 0;
+    }
+    return result[0].id;
+  }
+
+  static async getFailedAppointments(id) {
+    const sql = "SELECT nFailedAppointments FROM patient WHERE id = " + id;
+    const result = await db.query(sql, []);
+    return result[0].nfailedappointments;
+  }
 }
 
 class Nurse extends User {
@@ -477,10 +495,9 @@ class Admin extends User {
       user.phonenumber,
       user.mail,
       user.password,
-      user.dateofbirth,
+      user.dateofbirth
     );
   }
-
 }
 
 module.exports = {

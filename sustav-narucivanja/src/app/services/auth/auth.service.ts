@@ -32,6 +32,18 @@ export class AuthService {
       .pipe(tap((resp) => console.log(resp)));
   }
 
+  public getPatientNurseId(): Observable<any> {
+    return this.http
+      .get('/api/user/nurse')
+      .pipe(tap((resp) => console.log(resp)));
+  }
+
+  public getPatientNFailedAppointments(): Observable<any> {
+    return this.http
+      .get('/api/user/nfailed')
+      .pipe(tap((resp) => console.log(resp)));
+  }
+
   public login(data: ILoginData) {
     return this.http.post<IUser>('/api/login', data).pipe(
       tap((resp) => {
