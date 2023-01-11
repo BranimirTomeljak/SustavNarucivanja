@@ -13,6 +13,8 @@ import { TeamComponent } from './pages/admin/create/team/team.component';
 import { TeamModule } from './pages/admin/create/team/team.module';
 import { TechComponent } from './pages/admin/create/tech/tech.component';
 import { TechModule } from './pages/admin/create/tech/tech.module';
+import { DoctorPageComponent } from './pages/doctor-page/doctor-page.component';
+import { DoctorPageModule } from './pages/doctor-page/doctor-page.module';
 import { TeamViewComponent } from './pages/admin/team-view/team-view.component';
 import { TeamViewModule } from './pages/admin/team-view/team-view.module';
 import { HomeComponent } from './pages/home/home.component';
@@ -25,6 +27,10 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { ProfileModule } from './pages/profile/profile.module';
 import { RegisterComponent } from './pages/register/register.component';
 import { RegisterModule } from './pages/register/register.module';
+import { WorkingHoursComponent } from './pages/doctor-page/working-hours/working-hours.component';
+import { WorkingHoursModule } from './pages/doctor-page/working-hours/working-hours.module';
+import { NursePageComponent } from './pages/nurse-page/nurse-page.component';
+import { NursePageModule } from './pages/nurse-page/nurse-page.module';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -49,6 +55,12 @@ const routes: Routes = [
         canActivate: [AdminGuard],
       },
       { path: 'patient', component: PatientComponent },
+      { path: 'doctor',
+        children: [
+          { path: '', component: DoctorPageComponent },
+          { path: 'working-hours', component: WorkingHoursComponent}
+        ]},
+      { path: 'nurse', component: NursePageComponent },
       { path: 'profile', component: ProfileComponent },
     ],
     canActivate: [AuthGuard],
@@ -72,6 +84,9 @@ const routes: Routes = [
     RegisterModule,
     AdminModule,
     DoctorModule,
+    DoctorPageModule,
+    NursePageModule,
+    WorkingHoursModule,
     TechModule,
     TeamModule,
     PatientModule,

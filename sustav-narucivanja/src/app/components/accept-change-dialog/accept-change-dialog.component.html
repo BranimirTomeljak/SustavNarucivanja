@@ -1,0 +1,22 @@
+<div *ngIf="data.appointments.length != 0; else noAppointments">
+    <h2 mat-dialog-title>Želite li potvrditi nove termine?</h2>
+    <mat-dialog-content class="mat-typography">
+        <h3>
+        <div *ngFor="let app of data.appointments" class="example-section">
+           <!-- <mat-checkbox [checked]="app.selected" (change)="onChange(app)" labelPosition="before">{{app.title}}</mat-checkbox>-->
+            <label class="example-margin">{{app.date}} iz {{app.title_from}} u {{app.title_to}}</label>
+            <mat-radio-button class="example-margin" (change)="onChange(app, true)" name="{{app.id_to}}" id="{{app.id_to+ 'yes'}}">Da</mat-radio-button>
+            <mat-radio-button class="example-margin" (change)="onChange(app, false)" name="{{app.id_to}}" id="{{app.id_to + 'no'}}">Ne</mat-radio-button>
+        </div>
+        </h3>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button [mat-dialog-close]="false">Odustani</button>
+      <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Potvrdi</button>
+    </mat-dialog-actions>
+    </div>
+    
+    <ng-template #noAppointments>
+        <h2  mat-dialog-title>Nema promijenjenih termina</h2>
+        <button mat-button [mat-dialog-close]="false" cdkFocusInitial>Zatvori</button>
+    </ng-template>

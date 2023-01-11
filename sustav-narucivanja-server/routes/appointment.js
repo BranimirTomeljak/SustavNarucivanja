@@ -14,8 +14,8 @@ const curr_date_factory = ()=> {return add_hour(new Date())}
 
 // get all appointemnts from an `id` with `type`
 router.get('/', async function(req, res, next) {
-  let type = req.session.user.type
-  let id   = req.session.user.id
+  let type = req.query.type
+  let id   = req.query.id
   if (type == 'admin')
     throw 'no admin here'
   let field = {'doctor':'doctorid', 'patient':'patientid', 'nurse':'nurseid'}[type]
@@ -106,7 +106,7 @@ router.post('/add_range', async function(req, res, next) {
 
   if (await loop_over_appointments(check_errors)){
     await loop_over_appointments(save_to_db)
-    res.status(300).send("OK");
+    res.json();
   }
 });
 
@@ -129,9 +129,10 @@ router.post('/reserve', async function(req, res, next) {
   app.type = req.body.type
   await app.updateDb()
 
-  let doctor = await Doctor.getById(app.doctorid);
-  notification.sendEmail("appointmentReserved", doctor); //obavijesti doktora o rezervaciji termina
-  res.status(300).send("OK")
+  //let doctor = await Doctor.getById(app.doctorid);
+  //notification.sendEmail("appointmentReserved", doctor); //obavijesti doktora o rezervaciji termina
+  //res.status(300).send("OK")
+  res.json(app);
 });
 
 // if somebody needs to cancel an appointment
@@ -144,9 +145,11 @@ router.post('/cancel', async function(req, res, next) {
   app.created_on = undefined
   app.changes_from = undefined
   app.type = undefined
-  await app_to.updateDb()
-  notification.sendEmail("appointmentCanceled", app)
-  res.status(300).send("OK")
+  //await app_to.updateDb()
+  await app.updateDb()
+  //notification.sendEmail("appointmentCanceled", app)
+  //res.status(300).send("OK")
+  res.json(app)
 });
 
 // so doctor can change the appointment of the patient
@@ -162,8 +165,9 @@ router.post('/change', async function(req, res, next) {
   app_to.patientid = app_from.patientid
   await app_to.updateDb()
   let patient = await Patient.getById(app_from.patientid);
-  notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
-  res.status(300).send("OK")
+  //notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
+  //res.status(300).send("OK")
+  res.json();
 });
 
 // if the doctor moves the appointment the patient has to accept
@@ -180,8 +184,9 @@ router.post('/accept_change', async function(req, res, next) {
   app_from.type = undefined
   await app_to.updateDb()
   await app_from.updateDb()
-  notification.sendEmail("appointmentChangeAccept", app_to);
-  res.status(300).send("OK")
+  //notification.sendEmail("appointmentChangeAccept", app_to);
+  //res.status(300).send("OK")
+  res.json();
 });
 
 // if the doctor moves the appointment the patient can reject
@@ -193,7 +198,8 @@ router.post('/reject_change', async function(req, res, next) {
   app_to.patientid = undefined
   await app_to.updateDb()
   notification.sendEmail("appointmentChangeReject", app_to);
-  res.status(300).send("OK")
+  //res.status(300).send("OK")
+  res.json();
 });
 
 // at the end of the day nurse/doctor has to record did the patiend come
@@ -205,7 +211,7 @@ router.post('/record_attendance', async function(req, res, next) {
   app = (await Appointment.fetchBy('id', req.body.id))[0]
   app.patient_came = JSON.parse(req.body.patient_came)
   await app.updateDb()
-  res.status(300).send("OK")
+  res.json(app);
 });
 
 
@@ -227,7 +233,8 @@ router.post('/delete', async function(req, res, next) {
     res.status(500).send('Does not exist in the database.')
   else{
     app.removeFromDb()
-    res.status(300).send("OK");
+    //res.status(300).send("OK");
+    res.json();
   }
 
 });
