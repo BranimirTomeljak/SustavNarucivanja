@@ -42,14 +42,18 @@ const colors: Record<string, EventColor> = {
 export class PatientComponent implements OnInit{
   public user$ = this.authService.user$;
   private doctorId?: number;
+  private numFutureAppointments?: number;
   private id = this.authService.id || 0;
-  private nFailedAppointments = this.authService.id || 0;
-
+  private numFailedAppointments = this.authService.id || 0;
+  
   
   private readonly subscription = new Subscription();
  
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public appointments$: Observable<any> = this.trigger$.pipe(
+    /*switchMap(() => {
+      return this.appointmentsService.getNumFutureAppointments(this.id); 
+    }), tap((res) => this.numFutureAppointments = res),*/
     switchMap(() => {
       return this.appointmentsService.getAllApointments('patient', this.id);
     }
@@ -78,6 +82,7 @@ export class PatientComponent implements OnInit{
   events : CalendarEvent[] = [];
 
   public ngOnInit() : void {
+    console.log(this.numFutureAppointments)
     this.fetchAppointments();
   }
 
@@ -150,7 +155,10 @@ export class PatientComponent implements OnInit{
   }
 
   public reserveAppointment(type : string) : void{
-    if(this.nFailedAppointments >= 0) {
+    if(this.numFutureAppointments as number >= 3) {
+      console.log('tak ti je to')
+    }
+    if(this.numFailedAppointments >= 3){
       console.log('tak ti je to')
     }
     this.type = type;
