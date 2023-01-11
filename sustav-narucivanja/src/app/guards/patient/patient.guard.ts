@@ -25,7 +25,7 @@ export class PatientGuard implements CanActivate {
     | UrlTree {
     return this.authService.user$.pipe(
       map((user) => {
-        if (user?.type === 'admin') {
+        if (user?.type === 'patient') {
           return true;
         }
 
