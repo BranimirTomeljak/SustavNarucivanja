@@ -1,4 +1,5 @@
 var express = require('express');
+const db = require('../db')
 //const { rawListeners } = require('../app');
 const notification = require("../models/NotificationModel");
 var Appointment = require('../models/AppointmentModel');
@@ -82,7 +83,6 @@ router.post('/add_range', async function(req, res, next) {
     let date = new Date()
     console.log(" OVO JE DATE: " + date.getTime())
     const diff = Math.abs(endTime.getTime() - date.getTime())
-    console.log(" diff: " + Math.ceil(diff / (1000 * 60 * 60 * 24)))
     if (Math.ceil(diff / (1000 * 60 * 60 * 24)) > 10) {
       res.status(403).send("Moguce je definirati slobodne termine samo do 10 dana unaprijed.");
       return false;
@@ -160,6 +160,16 @@ router.post('/reserve', async function(req, res, next) {
   app = (await Appointment.fetchBy('id', req.body.id))[0]
   app.patientid = req.body.patientid
   app.created_on = curr_date_factory()
+  const date = new Date();
+  const difference = Math.abs(app.time.getTime() - date.getTime())
+
+  const sql = "SELECT appointmentRule FROM doctor WHERE id = " + app.doctorid;
+  const results = await db.query(sql, []);
+  console.log();
+  
+  if ( results[0].appointmentrule != undefined && (difference / (60*60*1000)) < results[0].appointmentrule) {
+    res.status(403).send("Nije moguce ugovoriti pregled više od " + results[0].appointmentrule + " sati prije pocetka")
+  }
   app.type = req.body.type
   await app.updateDb()
 

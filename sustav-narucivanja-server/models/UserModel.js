@@ -360,6 +360,19 @@ class Doctor extends Nurse {
     this.type = "doctor";
   }
 
+  static async setRule(id, hours) {
+    let doctor = await this.getById(id);
+    if (doctor === undefined) {
+      console.log("You cant set a rule for undefined doctor");
+      return false;
+    }
+
+    const sql ="UPDATE doctor SET appointmentRule =" +
+      hours + " WHERE id = " + id;
+    
+      await db.query(sql, []);
+  }
+
   async addToDb() {
     if (await this.isUserInDb()) console.log("already there");
     else await this.saveUserToDb();
@@ -463,7 +476,7 @@ module.exports = {
   Patient: Patient,
   Doctor: Doctor,
   Nurse: Nurse,
-  Admin: Admin,
+  Admin: Admin
 };
 
 async function test() {

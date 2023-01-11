@@ -43,6 +43,7 @@ const sql_create_patient = `CREATE TABLE patient (
 const sql_create_doctor = `CREATE TABLE doctor (
     id INT NOT NULL,
     teamid INT,
+    appointmentRule INT,
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES users(id),
     FOREIGN KEY (teamid) REFERENCES team(teamid)
@@ -1086,7 +1087,7 @@ const sql_insert_users = `INSERT INTO users (name, surname, sex, phoneNumber, ma
 
 const sql_insert_team = `INSERT INTO team (name) VALUES ('Prvi'), ('Drugi'), ('Treci')`;
 const sql_insert_admin = `INSERT INTO admin (id) VALUES (2), (3), (5)`;
-const sql_insert_doctor = `INSERT INTO doctor (id, teamid) VALUES (7, NULL), (1, 1), (2, NULL), (3, 2), (4, 3), (5, NULL), (6, NULL), (10, NULL), (8, NULL), (9, NULL)`;
+const sql_insert_doctor = `INSERT INTO doctor (id, teamid, appointmentRule) VALUES (7, NULL, NULL), (1, 1, NULL), (2, NULL, NULL), (3, 2, NULL), (4, 3, NULL), (5, NULL, NULL), (6, NULL, NULL), (10, NULL, NULL), (8, NULL, NULL), (9, NULL, NULL)`;
 const sql_insert_nurse = `INSERT INTO nurse (id, teamid) VALUES (8, NULL), (10, 1), (12, NULL), (14, 2), (16, 3)`;
 const sql_insert_patient = `INSERT INTO patient (nFailedAppointments, id, doctorid, notificationMethod) VALUES 
     (0, 100, 7, 'email'), (0, 101, 7, 'email'), (0, 102, 7, 'email')`;
