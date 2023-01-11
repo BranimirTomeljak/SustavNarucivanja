@@ -1,4 +1,6 @@
 var express = require('express');
+const db = require('../db')
+//const { rawListeners } = require('../app');
 const notification = require("../models/NotificationModel");
 var Appointment = require('../models/AppointmentModel');
 var { Doctor, Patient } = require("../models/UserModel");
@@ -51,14 +53,22 @@ needed in the query:
 router.post('/add_range', async function(req, res, next) {
   const loop_over_appointments = async (func) => {
     // Parse the start and end times as Date objects
-    const startTime = add_hour(add_hour(new Date(Date.parse(req.body.time_start))));
-    const endTime   = add_hour(add_hour(new Date(Date.parse(req.body.time_end))));
+    const startTime = add_hour(new Date(Date.parse(req.body.time_start)));
+    const endTime   = add_hour(new Date(Date.parse(req.body.time_end)));
+    console.log(" OVO JE  ENDTIME: " + endTime)
+    let date = new Date()
+    console.log(" OVO JE DATE: " + date.getTime())
+    const diff = Math.abs(endTime.getTime() - date.getTime())
+    if (Math.ceil(diff / (1000 * 60 * 60 * 24)) > 10) {
+      res.status(403).send("Moguce je definirati slobodne termine samo do 10 dana unaprijed.");
+      return false;
+    }
 
     // Set the current time to the start time
     let currentTime = startTime;
 
     // Loop until the current time is past the end time
-    while (currentTime.getTime() + appointment_duration * 60 * 1000 < endTime.getTime()) {
+    while (currentTime.getTime() + appointment_duration * 60 * 1000 <= endTime.getTime()) {
       console.log(currentTime.toISOString())
       let dateString = currentTime.toISOString().slice(0, 19).replace('T', ' ');
       console.log(dateString)
@@ -135,6 +145,16 @@ router.post('/reserve', async function(req, res, next) {
   app = (await Appointment.fetchBy('id', req.body.id))[0]
   app.patientid = req.session.user.id
   app.created_on = curr_date_factory()
+  const date = new Date();
+  const difference = Math.abs(app.time.getTime() - date.getTime())
+
+  const sql = "SELECT appointmentRule FROM doctor WHERE id = " + app.doctorid;
+  const results = await db.query(sql, []);
+  console.log();
+  
+  if ( results[0].appointmentrule != undefined && (difference / (60*60*1000)) < results[0].appointmentrule) {
+    res.status(403).send("Nije moguce ugovoriti pregled više od " + results[0].appointmentrule + " sati prije pocetka")
+  }
   app.type = req.body.type
   await app.updateDb()
 
@@ -170,13 +190,20 @@ router.post('/cancel', async function(req, res, next) {
 router.post('/change', async function(req, res, next) {
   app_from = (await Appointment.fetchBy('id', req.body.from_id))[0]
   app_to   = (await Appointment.fetchBy('id', req.body.to_id))[0]
-  app_to.changes_from = req.body.from_id
-  app_to.patientid = app_from.patientid
-  await app_to.updateDb()
-  let patient = await Patient.getById(app_from.patientid);
-  //notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
-  //res.status(300).send("OK")
-  res.json();
+
+  let date = new Date()
+
+  if(((app_to.getTime() - date.getTime())/(60*60*1000)) < 24) 
+    res.status(403).send("Ne mozete pomaknuti pregled do cijeg je pocetka manje od 24 sata.")
+  
+  else {
+    app_to.changes_from = req.body.from_id
+    app_to.patientid = app_from.patientid
+    await app_to.updateDb()
+    let patient = await Patient.getById(app_from.patientid);
+    //notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
+    res.status(300).send("OK")
+  }
 });
 
 // if the doctor moves the appointment the patient has to accept
