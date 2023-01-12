@@ -129,6 +129,7 @@ export class DoctorPageComponent implements OnInit {
               .filter(app => new Date(app.time.slice(0,-1)).toLocaleDateString() == new Date().toLocaleDateString())
               .filter(app => this.addDuration(new Date(app.time.slice(0, -1)), app.duration).getTime() < new Date().getTime());
           this.badgeContent = this.pendingAppointments.length;
+          var typeDoctor : string = app.type != undefined ? ", tip pregleda: " + app.type : "";
           this.events.push({
             id: app.id,
             start: new Date(app.time.slice(0, -1)),
@@ -136,6 +137,7 @@ export class DoctorPageComponent implements OnInit {
             title: app.patientid !== null 
               ? 'Rezerviran termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                   + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
+                  + typeDoctor
               : 'Slobodan termin ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                 + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
             color: app.patientid !== null ? { ...colors['blue'] } : { ...colors['yellow'] },

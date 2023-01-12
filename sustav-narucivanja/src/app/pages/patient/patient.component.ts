@@ -163,7 +163,8 @@ export class PatientComponent implements OnInit{
           this.patientAppointments.push(app);
           this.pendingAppointments = this.patientAppointments.filter(app => app.changes_from !== null)
           this.badgeContent = this.pendingAppointments.length;
-          var type : string = app.type != undefined ? ", vrsta usluge: " + app.type : "";
+          var typeNurse : string = app.type != undefined ? ", vrsta usluge: " + app.type : "";
+          var typeDoctor : string = app.type != undefined ? ", tip pregleda: " + app.type : "";
           this.events.push({
             id: app.id,
             start: new Date(app.time.slice(0, -1)),
@@ -171,9 +172,10 @@ export class PatientComponent implements OnInit{
             title: app.nurseid !== null 
               ? 'Medicinska usluga ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                   + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
-                  + type
+                  + typeNurse
               : 'Liječnički pregled ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
-                + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
+                + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
+                + typeDoctor,
             color: app.nurseid !== null ? { ...colors['red'] } : { ...colors['blue'] },
           })
         });

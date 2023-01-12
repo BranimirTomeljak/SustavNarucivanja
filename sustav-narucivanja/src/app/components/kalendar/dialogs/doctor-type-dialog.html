@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>Upišite tip pregleda:</h2>
+<mat-dialog-content class="mat-typography">
+<h3>
+    <input matInput type="text" value="{{data.type}}" [(ngModel)] ="type">
+</h3>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="false">Odustani</button>
+  <button mat-button [mat-dialog-close]="type" cdkFocusInitial>Potvrdi</button>
+</mat-dialog-actions>

@@ -256,18 +256,6 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   }
 
   handlePatient(event: CalendarEvent) : void {
-    const data : IAppointmentData = {
-      id: event.id,
-      patientid : this.authService.id,
-      doctorid : this.doctorId,
-      nurseid : undefined,
-      time : event.start.toISOString(), // ako koristimo addAppointment(data) => this.addTimeZone(event.start).toISOString()
-      duration : this.getDuration(this.addTimeZone(event.start), event.end),
-      created_on : new Date(),
-      pending_accept : false,
-      type : null,
-      patient_came : false,
-    }
     if(event.color?.primary == colors['yellow'].primary){
       if(this.typeInput == 'doctor'){
         const dialogRef = this.dialog.open(ReserveAppointmentDialog, {
@@ -276,19 +264,40 @@ export class KalendarComponent implements OnInit ,OnDestroy {
         });
         dialogRef.afterClosed().subscribe(result => {
           if(result){
-            const appointmentSubscription = this.appointmentsService
-              .reserveAppointment(data)
-              .pipe(
-                catchError(() => {
-                  this.snackBar.open(`Više nije moguće ugovoriti pregled` , 'Zatvori', { duration: 5000 });
-                  return EMPTY;
-                })
-              )
-              .subscribe(() => {
-                this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-                this.router.navigate(['/patient']));
-              });
-              this.subscription.add(appointmentSubscription);
+            const dialogRef = this.dialog.open(DoctorTypeDialog, {
+              data : { type : 'nesto'}
+            });
+            dialogRef.afterClosed().subscribe(result => {
+              if(result){
+                console.log(result);
+                const data : IAppointmentData = {
+                  id: event.id,
+                  patientid : this.authService.id,
+                  doctorid : this.doctorId,
+                  nurseid : undefined,
+                  time : event.start.toISOString(), // ako koristimo addAppointment(data) => this.addTimeZone(event.start).toISOString()
+                  duration : this.getDuration(this.addTimeZone(event.start), event.end),
+                  created_on : new Date(),
+                  pending_accept : false,
+                  type : result,
+                  patient_came : false,
+                }
+                const appointmentSubscription = this.appointmentsService
+                .reserveAppointment(data)
+                .pipe(
+                  catchError(() => {
+                    this.snackBar.open(`Više nije moguće ugovoriti pregled` , 'Zatvori', { duration: 5000 });
+                    return EMPTY;
+                  })
+                )
+                .subscribe(() => {
+                  this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+                  this.router.navigate(['/patient']));
+                });
+                this.subscription.add(appointmentSubscription);
+              }
+            })
+            
           }
         }
         )
@@ -348,6 +357,18 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       });
       dialogRef.afterClosed().subscribe(result => {
         if(result){
+          const data : IAppointmentData = {
+            id: event.id,
+            patientid : this.authService.id,
+            doctorid : this.doctorId,
+            nurseid : undefined, // ?????
+            time : event.start.toISOString(), // ako koristimo addAppointment(data) => this.addTimeZone(event.start).toISOString()
+            duration : this.getDuration(this.addTimeZone(event.start), event.end),
+            created_on : new Date(),
+            pending_accept : false,
+            type : result,
+            patient_came : false,
+          }
           const appointmentSubscription = this.appointmentsService
           .cancelAppointment(data)
           .pipe(
@@ -518,4 +539,13 @@ export class MedicalServiceDialog {
       ser.selected = isChecked;
     }
   }
+}
+
+@Component({
+  selector: 'doctor-type-dialog',
+  templateUrl: 'dialogs/doctor-type-dialog.html',
+})
+export class DoctorTypeDialog {
+  constructor(@Inject(MAT_DIALOG_DATA) public data : {type : string}) {}
+  type : string = '';
 }
