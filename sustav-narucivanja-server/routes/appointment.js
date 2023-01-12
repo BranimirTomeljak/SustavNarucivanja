@@ -59,8 +59,8 @@ router.post('/add_range', async function(req, res, next) {
     let date = new Date()
     console.log(" OVO JE DATE: " + date.getTime())
     const diff = Math.abs(endTime.getTime() - date.getTime())
-    if (Math.ceil(diff / (1000 * 60 * 60 * 24)) > 10) {
-      res.status(403).send("Moguce je definirati slobodne termine samo do 10 dana unaprijed.");
+    if (Math.ceil(diff / (1000 * 60 * 60 * 24)) < 10) {
+      res.status(403).send("Moguce je definirati slobodne termine samo 10 dana ili više unaprijed.");
       return false;
     }
 
