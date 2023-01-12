@@ -201,8 +201,10 @@ router.post('/change', async function(req, res, next) {
   app_to   = (await Appointment.fetchBy('id', req.body.to_id))[0]
 
   let date = new Date()
+  console.log(date.getTime())
+  console.log(app_from.created_on.getTime())
 
-  if(((app_from.created_on.getTime() - date.getTime())/(60*60*1000)) < 24)
+  if(((date.getTime() - app_from.created_on.getTime())/(60*60*1000)) > 24)
     res.status(403).send("Ne mozete pomaknuti pregled do cijeg je pocetka manje od 24 sata.")
   
   else {
@@ -211,7 +213,8 @@ router.post('/change', async function(req, res, next) {
     await app_to.updateDb()
     let patient = await Patient.getById(app_from.patientid);
     //notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
-    res.status(300).send("OK")
+    res.json()
+    //res.status(300).send("OK")
   }
 });
 
