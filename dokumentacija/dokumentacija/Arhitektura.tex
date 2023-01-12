@@ -237,11 +237,14 @@
 			\eject 
 		\section{Dijagram aktivnosti}
   
-			 \begin{figure}[H]
-			            \includegraphics[width=\textwidth]{slike/dijagram_aktivnosti.jpg} %veličina u odnosu na širinu linije
+			 \begin{figure}[H]         %DODAO SAM TU BROJ 0.88
+			            \includegraphics[width=0.88\textwidth]  {slike/dijagram_aktivnosti.jpg} %veličina u odnosu na širinu linije
 			          \caption{Dijagram aktivnosti}
 			            \label{fig:act} %label mora biti drugaciji za svaku sliku
 		      \end{figure}
+                 \texttt{}{
+                 Na slici 4.6. prikazan je dijagram aktivnosti sustava za naručivanje. Opisan je slučaj naručivanja pregleda. Iako je u dijagramu detaljno opisana radnja naručivanja, ovdje ćemo je sažeti. Korisnik se prijavljuje u sustav, ukoliko je unio pogrešne podatke sustav ga vraća na početak. Ukoliko su podatci postojani, tada se prikazuje kalendar korisniku. Nakon toga aplikacija ispituje je li status pacijenta redovan. Ako je, pacijentu se dozvoljava odabir termina. Ako je pacijent imao previše izostanaka, šalje ga da zakaže sastanak s doktorom uživo. Ako je pacijent imao previše zakazanih pregleda, ispisuje se poruka: "Pacijent ima previše zakazanih pregleda".
+                 }
 			
 			\eject
 		\section{Dijagram komponenti}

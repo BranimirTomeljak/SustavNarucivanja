@@ -4,12 +4,38 @@
 		\section{Korištene tehnologije i alati}
 		
 		    \texttt{}{
-               Komunikacija u timu postignuta je izradom Discord servera NULL grupe 2022./2023. i WhatsApp grupe kojima su pristup imali svi članovi tima. Ova dva kanala komunikacije omogućavali su nam brzu i jednostavnu komunikaciju, te spremnost svakog člana na pomoć drugome u nevolji u kratkom vremenu. Za izradu UML dijagrama koristili smo Draw.io, Astah Professional, Visual Paradigm, Microsoft Paint itd... Sustav za upravljanje, upravljan je izvornim kodom Git. Repozitorij projekta dostupan je na web platformi GitLab. 
+               Komunikacija u timu postignuta je izradom Discord servera NULL grupe 2022./2023. i WhatsApp grupe kojima su pristup imali svi članovi tima. Ova dva kanala komunikacije omogućavali su nam brzu i jednostavnu komunikaciju, te spremnost svakog člana na pomoć drugome u nevolji u kratkom vremenu. Za izradu UML dijagrama koristili smo Draw.io, Astah Professional, Visual Paradigm, Microsoft Paint... Sustav za upravljanje, upravljan je izvornim kodom Git. Repozitorij projekta dostupan je na web platformi GitLab. 
 
-               Razvojno okruženje korišteno pri izradi je Visual Studio Code, integrirano razvojno okruženje tvrtke Microsoft. 
+               Razvojno okruženje korišteno pri izradi je Visual Studio Code, integrirano razvojno okruženje tvrtke Microsoft. Prvenstveno se koristi za razvoj računalnih programa za operacijski sustav Windows, kao i za web-stranice, web-aplikacije, web-usluge i mobilne aplikacije. Visual Studio za razvoj softvera koristi Microsoft-ove platforme kao sto su Windows API, Windows Forms, Windows Presentation Foundation, Windows Store i Microsoft Silverlight. Backend domena izrađena je pomoću radnog okvira Node.js i jezika Javascript, a frontend domena korištenjem Angular okvira, te jezikom Typescript. 
 
-               Prvenstveno se koristi za razvoj računalnih programa za operacijski sustav Windows, kao i za web-stranice, web-aplikacije, web-usluge i mobilne aplikacije. Visual Studio za razvoj softvera koristi Microsoft-ove platforme kao sto su Windows API, Windows Forms, Windows Presentation Foundation, Windows Store i Microsoft Silverlight. Backend domena izrađena je pomoću radnog okvira Node.js i jezika Javascript, a frontend domena korištenjem Angular okvira, te jezikom Typescript. 
+              
+
+              
             }
+
+            
+             \textit{Linkovi na alate:}
+            \newline
+             \url{https://code.visualstudio.com/}
+             \newline
+             \url{https://www.whatsapp.com/}
+             \newline
+             \url{https://online.visual-paradigm.com/}
+             \newline
+             \url{https://discord.com/}
+             \newline
+             \url{https://app.diagrams.net/}
+             \newline
+             \url{https://astah.net/products/astah-professional/}
+             \newline
+             \url{https://nodejs.org/en/}
+             \newline
+             \url{https://angular.io/}
+             \newline
+             \url{https://gitlab.com/}
+             \newline
+             \url{https://git-scm.com/}
+             
 			
 			
 			\eject 
@@ -158,7 +184,7 @@
     \end{figure}
 
     \subsection{Instaliranje potrebnih knjižnica i programa te downloadanje programa}
-    \textit{Potrebno je klonirati program backenda i frontenda na virtualnu mašinu, za što treba imati ovlasti za to kloniranje. To napravimo tako da na virtualnu mašinu stavimo ssh kljuc za gitlab. Nadalje trebamo instalirati sve potrebno za rad kloniranoga repozitorija. To postižemo s "sudo apt install nodejs" za nodejs, "npm install -g @angular/cli" za angular, "sudo apt install postgresql postgresql-contrib" za Postgres. Također da smo sigurni da je Postgres upaljen treba provesti još "sudo systemctl start postgresql.service". Ostali dijelovi se dobivaju preko "npm install" u frontend i backend direktorijima.}
+    \textit{Potrebno je klonirati program backenda i frontenda na virtualnu mašin pomoću komande "git clone <insert-url>", sustav će pitati za korisnika i lozinku. Nadalje trebamo instalirati sve potrebno za rad kloniranoga repozitorija. To postižemo s "sudo apt install nodejs" za nodejs, "npm install -g @angular/cli" za angular, "sudo apt install postgresql postgresql-contrib" za Postgres. Također da smo sigurni da je Postgres upaljen treba provesti još "sudo systemctl start postgresql.service". Ostali dijelovi se dobivaju preko "npm install" u frontend i backend direktorijima.}
 
     \subsection{Punjenje Postgres baze podataka}
     \textit{Potrebno je dodati u bazu podataka tablice koje se dalje koriste u backendu. Pozicionirati se u direktorij backenda ("cd sustav-narucivanja/sustav-narucivanja-server") te zatim "node db/seed.js"}
