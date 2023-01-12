@@ -53,10 +53,8 @@ export class DoctorsService {
   }
 
 
-  public getDoctorRule(): Observable<any> {
-    return this.http
-      .get('/api/doctor/get_rule')
-      .pipe(tap((resp) => console.log(resp)));
+  public getDoctorRule(id : number): Observable<any> {
+    return this.http.get<any>(`/api/doctor/get_rule/${id}`);
   }
 
 }

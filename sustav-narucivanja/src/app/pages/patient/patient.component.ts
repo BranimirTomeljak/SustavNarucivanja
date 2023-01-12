@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
 import { AcceptChangeDialogComponent } from 'src/app/components/accept-change-dialog/accept-change-dialog.component';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -44,7 +45,7 @@ export class PatientComponent implements OnInit{
   public user$ = this.authService.user$;
   private doctorId?: number;
   private nurseId?: number;
-  private rule?: number = 10;
+  private rule?: number;
   private numFutureAppointments?: number;
   private numFailedAppointments?: number;
   private id = this.authService.id || 0;
@@ -71,6 +72,9 @@ export class PatientComponent implements OnInit{
       return this.authService.getPatientDoctorId(); 
     }), tap((res) => this.doctorId = res),
     switchMap(() => {
+      return this.doctorService.getDoctorRule(this.doctorId as number);
+    }), tap((res) => this.rule = res),
+    switchMap(() => {
       return this.appointmentsService.getAllApointments('doctor', this.doctorId as number); 
     })
   );
@@ -89,6 +93,7 @@ export class PatientComponent implements OnInit{
   constructor(
     private readonly appointmentsService: AppointmentsService,
     private readonly authService: AuthService,
+    private readonly doctorService: DoctorsService,
     public dialog: MatDialog,
     private readonly router : Router,
     private readonly snackBar: MatSnackBar,
@@ -154,7 +159,6 @@ export class PatientComponent implements OnInit{
     this.events = [];
     this.appointments$.subscribe(
       (modelData : IAppointmentData[]) => {
-        //console.log(modelData);
         modelData.forEach((app) => {
           this.patientAppointments.push(app);
           this.pendingAppointments = this.patientAppointments.filter(app => app.changes_from !== null)
@@ -193,9 +197,10 @@ export class PatientComponent implements OnInit{
     this.events = [];
     this.fetchAppointments();
     if(type == 'doctor'){
+      console.log(this.rule)
+      console.log(this.doctorId)
       this.doctorAppointments$.subscribe(
         (modelData : IAppointmentData[]) => {
-          //console.log(modelData);
           modelData.filter((app) => app.patientid === null)
           .filter((app) => !this.patientAppointments.find((a) => a.time == app.time))
           .filter(app => this.addRule(new Date(app.time.slice(0, -1)), this.rule).getTime() > new Date().getTime())
@@ -217,9 +222,6 @@ export class PatientComponent implements OnInit{
     } else if(type == 'tech') {
       this.nurseAppointments$.subscribe(
         (modelData : IAppointmentData[]) => {
-          console.log(modelData);
-          console.log(this.patientAppointments);
-
           modelData.filter((app) => app.patientid === null)
           .filter((app) => !this.patientAppointments.find(a => a.time == app.time))
           .filter(app => this.addRule(new Date(app.time.slice(0, -1)), this.rule).getTime() > new Date().getTime())
@@ -261,7 +263,7 @@ export class PatientComponent implements OnInit{
                 this.addDuration(new Date(this.patientAppointments.find(a => a.id == app.changes_from)!.time.slice(0, -1)), app.duration)
                 .toLocaleTimeString().slice(0, -3),
                 selected : undefined}));
-    //console.log(apps)
+    
               
     const dialogRef = this.dialog.open(AcceptChangeDialogComponent, {
       data : {
@@ -271,7 +273,6 @@ export class PatientComponent implements OnInit{
     dialogRef.afterClosed().subscribe(result => {
       if(result){
         apps.forEach(app => {
-          //console.log(app)
           const data : IChangeAppointmentData = {
             from_id : app.id_from,
             to_id : app.id_to
@@ -298,13 +299,6 @@ export class PatientComponent implements OnInit{
       }
     })
     
-  }
-
-  test(){
-    console.log('nurse' , this.nurseId);
-    console.log('doctor', this.doctorId as number);
-    console.log('failed', this.numFailedAppointments);
-    console.log('future',this.numFutureAppointments);
   }
 
 }

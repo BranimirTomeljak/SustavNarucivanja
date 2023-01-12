@@ -3,7 +3,7 @@ const db = require('../db')
 //const { rawListeners } = require('../app');
 const notification = require("../models/NotificationModel");
 var Appointment = require('../models/AppointmentModel');
-var { Doctor, Patient } = require("../models/UserModel");
+var { Doctor, Patient, Nurse } = require("../models/UserModel");
 var { Team } = require("../models/TeamModel");
 
 var router = express.Router();
@@ -148,7 +148,12 @@ router.post('/reserve', async function(req, res, next) {
   const date = new Date();
   const difference = Math.abs(app.time.getTime() - date.getTime())
 
-  const sql = "SELECT appointmentRule FROM doctor WHERE id = " + app.doctorid;
+  if (app.doctorid != null)
+    var sql = "SELECT appointmentRule FROM doctor WHERE id = " + app.doctorid;
+  else{
+    nurse = await Nurse.getById(app.nurseid);
+    var sql = "SELECT appointmentRule FROM doctor WHERE teamId = " + nurse.teamid;
+  } 
   const results = await db.query(sql, []);
   console.log();
   

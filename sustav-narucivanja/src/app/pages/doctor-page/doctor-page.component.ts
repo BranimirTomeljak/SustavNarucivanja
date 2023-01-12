@@ -44,17 +44,14 @@ const colors: Record<string, EventColor> = {
 })
 export class DoctorPageComponent implements OnInit {
   private id : number = this.authService.id || 0;
-  private rule?: number = 12; // to do
+  private rule?: number;
   private readonly subscription = new Subscription();
   // dohvacanje appointmenta
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public appointments$: Observable<any> = this.trigger$.pipe(
-    /*switchMap(() => {
-      return this.doctorsService.getDoctorRule();
-    }), tap((res) => {
-            this.rule = res
-            console.log(res)
-          }),*/
+    switchMap(() => {
+      return this.doctorsService.getDoctorRule(this.id);
+    }), tap((res) => this.rule = res),
     switchMap(() => {
       return this.appointmentsService.getAllApointments('doctor', this.id);
     })
@@ -199,13 +196,11 @@ export class DoctorPageComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
       if(result){
         const data : IDoctorRule = {
           id : this.id,
           hours : result.hour
         }
-        console.log(data);
         const doctorSubscription = this.doctorsService
                   .setDoctorRule(data)
                   .subscribe(() => {

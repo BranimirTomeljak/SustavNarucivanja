@@ -42,6 +42,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -67,7 +68,9 @@ const colors: Record<string, EventColor> = {
 })
 export class KalendarComponent implements OnInit ,OnDestroy {
   public user$ = this.authService.user$;
+  private rule?: number;
   private doctorId?: number;
+  private nurseId?: number;
   private readonly subscription = new Subscription();
   private readonly trigger$ = new BehaviorSubject<any>(null);
 
@@ -75,11 +78,16 @@ export class KalendarComponent implements OnInit ,OnDestroy {
     switchMap(() => {
       return this.authService.getPatientDoctorId(); 
     }), tap((res) => this.doctorId = res),
+    switchMap(() => {
+      return this.authService.getPatientNurseId(); 
+    }), tap((res) => this.nurseId = res),
   );
+
 
   constructor(
     private readonly appointmentsService: AppointmentsService,
     private readonly authService: AuthService,
+    private readonly doctorsService: DoctorsService,
     private readonly router : Router,
     public dialog : MatDialog,
     private readonly snackBar : MatSnackBar
@@ -270,6 +278,12 @@ export class KalendarComponent implements OnInit ,OnDestroy {
           if(result){
             const appointmentSubscription = this.appointmentsService
               .reserveAppointment(data)
+              .pipe(
+                catchError(() => {
+                  this.snackBar.open(`Više nije moguće ugovoriti pregled` , 'Zatvori', { duration: 5000 });
+                  return EMPTY;
+                })
+              )
               .subscribe(() => {
                 this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
                 this.router.navigate(['/patient']));
@@ -298,7 +312,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
                     id: event.id,
                     patientid : this.authService.id,
                     doctorid : this.doctorId, 
-                    nurseid : 16, // kako dobit nurseId
+                    nurseid : this.nurseId,
                     time : event.start.toISOString(),
                     duration : this.getDuration(this.addTimeZone(event.start), event.end),
                     created_on : new Date(),
@@ -306,11 +320,16 @@ export class KalendarComponent implements OnInit ,OnDestroy {
                     type : appType,
                     patient_came : false,
                   }
+                  console.log(data);
                   const appointmentSubscription = this.appointmentsService
                   .reserveAppointment(data)
+                  .pipe(
+                    catchError(() => {
+                      this.snackBar.open(`Više nije moguće ugovoriti pregled` , 'Zatvori', { duration: 5000 });
+                      return EMPTY;
+                    })
+                  )
                   .subscribe(() => {
-                    //this.router.navigate(['/patient'])
-                    //this.refresh.next()
                     this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
                     this.router.navigate(['/patient']));
                   });
@@ -328,13 +347,12 @@ export class KalendarComponent implements OnInit ,OnDestroy {
                 date : event.start.toLocaleDateString()}
       });
       dialogRef.afterClosed().subscribe(result => {
-        console.log(`Dialog result: ${result}`);
         if(result){
           const appointmentSubscription = this.appointmentsService
           .cancelAppointment(data)
           .pipe(
             catchError(() => {
-              this.snackBar.open('Termin možete otkazati najkasnije 24 sata nakon rezervacije', 'Zatvori', { duration: 5000 });
+              this.snackBar.open('Termin možete otkazati najkasnije 24 sata prije termina', 'Zatvori', { duration: 5000 });
               return EMPTY;
             })
           )

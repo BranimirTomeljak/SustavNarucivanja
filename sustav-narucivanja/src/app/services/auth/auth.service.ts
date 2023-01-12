@@ -28,20 +28,17 @@ export class AuthService {
 
   public getPatientDoctorId(): Observable<any> {
     return this.http
-      .get('/api/user/doctor')
-      .pipe(tap((resp) => console.log(resp)));
+      .get('/api/user/doctor');
   }
 
   public getPatientNurseId(): Observable<any> {
     return this.http
-      .get('/api/user/nurse')
-      .pipe(tap((resp) => console.log(resp)));
+      .get('/api/user/nurse');
   }
 
   public getPatientNFailedAppointments(): Observable<any> {
     return this.http
-      .get('/api/user/nfailed')
-      .pipe(tap((resp) => console.log(resp)));
+      .get('/api/user/nfailed');
   }
 
   public login(data: ILoginData) {
