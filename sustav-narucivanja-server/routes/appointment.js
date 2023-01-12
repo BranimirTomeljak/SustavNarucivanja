@@ -170,15 +170,19 @@ router.post('/reserve', async function(req, res, next) {
 // id: appointment id
 router.post('/cancel', async function(req, res, next) {
   app = (await Appointment.fetchBy('id', req.body.id))[0]
-  app.patientid = undefined
-  app.created_on = undefined
-  app.changes_from = undefined
-  app.type = undefined
-  //await app_to.updateDb()
-  await app.updateDb()
-  //notification.sendEmail("appointmentCanceled", app)
-  //res.status(300).send("OK")
-  res.json(app)
+
+  if(((app.time.getTime() - new Date().getTime())/(60*60*1000)) < 24){
+    res.status(403).send("Ne mozete otkazati pregled prije manje od 24 sata od pocetka termina.")
+  } else {
+    app.patientid = undefined
+    app.created_on = undefined
+    app.changes_from = undefined
+    app.type = undefined
+    await app.updateDb()
+    //notification.sendEmail("appointmentCanceled", app)
+    //res.status(300).send("OK")
+    res.json(app)
+  }
 });
 
 // so doctor can change the appointment of the patient
