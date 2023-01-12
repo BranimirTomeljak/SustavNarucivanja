@@ -247,6 +247,11 @@ router.post('/record_attendance', async function(req, res, next) {
   app = (await Appointment.fetchBy('id', req.body.id))[0]
   app.patient_came = JSON.parse(req.body.patient_came)
   await app.updateDb()
+  let patient = await Patient.fetchById(app.patientid)
+  console.log(patient)
+  console.log(app)
+  if (!app.patient_came)
+    await patient.incrementNfailedAppointments()
   res.json(app);
 });
 
