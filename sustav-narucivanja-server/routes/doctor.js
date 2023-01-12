@@ -13,10 +13,8 @@ router.get("/:id", async function (req, res) {
     res.json(doctor);
 });
 
-
 // ovaj get ne radi
 router.get("/get_rule", async function (req, res, next) {
-    //console.log("tu smo" , req.session.user.id)
     const result = await Doctor.getRule(req.session.user.id);
     res.json(result);
 });

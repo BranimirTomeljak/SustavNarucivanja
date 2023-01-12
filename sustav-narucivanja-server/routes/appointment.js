@@ -193,7 +193,7 @@ router.post('/change', async function(req, res, next) {
 
   let date = new Date()
 
-  if(((app_to.getTime() - date.getTime())/(60*60*1000)) < 24) 
+  if(((app_from.created_on.getTime() - date.getTime())/(60*60*1000)) < 24)
     res.status(403).send("Ne mozete pomaknuti pregled do cijeg je pocetka manje od 24 sata.")
   
   else {

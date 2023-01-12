@@ -41,6 +41,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -75,6 +76,20 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       return this.authService.getPatientDoctorId(); 
     }), tap((res) => this.doctorId = res),
   );
+
+  constructor(
+    private readonly appointmentsService: AppointmentsService,
+    private readonly authService: AuthService,
+    private readonly router : Router,
+    public dialog : MatDialog,
+    private readonly snackBar : MatSnackBar
+    ) {
+    this.trigger$.next(null);
+  }
+
+  @Input() refresh = new Subject<void>();
+  @Input() typeInput : string = '';
+  @Input() events: CalendarEvent[] = [];
  
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
@@ -90,9 +105,6 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   };
 
 
-  @Input() refresh = new Subject<void>();
-  @Input() typeInput : string = '';
-  @Input() events: CalendarEvent[] = [];
 
   private addDuration = (date: Date, obj: object): Date => {
     const result = new Date(date);
@@ -156,15 +168,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
 
   activeDayIsOpen: boolean = false;
 
-  constructor(
-    private readonly appointmentsService: AppointmentsService,
-    private readonly authService: AuthService,
-    private readonly router : Router,
-    public dialog : MatDialog
-    ) {
-    this.trigger$.next(null);
-  }
-
+  
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
       if (
@@ -346,35 +350,41 @@ export class KalendarComponent implements OnInit ,OnDestroy {
       });
       dialogRef.afterClosed().subscribe(result => {
         if(result){
-        var appointments : string[] = [];
-        var evs : CalendarEvent[] = [];
-        evs = this.events.filter(e => e.color?.primary == colors['yellow'].primary
-        && e.start.toLocaleDateString() == event.start.toLocaleDateString()); 
-        this.events.filter(e => e.color?.primary == colors['yellow'].primary
-                        && e.start.toLocaleDateString() == event.start.toLocaleDateString())
-                        .forEach(e => {
-                          appointments.push(
-                            e.title
-                          )
-                        })
-        const dialogRef = this.dialog.open(FreeAppointmentDialog, {
-          data : {apps : appointments}
-        });
-        dialogRef.afterClosed().subscribe(result => {
-          console.log(result);
-          if(result != false && result != undefined){ 
-            var newEvent = evs.find(e => e.title == result);
-          const data : IChangeAppointmentData = {
-            from_id : event.id,
-            to_id : newEvent?.id
-          }
-          const appointmentSubscription = this.appointmentsService
-          .changeAppointment(data)
-          .subscribe(() => {
-            this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
-            this.router.navigate(['/doctor']));
+          var appointments : string[] = [];
+          var evs : CalendarEvent[] = [];
+          evs = this.events.filter(e => e.color?.primary == colors['yellow'].primary
+          && e.start.toLocaleDateString() == event.start.toLocaleDateString()); 
+          this.events.filter(e => e.color?.primary == colors['yellow'].primary
+                          && e.start.toLocaleDateString() == event.start.toLocaleDateString())
+                          .forEach(e => {
+                            appointments.push(
+                              e.title
+                            )
+                          })
+          const dialogRef = this.dialog.open(FreeAppointmentDialog, {
+            data : {apps : appointments}
           });
-          this.subscription.add(appointmentSubscription);
+          dialogRef.afterClosed().subscribe(result => {
+            console.log(result);
+            if(result != false && result != undefined){ 
+              var newEvent = evs.find(e => e.title == result);
+            const data : IChangeAppointmentData = {
+              from_id : event.id,
+              to_id : newEvent?.id
+            }
+            const appointmentSubscription = this.appointmentsService
+            .changeAppointment(data)
+            .pipe(
+              catchError(() => {
+                this.snackBar.open('Termin možete pomicati samo do 24 sata nakon rezervacije', 'Zatvori', { duration: 5000 });
+                return EMPTY;
+              })
+            )
+            .subscribe(() => {
+              this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+              this.router.navigate(['/doctor']));
+            });
+            this.subscription.add(appointmentSubscription);
           }
         })
         }
@@ -383,7 +393,6 @@ export class KalendarComponent implements OnInit ,OnDestroy {
   }
 
   handleNurse(event : CalendarEvent) : void {
-    console.log('Sad je medicinska sestra');
     if(event.color?.primary == colors['red'].primary && event.start.getTime() > new Date().getTime()){
       const dialogRef = this.dialog.open(ChangeAppointmentDialog, {
         data : { appointment : event.title.toLocaleLowerCase(),
