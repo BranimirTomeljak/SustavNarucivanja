@@ -122,9 +122,17 @@ router.post('/add_range', async function(req, res, next) {
   }
   console.log('here')
 
-  if (await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, check_errors)})){
-    await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, save_to_db)})
-    res.json();
+  if (req.session.user.type == "doctor"){
+    if (await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, check_errors)})){
+      await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, save_to_db)})
+      res.json();
+    }  
+  }
+  else{
+      if (await loop_over_appointments(async (time) => {await check_errors(appointment_factory(time, undefined, req.session.user.id))})){
+        await loop_over_appointments(async (time) => {await save_to_db(appointment_factory(time, undefined, req.session.user.id))})
+        res.json();
+    }  
   }
 
 });
@@ -259,6 +267,11 @@ router.post('/record_attendance', async function(req, res, next) {
   app = (await Appointment.fetchBy('id', req.body.id))[0]
   app.patient_came = JSON.parse(req.body.patient_came)
   await app.updateDb()
+  let patient = await Patient.fetchById(app.patientid)
+  console.log(patient)
+  console.log(app)
+  if (!app.patient_came)
+    await patient.incrementNfailedAppointments()
   res.json(app);
 });
 

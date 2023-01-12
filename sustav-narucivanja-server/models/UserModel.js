@@ -144,6 +144,11 @@ class User {
     const result = await db.query(sql, []);
   }
 
+  async incrementNfailedAppointments() {
+    const sql = "Update patient set nFailedAppointments=nFailedAppointments + 1 where id=" + this.id;
+    const result = await db.query(sql, []);
+  }
+
   //brisanje zapisa o korisniku u bazi podataka
   async removeUserFromDb() {
     if (this.id === undefined)

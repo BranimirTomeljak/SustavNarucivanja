@@ -147,10 +147,20 @@ class Team {
     const result = await db.query(sql, []);
   }
   async addNurseToTeam(nurse) {
+    console.log('fasjdf;lkdsajf;lkdjasfl;jask;dlfjad;slkjf;lkasdjlfk;jasdko;fj;lkadsj')
     if (this.teamId === undefined)
       throw "cannot have undefined teamId and try to add the nurse to the team";
-    const sql = `UPDATE nurse SET teamid = ${this.teamId} WHERE id = ${nurse}`;
-    const result = await db.query(sql, []);
+      let sql = `Select * from appointment WHERE nurseid = ${nurse} and patientid is Null and now() at time zone 'Europe/Paris'<time`;
+      let result = await db.query(sql, []);
+      if (result.length > 0)
+        return false
+      sql = `UPDATE nurse SET teamid = ${this.teamId} WHERE id = ${nurse}`;
+      result = await db.query(sql, []);
+      sql = ` insert into appointment (nurseid, time, duration)
+              select ${nurse}, time, duration from appointment join doctor on (appointment.doctorid=doctor.id) 
+              WHERE teamid = ${this.teamId} and now() at time zone 'Europe/Paris'<time`;
+      result = await db.query(sql, []);
+      return true
   }
 
   async removeDoctorFromTeam(doctor) {
@@ -185,3 +195,4 @@ class Team {
 module.exports = {
   Team: Team,
 };
+
