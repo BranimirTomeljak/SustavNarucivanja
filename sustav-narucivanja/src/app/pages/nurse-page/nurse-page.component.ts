@@ -133,7 +133,8 @@ export class NursePageComponent implements OnInit {
                   + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
                   + type
               : 'Slobodan termin ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
-                + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
+                  + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
+                  + type,
             color: app.patientid !== null ? { ...colors['red'] } : { ...colors['yellow'] },
             //actions: this.actions
           })
