@@ -122,9 +122,17 @@ router.post('/add_range', async function(req, res, next) {
   }
   console.log('here')
 
-  if (await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, check_errors)})){
-    await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, save_to_db)})
-    res.json();
+  if (req.session.user.type == "doctor"){
+    if (await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, check_errors)})){
+      await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, save_to_db)})
+      res.json();
+    }  
+  }
+  else{
+      if (await loop_over_appointments(async (time) => {await check_errors(appointment_factory(time, undefined, req.session.user.id))})){
+        await loop_over_appointments(async (time) => {await save_to_db(appointment_factory(time, undefined, req.session.user.id))})
+        res.json();
+    }  
   }
 
 });
