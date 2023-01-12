@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ISingleTeam } from 'src/app/interfaces/single-team';
 import { ITeamCreateData } from 'src/app/interfaces/team-create-data';
+import { IDoctorRule } from 'src/app/interfaces/doctor-rule-data';
 import { ITeamData } from 'src/app/interfaces/team-data';
 
 @Injectable({
@@ -46,4 +47,13 @@ export class DoctorsService {
   public editTeam(id: number, data: ITeamCreateData) {
     return this.http.post(`/api/team/edit/${id}`, data);
   }
+
+  public setDoctorRule(data : IDoctorRule) {
+    return this.http.post('/api/doctor/set_rule', data);
+  }
+
+  public getDoctorRule(): Observable<any> {
+    return this.http.get('/api/doctor/get_rule');
+  }
+
 }

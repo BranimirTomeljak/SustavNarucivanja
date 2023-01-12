@@ -13,7 +13,13 @@ router.get("/:id", async function (req, res) {
     res.json(doctor);
 });
 
-router.post("/set", async function (req, res, next) {
+router.get("/get_rule", async function (req, res, next) {
+    const id = req.session.user.id;
+    const result = await Doctor.getRule(id);
+    res.json(result);
+});
+
+router.post("/set_rule", async function (req, res, next) {
     await Doctor.setRule(req.body.id, req.body.hours);
     res.json("success");
 });

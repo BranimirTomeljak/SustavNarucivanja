@@ -399,6 +399,13 @@ class Doctor extends Nurse {
       await db.query(sql, []);
   }
 
+  
+  static async getRule(id) {
+    const sql ="SELECT appointmentRule FROM doctor WHERE id = " + id;
+    const result = await db.query(sql, []);
+    return result[0].appointmentRule;
+  }
+
   async addToDb() {
     if (await this.isUserInDb()) console.log("already there");
     else await this.saveUserToDb();

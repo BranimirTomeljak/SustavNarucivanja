@@ -9,7 +9,7 @@ import {
   CalendarView,
 } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
-import { BehaviorSubject, Observable, Subject, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, switchMap, tap } from 'rxjs';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
 import { Router } from '@angular/router';
@@ -17,6 +17,8 @@ import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Form, FormBuilder} from '@angular/forms';
 import { RecordAttendanceDialogComponent } from 'src/app/components/record-attendance-dialog/record-attendance-dialog.component';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { DoctorsService } from 'src/app/services/doctors/doctors.service';
+import { IDoctorRule } from 'src/app/interfaces/doctor-rule-data';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -40,12 +42,15 @@ const colors: Record<string, EventColor> = {
   styleUrls: ['./doctor-page.component.scss']
 })
 export class DoctorPageComponent implements OnInit {
-  private id = this.authService.id || 0;
-
+  private id : number = this.authService.id || 0;
+  private rule?: number;
   private readonly subscription = new Subscription();
   // dohvacanje appointmenta
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public appointments$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.doctorsService.getDoctorRule();
+    }), tap((res) => this.rule = res),
     switchMap(() => {
       return this.appointmentsService.getAllApointments('doctor', this.id);
     })
@@ -53,6 +58,7 @@ export class DoctorPageComponent implements OnInit {
   
   constructor(
     private readonly appointmentsService: AppointmentsService,
+    private readonly doctorsService: DoctorsService,
     private readonly router: Router,
     public dialog : MatDialog,
     private readonly authService: AuthService
@@ -182,15 +188,27 @@ export class DoctorPageComponent implements OnInit {
   }
 
   defineRules(){
-    console.log('Definiraj pravila')
     const dialogRef = this.dialog.open(DefineRulesDialog, {
       data : {
-        rule : 100,
+        rule : this.rule,
       }
     });
     dialogRef.afterClosed().subscribe(result => {
       if(result){
-        console.log(result);
+        const data : IDoctorRule = {
+          id : this.id,
+          hours : result
+        }
+        console.log(data);
+        /*
+        const doctorSubscription = this.doctorsService
+                  .setDoctorRule(data)
+                  .subscribe(() => {
+                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+                    this.router.navigate(['/doctor']));
+                  });
+        this.subscription.add(doctorSubscription);
+        */
       }
     })
   }
