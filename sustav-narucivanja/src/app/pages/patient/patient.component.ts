@@ -44,6 +44,7 @@ export class PatientComponent implements OnInit{
   public user$ = this.authService.user$;
   private doctorId?: number;
   private nurseId?: number;
+  private rule?: number = 10;
   private numFutureAppointments?: number;
   private numFailedAppointments?: number;
   private id = this.authService.id || 0;
@@ -138,6 +139,14 @@ export class PatientComponent implements OnInit{
     return date;
   }
 
+  private addRule = (date: Date, hours? : number) : Date => {
+    if(hours == undefined){
+      return date
+    }
+    date.setHours(date.getHours() - hours);
+    return date;
+  }
+
   
   refresh = new Subject<void>();
 
@@ -171,7 +180,7 @@ export class PatientComponent implements OnInit{
   }
 
   public reserveAppointment(type : string) : void{
-    if(this.numFutureAppointments as number <= 5) {
+    if(this.numFutureAppointments as number >= 5) {
       this.snackBar.open('Imate previše zakazanih termina, dođite izravno na dogovor', 'Zatvori', {
         duration: 5000,
       });
@@ -189,7 +198,7 @@ export class PatientComponent implements OnInit{
           //console.log(modelData);
           modelData.filter((app) => app.patientid === null)
           .filter((app) => !this.patientAppointments.find((a) => a.time == app.time))
-          .filter(app => new Date(app.time.slice(0, -1)).getTime() > new Date().getTime())
+          .filter(app => this.addRule(new Date(app.time.slice(0, -1)), this.rule).getTime() > new Date().getTime())
           .forEach((app) => {
             this.events.push({
               id: app.id,
@@ -212,8 +221,8 @@ export class PatientComponent implements OnInit{
           console.log(this.patientAppointments);
 
           modelData.filter((app) => app.patientid === null)
-          .filter(app => new Date(app.time.slice(0, -1)).getTime() > new Date().getTime())
           .filter((app) => !this.patientAppointments.find(a => a.time == app.time))
+          .filter(app => this.addRule(new Date(app.time.slice(0, -1)), this.rule).getTime() > new Date().getTime())
           .forEach((app) => {
             this.events.push({
               id: app.id,

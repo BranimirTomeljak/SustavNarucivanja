@@ -11,6 +11,7 @@ import {MatRadioModule} from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
 import {MatBadgeModule} from '@angular/material/badge';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RecordAttendanceDialogModule } from 'src/app/components/record-attendance-dialog/record-attendance-dialog.module';
 
 @NgModule({
@@ -27,7 +28,8 @@ import { RecordAttendanceDialogModule } from 'src/app/components/record-attendan
     RecordAttendanceDialogModule,
     MatBadgeModule,
     MatFormFieldModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [DoctorPageComponent],
 })

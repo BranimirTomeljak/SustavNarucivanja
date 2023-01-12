@@ -14,11 +14,12 @@ import { AppointmentsService } from 'src/app/services/appointments/appointments.
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
 import { Router } from '@angular/router';
 import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {Form, FormBuilder} from '@angular/forms';
+import {Form, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import { RecordAttendanceDialogComponent } from 'src/app/components/record-attendance-dialog/record-attendance-dialog.component';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 import { IDoctorRule } from 'src/app/interfaces/doctor-rule-data';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -43,14 +44,17 @@ const colors: Record<string, EventColor> = {
 })
 export class DoctorPageComponent implements OnInit {
   private id : number = this.authService.id || 0;
-  private rule?: number;
+  private rule?: number = 12; // to do
   private readonly subscription = new Subscription();
   // dohvacanje appointmenta
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public appointments$: Observable<any> = this.trigger$.pipe(
-    switchMap(() => {
+    /*switchMap(() => {
       return this.doctorsService.getDoctorRule();
-    }), tap((res) => this.rule = res),
+    }), tap((res) => {
+            this.rule = res
+            console.log(res)
+          }),*/
     switchMap(() => {
       return this.appointmentsService.getAllApointments('doctor', this.id);
     })
@@ -188,19 +192,20 @@ export class DoctorPageComponent implements OnInit {
   }
 
   defineRules(){
-    const dialogRef = this.dialog.open(DefineRulesDialog, {
+    console.log(this.rule)
+    const dialogRef = this.dialog.open(DefineRulesDialog, { 
       data : {
         rule : this.rule,
       }
     });
     dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
       if(result){
         const data : IDoctorRule = {
           id : this.id,
-          hours : result
+          hours : result.hour
         }
         console.log(data);
-        /*
         const doctorSubscription = this.doctorsService
                   .setDoctorRule(data)
                   .subscribe(() => {
@@ -208,7 +213,6 @@ export class DoctorPageComponent implements OnInit {
                     this.router.navigate(['/doctor']));
                   });
         this.subscription.add(doctorSubscription);
-        */
       }
     })
   }
@@ -225,7 +229,14 @@ type App = {
   templateUrl: 'dialogs/define-rules-dialog.html',
 })
 export class DefineRulesDialog {
-  constructor(@Inject(MAT_DIALOG_DATA) public data : {rule : number}) {}
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data : {rule : number},
+    private readonly snackBar : MatSnackBar
+  ) {}
   newRule : number = 0;
+
+  public form: FormGroup = new FormGroup({
+    hour: new FormControl(this.data.rule, [Validators.required]),
+  });
 }
 

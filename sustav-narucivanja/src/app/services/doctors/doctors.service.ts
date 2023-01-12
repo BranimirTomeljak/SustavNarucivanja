@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { ISingleTeam } from 'src/app/interfaces/single-team';
 import { ITeamCreateData } from 'src/app/interfaces/team-create-data';
 import { IDoctorRule } from 'src/app/interfaces/doctor-rule-data';
@@ -52,8 +52,11 @@ export class DoctorsService {
     return this.http.post('/api/doctor/set_rule', data);
   }
 
+
   public getDoctorRule(): Observable<any> {
-    return this.http.get('/api/doctor/get_rule');
+    return this.http
+      .get('/api/doctor/get_rule')
+      .pipe(tap((resp) => console.log(resp)));
   }
 
 }

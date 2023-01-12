@@ -399,11 +399,10 @@ class Doctor extends Nurse {
       await db.query(sql, []);
   }
 
-  
   static async getRule(id) {
     const sql ="SELECT appointmentRule FROM doctor WHERE id = " + id;
     const result = await db.query(sql, []);
-    return result[0].appointmentRule;
+    return result[0].appointmentrule;
   }
 
   async addToDb() {
