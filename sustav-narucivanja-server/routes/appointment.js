@@ -81,14 +81,17 @@ router.post('/add_range', async function(req, res, next) {
     return true
   }
 
-  const appointment_factory = (time, doctorid, nurseid) => {
+  const appointment_factory = (time, doctorid, nurseid, type) => {
     return new Appointment(
       undefined,
       undefined,
       doctorid,
       nurseid,
       time,
-      '00:' + appointment_duration + ':00'
+      '00:' + appointment_duration + ':00',
+      undefined,
+      undefined,
+      type
     )
   }
   
@@ -106,11 +109,11 @@ router.post('/add_range', async function(req, res, next) {
   }
 
   const multiply_appointment_over_team = async (time, func) => {
-    let app = appointment_factory(time, req.session.user.id, undefined)
+    let app = appointment_factory(time, req.session.user.id, undefined, undefined)
     let res = await func(app)
-    let nurses = await Team.dbGetNursesByTeamId(req.session.user.teamid)
+    let nurses = await Team.dbGetNursesByTeamId(req.session.user.teamid, undefined)
     for (let nurse of nurses){
-      app = appointment_factory(time, undefined, nurse.id)
+      app = appointment_factory(time, undefined, nurse.id, undefined)
       res = res && await func(app)
     }
     return res
@@ -120,17 +123,20 @@ router.post('/add_range', async function(req, res, next) {
       await app.saveToDb()   
       return true 
   }
-  console.log('here')
+  
+  const appType = req.body.type
 
-  if (req.session.user.type == "doctor"){
+  if (req.session.user.type === "doctor"){
     if (await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, check_errors)})){
       await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, save_to_db)})
       res.json();
     }  
   }
   else{
-      if (await loop_over_appointments(async (time) => {await check_errors(appointment_factory(time, undefined, req.session.user.id))})){
-        await loop_over_appointments(async (time) => {await save_to_db(appointment_factory(time, undefined, req.session.user.id))})
+    console.log('1')
+      if (await loop_over_appointments(async (time) => {await check_errors(appointment_factory(time, undefined, req.session.user.id, appType))})){
+        console.log('2')
+        await loop_over_appointments(async (time) => {await save_to_db(appointment_factory(time, undefined, req.session.user.id, appType))})
         res.json();
     }  
   }
@@ -286,6 +292,19 @@ router.post('/delete', async function(req, res, next) {
     res.json();
   }
 
+});
+
+router.get("/nurse_appointments_by_type", async function(req, res, next) {
+  let app = new Appointment(
+    id = req.body.id,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined
+  )
+  const appointments = await app.fetchNurseAppointmentsByType(req.body.type);
+  res.json(appointments);
 });
 
 

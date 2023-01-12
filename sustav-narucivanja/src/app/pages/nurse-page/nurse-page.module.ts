@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule} from '@angular/material/radio';
 import { MatBadgeModule } from '@angular/material/badge';
 import { RecordAttendanceDialogModule } from 'src/app/components/record-attendance-dialog/record-attendance-dialog.module';
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
@@ -24,7 +25,7 @@ import { RecordAttendanceDialogModule } from 'src/app/components/record-attendan
     MatButtonModule,
     MatRadioModule,
     RecordAttendanceDialogModule,
-    MatBadgeModule
+    MatBadgeModule, RouterModule
   ],
   exports: [NursePageComponent],
 })

@@ -33,7 +33,7 @@ function initialize(passport) {
         } else {
           // No user
           return done(null, false, {
-            message: "No user with that mail address"
+            message: "No user with that mail address",
           });
         }
       }
