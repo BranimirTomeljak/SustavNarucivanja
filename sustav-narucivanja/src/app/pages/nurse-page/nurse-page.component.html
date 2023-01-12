@@ -2,6 +2,9 @@
 
 <app-kalendar [events]="events" [refresh]="refresh"></app-kalendar>
 <div class="btn_container">
+  <a [routerLink]="'/nurse/working-hours'" class="btn btn-primary">
+    Određivanje radnog vremena
+  </a>
     <button class="btn btn-primary" [matBadge]="badgeContent" (click)="recordAttendance()">
       Potvrđivanje dolaznosti pacijenata
     </button>

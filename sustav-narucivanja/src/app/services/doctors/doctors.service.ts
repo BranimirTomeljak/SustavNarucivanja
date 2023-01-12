@@ -28,6 +28,12 @@ export class DoctorsService {
     return this.http.get(`/api/nurse/${id}`);
   }
 
+  public getNurseTeam() {
+    return this.http
+      .get('/api/user/nurse/teamId')
+      .pipe(tap((resp) => console.log('teamid', resp)));
+  }
+
   public createTeam(data: ITeamCreateData) {
     return this.http.post('/api/team/create', data);
   }

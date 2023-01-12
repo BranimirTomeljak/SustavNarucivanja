@@ -145,7 +145,9 @@ class User {
   }
 
   async incrementNfailedAppointments() {
-    const sql = "Update patient set nFailedAppointments=nFailedAppointments + 1 where id=" + this.id;
+    const sql =
+      "Update patient set nFailedAppointments=nFailedAppointments + 1 where id=" +
+      this.id;
     const result = await db.query(sql, []);
   }
 
@@ -294,7 +296,7 @@ class Nurse extends User {
     rest = {}
   ) {
     super(id, name, surname, sex, phonenumber, mail, password, dateofbirth);
-    this.teamid = rest.teamid
+    this.teamid = rest.teamid;
     this.type = "nurse";
   }
 
@@ -324,8 +326,8 @@ class Nurse extends User {
       user.mail,
       user.password,
       user.dateofbirth,
-      {teamid:result[0].teamid},
-      );
+      { teamid: result[0].teamid }
+    );
   }
 
   static async getAll() {
@@ -344,7 +346,7 @@ class Nurse extends User {
           result.mail,
           result.password,
           result.dateofbirth,
-          {teamid:result[0].teamid},
+          { teamid: result[0].teamid }
         )
       );
     return toreturn;
@@ -371,6 +373,12 @@ class Nurse extends User {
     let user = users[0];
     return new Nurse(user.id, user.name, user.surname);
   }
+
+  static async getTeamId(id) {
+    const sql = "SELECT teamid FROM nurse WHERE id = " + id;
+    const result = await db.query(sql, []);
+    return result[0].teamid;
+  }
 }
 
 class Doctor extends Nurse {
@@ -387,8 +395,8 @@ class Doctor extends Nurse {
   ) {
     super(id, name, surname, sex, phonenumber, mail, password, dateofbirth);
     this.type = "doctor";
-    this.teamid = rest.teamid
-    console.log('hello' + this.teamid)
+    this.teamid = rest.teamid;
+    console.log("hello" + this.teamid);
   }
 
   static async setRule(id, hours) {
@@ -398,10 +406,10 @@ class Doctor extends Nurse {
       return false;
     }
 
-    const sql ="UPDATE doctor SET appointmentRule =" +
-      hours + " WHERE id = " + id;
-    
-      await db.query(sql, []);
+    const sql =
+      "UPDATE doctor SET appointmentRule =" + hours + " WHERE id = " + id;
+
+    await db.query(sql, []);
   }
 
   static async getRule(id) {
@@ -427,8 +435,8 @@ class Doctor extends Nurse {
     const sql = "SELECT * FROM doctor WHERE id = " + id;
     const result = await db.query(sql, []);
     if (result.length === 0) throw "doctor does not exist";
-    console.log(result)
-    console.log('sorry')
+    console.log(result);
+    console.log("sorry");
     return new Doctor(
       user.id,
       user.name,
@@ -438,8 +446,8 @@ class Doctor extends Nurse {
       user.mail,
       user.password,
       user.dateofbirth,
-      {teamid:result[0].teamid}
-      );
+      { teamid: result[0].teamid }
+    );
   }
 
   static async getAll() {
@@ -458,8 +466,8 @@ class Doctor extends Nurse {
           result.mail,
           result.password,
           result.dateofbirth,
-          {teamid:result[0].teamid}
-          )
+          { teamid: result[0].teamid }
+        )
       );
     return toreturn;
   }
@@ -533,7 +541,7 @@ module.exports = {
   Patient: Patient,
   Doctor: Doctor,
   Nurse: Nurse,
-  Admin: Admin
+  Admin: Admin,
 };
 
 async function test() {

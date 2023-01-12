@@ -1,0 +1,40 @@
+<app-main-navigation></app-main-navigation>
+
+<div class="container">
+  <h1>Određivanje radnog vremena</h1>
+  <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
+    <mat-form-field class="toggle">
+      <mat-label>Radni dan</mat-label>
+      <input
+        formControlName="date"
+        placeholder="MM/DD/YYYY"
+        matInput
+        [matDatepicker]="date"
+      />
+      <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
+      <mat-datepicker #date></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Početak radnog vremena:</mat-label>
+      <input matInput type="time" formControlName="start" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Kraj radnog vremena:</mat-label>
+      <input matInput type="time" formControlName="end" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select placeholder="Tip usluge" formControlName="type">
+        <mat-option *ngFor="let option of medicalServices" [value]="option">
+          {{ option }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button>Potvrdi</button>
+  </form>
+</div>
+
+<app-main-footer></app-main-footer>
