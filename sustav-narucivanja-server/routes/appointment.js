@@ -81,14 +81,17 @@ router.post('/add_range', async function(req, res, next) {
     return true
   }
 
-  const appointment_factory = (time, doctorid, nurseid) => {
+  const appointment_factory = (time, doctorid, nurseid, type) => {
     return new Appointment(
       undefined,
       undefined,
       doctorid,
       nurseid,
       time,
-      '00:' + appointment_duration + ':00'
+      '00:' + appointment_duration + ':00',
+      undefined,
+      undefined,
+      type
     )
   }
   
@@ -106,11 +109,11 @@ router.post('/add_range', async function(req, res, next) {
   }
 
   const multiply_appointment_over_team = async (time, func) => {
-    let app = appointment_factory(time, req.session.user.id, undefined)
+    let app = appointment_factory(time, req.session.user.id, undefined, undefined)
     let res = await func(app)
-    let nurses = await Team.dbGetNursesByTeamId(req.session.user.teamid)
+    let nurses = await Team.dbGetNursesByTeamId(req.session.user.teamid, undefined)
     for (let nurse of nurses){
-      app = appointment_factory(time, undefined, nurse.id)
+      app = appointment_factory(time, undefined, nurse.id, undefined)
       res = res && await func(app)
     }
     return res
@@ -129,8 +132,8 @@ router.post('/add_range', async function(req, res, next) {
     }  
   }
   else{
-      if (await loop_over_appointments(async (time) => {await check_errors(appointment_factory(time, undefined, req.session.user.id))})){
-        await loop_over_appointments(async (time) => {await save_to_db(appointment_factory(time, undefined, req.session.user.id))})
+      if (await loop_over_appointments(async (time) => {await check_errors(appointment_factory(time, undefined, req.session.user.id, res.body.type))})){
+        await loop_over_appointments(async (time) => {await save_to_db(appointment_factory(time, undefined, req.session.user.id, req.body.type))})
         res.json();
     }  
   }
