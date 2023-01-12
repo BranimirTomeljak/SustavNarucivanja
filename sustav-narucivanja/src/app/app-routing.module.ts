@@ -36,6 +36,7 @@ import { NurseGuard } from './guards/nurse/nurse.guard';
 import { PatientGuard } from './guards/patient/patient.guard';
 import { NurseWorkingHoursComponent } from './pages/nurse-page/nurse-working-hours/nurse-working-hours.component';
 import { NurseWorkingHoursModule } from './pages/nurse-page/nurse-working-hours/nurse-working-hours.module';
+import { NurseTeamGuard } from './guards/nurseTeam/nurse-team.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -76,7 +77,11 @@ const routes: Routes = [
         path: 'nurse',
         children: [
           { path: '', component: NursePageComponent },
-          { path: 'working-hours', component: NurseWorkingHoursComponent },
+          {
+            path: 'working-hours',
+            component: NurseWorkingHoursComponent,
+            canActivate: [NurseTeamGuard],
+          },
         ],
         canActivate: [NurseGuard],
       },
