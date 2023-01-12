@@ -142,7 +142,7 @@ export class DoctorPageComponent implements OnInit {
           })
         });
         this.refresh.next();
-        this.events.sort((a,b) => (a.title < b.title) ? -1 : 1);
+        this.events.sort((a,b) => (a.title.split(' ')[2] < b.title.split(' ')[2]) ? -1 : 1);
       },
       
     );
