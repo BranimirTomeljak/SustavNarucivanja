@@ -123,7 +123,8 @@ router.post('/add_range', async function(req, res, next) {
       await app.saveToDb()   
       return true 
   }
-  console.log('here')
+  
+  const appType = req.body.type
 
   if (req.session.user.type === "doctor"){
     if (await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, check_errors)})){
@@ -132,8 +133,10 @@ router.post('/add_range', async function(req, res, next) {
     }  
   }
   else{
-      if (await loop_over_appointments(async (time) => {await check_errors(appointment_factory(time, undefined, req.session.user.id, res.body.type))})){
-        await loop_over_appointments(async (time) => {await save_to_db(appointment_factory(time, undefined, req.session.user.id, req.body.type))})
+    console.log('1')
+      if (await loop_over_appointments(async (time) => {await check_errors(appointment_factory(time, undefined, req.session.user.id, appType))})){
+        console.log('2')
+        await loop_over_appointments(async (time) => {await save_to_db(appointment_factory(time, undefined, req.session.user.id, appType))})
         res.json();
     }  
   }
