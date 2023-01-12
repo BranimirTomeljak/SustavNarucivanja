@@ -170,7 +170,7 @@ router.post('/reserve', async function(req, res, next) {
 // id: appointment id
 router.post('/cancel', async function(req, res, next) {
   app = (await Appointment.fetchBy('id', req.body.id))[0]
-
+  
   if(((app.time.getTime() - new Date().getTime())/(60*60*1000)) < 24){
     res.status(403).send("Ne mozete otkazati pregled prije manje od 24 sata od pocetka termina.")
   } else {

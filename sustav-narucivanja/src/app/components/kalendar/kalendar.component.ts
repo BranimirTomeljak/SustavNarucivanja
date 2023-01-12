@@ -332,6 +332,12 @@ export class KalendarComponent implements OnInit ,OnDestroy {
         if(result){
           const appointmentSubscription = this.appointmentsService
           .cancelAppointment(data)
+          .pipe(
+            catchError(() => {
+              this.snackBar.open('Termin možete otkazati najkasnije 24 sata nakon rezervacije', 'Zatvori', { duration: 5000 });
+              return EMPTY;
+            })
+          )
           .subscribe(() => {
             this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
             this.router.navigate(['/patient']));
@@ -424,8 +430,13 @@ export class KalendarComponent implements OnInit ,OnDestroy {
           }
           const appointmentSubscription = this.appointmentsService
           .changeAppointment(data)
+          .pipe(
+            catchError(() => {
+              this.snackBar.open('Termin možete pomicati samo do 24 sata nakon rezervacije', 'Zatvori', { duration: 5000 });
+              return EMPTY;
+            })
+          )
           .subscribe(() => {
-            //this.router.navigate(['/nurse'])
             this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
             this.router.navigate(['/nurse']));
           });
