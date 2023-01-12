@@ -55,6 +55,12 @@ class Appointment {
         return toreturn
     }
 
+    async fetchNurseAppointmentsByType(type) {
+        let sql = 'SELECT * FROM appointment WHERE nurseid IS NOT NULL AND type = ' + type;
+        const result = await db.query(sql, []);
+        return result;
+    }
+
     // da li je appointment pohranjen u bazu podataka?
     async isSavedToDb() {
         if (this.id === undefined)

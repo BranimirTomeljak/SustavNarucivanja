@@ -122,7 +122,7 @@ router.post('/add_range', async function(req, res, next) {
   }
   console.log('here')
 
-  if (req.session.user.type == "doctor"){
+  if (req.session.user.type === "doctor"){
     if (await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, check_errors)})){
       await loop_over_appointments(async (time) => {await multiply_appointment_over_team(time, save_to_db)})
       res.json();
@@ -286,6 +286,19 @@ router.post('/delete', async function(req, res, next) {
     res.json();
   }
 
+});
+
+router.get("/nurse_appointments_by_type", async function(req, res, next) {
+  let app = new Appointment(
+    id = req.body.id,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined
+  )
+  const appointments = await app.fetchNurseAppointmentsByType(req.body.type);
+  res.json(appointments);
 });
 
 
