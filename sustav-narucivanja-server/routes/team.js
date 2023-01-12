@@ -44,11 +44,14 @@ router.post("/edit/:id", async function (req, res, next) {
     for (let doctorId of req.body.doctorIds) {
       await team.addDoctorToTeam(doctorId);
     }
+    let ok = true;
     for (let nurseId of req.body.nurseIds) {
-      await team.addNurseToTeam(nurseId);
+      ok = await team.addNurseToTeam(nurseId);
     }
-
-    res.status(200).json("Successfully edited team");
+    if (!ok)
+      res.status(500).json("Nurse should have no future appointments");
+    else
+      res.status(200).json("Successfully edited team");
   } catch {
     res.status(500).json("Error editing team");
   }
