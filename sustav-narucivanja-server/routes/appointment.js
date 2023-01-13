@@ -307,15 +307,9 @@ router.post('/delete', async function(req, res, next) {
 });
 
 router.get("/nurse_appointments_by_type", async function(req, res, next) {
-  let app = new Appointment(
-    id = req.body.id,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined
-  )
-  const appointments = await app.fetchNurseAppointmentsByType(req.body.type);
+  console.log(req.query.type)
+  let app = new Appointment();
+  const appointments = await app.fetchNurseAppointmentsByType(req.query.type);
   res.json(appointments);
 });
 

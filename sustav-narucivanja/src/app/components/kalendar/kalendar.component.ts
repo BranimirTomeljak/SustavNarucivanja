@@ -302,20 +302,14 @@ export class KalendarComponent implements OnInit ,OnDestroy {
         }
         )
       } else if(this.typeInput == 'tech'){
+
         const dialogRef = this.dialog.open(ReserveAppointmentDialog, {
           data : { appointment : event.title.toLocaleLowerCase(),
                   date : event.start.toLocaleDateString()}
         });
         dialogRef.afterClosed().subscribe(result => {
-          
-          if(result){
-            console.log(this.medicalServices)
-            const dialogRef = this.dialog.open(MedicalServiceDialog, {
-              data : { services: this.medicalServices}
-            });
-            dialogRef.afterClosed().subscribe(result => {
               if(result){
-                var appType = this.medicalServices.find(s => s.selected == true)?.title;
+                var appType = event.title.split("usluge:")[1].trim()
                 if(appType !== undefined){
                   const data : IAppointmentData = {
                     id: event.id,
@@ -329,7 +323,6 @@ export class KalendarComponent implements OnInit ,OnDestroy {
                     type : appType,
                     patient_came : false,
                   }
-                  console.log(data);
                   const appointmentSubscription = this.appointmentsService
                   .reserveAppointment(data)
                   .pipe(
@@ -346,8 +339,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
                 }
               }
             })
-          }
-        })
+          
       }
     }
     if(event.color?.primary == colors['red'].primary || event.color?.primary == colors['blue'].primary){
@@ -526,20 +518,6 @@ export class FreeAppointmentDialog {
   event : string = '';
 }
 
-@Component({
-  selector: 'medical-service-dialog',
-  templateUrl: 'dialogs/medical-service-dialog.html',
-})
-export class MedicalServiceDialog {
-  constructor(@Inject(MAT_DIALOG_DATA) public data : {services : MedicalService[]}) {}
-
-  onChange(service : MedicalService, isChecked : boolean){
-    var ser = this.data.services.find(s => s == service);
-    if(ser != undefined){
-      ser.selected = isChecked;
-    }
-  }
-}
 
 @Component({
   selector: 'doctor-type-dialog',

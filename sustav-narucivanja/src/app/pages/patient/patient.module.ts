@@ -2,19 +2,19 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MainFooterModule } from 'src/app/components/main-footer/main-footer.module';
 import { MainNavigationModule } from 'src/app/components/main-navigation/main-navigation.module';
-import { PatientComponent } from './patient.component';
+import { MedicalServiceDialog, PatientComponent } from './patient.component';
 import { KalendarModule } from 'src/app/components/kalendar/kalendar.module';
 import {MatBadgeModule} from '@angular/material/badge';
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
-import {MatRadioModule} from '@angular/material/radio';
+import {MatRadioButton, MatRadioModule} from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AcceptChangeDialogModule } from 'src/app/components/accept-change-dialog/accept-change-dialog.module';
 
 
 @NgModule({
-  declarations: [PatientComponent],
+  declarations: [PatientComponent, MedicalServiceDialog],
   imports: [
     CommonModule,
     MainNavigationModule,
@@ -22,8 +22,10 @@ import { AcceptChangeDialogModule } from 'src/app/components/accept-change-dialo
     KalendarModule,
     MatBadgeModule,
     MatDialogModule,
+    MatDialogModule,
     AcceptChangeDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatRadioModule
   ],
   exports: [PatientComponent],
 })

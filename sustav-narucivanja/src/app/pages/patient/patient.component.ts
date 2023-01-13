@@ -1,5 +1,5 @@
 import { 
-  Component, OnInit,
+  Component, Inject, OnInit,
 } from '@angular/core';
 import { addDays, addHours, endOfMonth, startOfDay, subDays } from 'date-fns';
 import {
@@ -13,7 +13,7 @@ import { BehaviorSubject, Observable, Subject, Subscription, switchMap, tap } fr
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
 import { IChangeAppointmentData } from 'src/app/interfaces/change-appointment-data';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AcceptChangeDialogComponent } from 'src/app/components/accept-change-dialog/accept-change-dialog.component';
 import { AuthService } from 'src/app/services/auth/auth.service';
@@ -79,15 +79,17 @@ export class PatientComponent implements OnInit{
     })
   );
 
+  /*
   public nurseAppointments$: Observable<any> = this.trigger$.pipe(
-    switchMap(() => {
+    /*switchMap(() => {
       return this.authService.getPatientNurseId(); 
     }), tap((res) => this.nurseId = res),
     switchMap(() => {
-      return this.appointmentsService.getAllApointments('nurse', this.nurseId as number); 
+      return this.appointmentsService.getNurseAppointmentsByType('vađenje krvi'); 
     })
   );
-
+  */
+ 
 
 
   constructor(
@@ -222,34 +224,65 @@ export class PatientComponent implements OnInit{
         },
       )
     } else if(type == 'tech') {
-      this.nurseAppointments$.subscribe(
-        (modelData : IAppointmentData[]) => {
-          modelData.filter((app) => app.patientid === null)
-          .filter((app) => !this.patientAppointments.find(a => a.time == app.time))
-          .filter(app => this.addRule(new Date(app.time.slice(0, -1)), this.rule).getTime() > new Date().getTime())
-          .forEach((app) => {
-            var typeNurse : string = app.type != undefined ? ", vrsta usluge: " + app.type : "";
-            this.events.push({
-              id: app.id,
-              start: new Date(app.time.slice(0, -1)),
-              end: this.addDuration(new Date(app.time.slice(0, -1)), app.duration),
-              title: 'Slobodan termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
-              + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
-              + typeNurse,
-              color: colors['yellow'] ,
-              //actions: this.actions
+
+      const dialogRef = this.dialog.open(MedicalServiceDialog, {
+        data : { services: this.medicalServices}
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if(result){
+          var appType = this.medicalServices.find(s => s.selected == true)?.title;
+          this.medicalServices.forEach(ms => ms.selected = false);
+          console.log(appType)
+          var nurseAppointments$: Observable<any> = this.trigger$.pipe(
+            /*switchMap(() => {
+              return this.authService.getPatientNurseId(); 
+            }), tap((res) => this.nurseId = res),*/
+            switchMap(() => {
+              return this.appointmentsService.getNurseAppointmentsByType(appType as string); 
             })
-          });
-          this.refresh.next();
-          this.events.sort((a,b) => (a.title.split(' ')[2] < b.title.split(' ')[2]) ? -1 : 1);
-        },
-      )
+          );
+          nurseAppointments$.subscribe(
+            (modelData : IAppointmentData[]) => {
+              console.log(modelData);
+              modelData.filter((app) => app.patientid === null)
+              .filter((app) => !this.patientAppointments.find(a => a.time == app.time))
+              .filter(app => this.addRule(new Date(app.time.slice(0, -1)), this.rule).getTime() > new Date().getTime())
+              .forEach((app) => {
+                var typeNurse : string = app.type != undefined ? ", vrsta usluge: " + app.type : "";
+                this.events.push({
+                  id: app.id,
+                  start: new Date(app.time.slice(0, -1)),
+                  end: this.addDuration(new Date(app.time.slice(0, -1)), app.duration),
+                  title: 'Slobodan termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
+                  + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
+                  + typeNurse,
+                  color: colors['yellow'] ,
+                  //actions: this.actions
+                })
+              });
+              this.refresh.next();
+              this.events.sort((a,b) => (a.title.split(' ')[2] < b.title.split(' ')[2]) ? -1 : 1);
+            },
+          )
+        }
+      })
+
+
+      
     }
     
   }
 }
 
   badgeContent : number = 0;
+
+  medicalServices : MedicalService[] = [
+    {title : 'vađenje krvi', selected : undefined},
+    {title : 'testiranje na COVID' , selected : undefined},
+    {title : 'mjerenje tlaka',  selected : undefined},
+    {title : 'mjerenje šećera', selected : undefined},
+    {title : 'previjanje' , selected : undefined},
+  ];
   
   private patientAppointments : IAppointmentData[] = [];
   private pendingAppointments : IAppointmentData[] = [];
@@ -307,11 +340,31 @@ export class PatientComponent implements OnInit{
 
 }
 
-type AppForChange = {
+interface AppForChange {
   date : string,
   id_from?: number | string,
   id_to?: number | string,
   title_from?: string,
   title_to: string,
   selected?: boolean
+}
+
+interface MedicalService {
+  title : string,
+  selected ?: boolean
+}
+
+@Component({
+  selector: 'medical-service-dialog',
+  templateUrl: 'dialogs/medical-service-dialog.html',
+})
+export class MedicalServiceDialog {
+  constructor(@Inject(MAT_DIALOG_DATA) public data : {services : MedicalService[]}) {}
+
+  onChange(service : MedicalService, isChecked : boolean){
+    var ser = this.data.services.find(s => s == service);
+    if(ser != undefined){
+      ser.selected = isChecked;
+    }
+  }
 }
