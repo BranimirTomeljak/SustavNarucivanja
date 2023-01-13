@@ -230,6 +230,7 @@ router.post('/change', async function(req, res, next) {
   else {
     app_to.changes_from = req.body.from_id
     app_to.patientid = app_from.patientid
+    app_to.type = app_from.type
     await app_to.updateDb()
     let patient = await Patient.getById(app_from.patientid);
     //notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
@@ -249,7 +250,7 @@ router.post('/accept_change', async function(req, res, next) {
   app_from.patientid = undefined
   app_from.created_on = undefined
   app_from.changes_from = undefined
-  app_from.type = undefined
+  app_from.type = undefined;
   await app_to.updateDb()
   await app_from.updateDb()
   //notification.sendEmail("appointmentChangeAccept", app_to);
