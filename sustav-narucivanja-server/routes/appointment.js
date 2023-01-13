@@ -167,7 +167,8 @@ router.post('/reserve', async function(req, res, next) {
   const results = await db.query(sql, []);
   
   if ( results[0].appointmentrule != undefined && (difference / (60*60*1000)) < results[0].appointmentrule) {
-    res.status(403).send("Nije moguce ugovoriti pregled više od " + results[0].appointmentrule + " sati prije pocetka")
+    res.status(403).send("Nije moguce ugovoriti pregled više od " + results[0].appointmentrule + " sati prije pocetka");
+    return;
   }
   app.type = req.body.type
   await app.updateDb()
