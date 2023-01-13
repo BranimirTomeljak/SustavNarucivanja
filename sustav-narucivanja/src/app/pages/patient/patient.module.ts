@@ -25,7 +25,8 @@ import { AcceptChangeDialogModule } from 'src/app/components/accept-change-dialo
     MatDialogModule,
     AcceptChangeDialogModule,
     MatSnackBarModule,
-    MatRadioModule
+    MatRadioModule,
+    MatButtonModule
   ],
   exports: [PatientComponent],
 })
