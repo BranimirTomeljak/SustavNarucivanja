@@ -80,7 +80,7 @@ export class WorkingHoursComponent{
       time_end: this.addHoursAndMinutes((date), endTime)
     };
 
-    console.log(data);
+    //console.log(data);
     
     
     const appointmentSubscription = this.appointmentService
@@ -105,7 +105,7 @@ export class WorkingHoursComponent{
   }
 
   public test() {
-    console.log(this.form.value);
+    //console.log(this.form.value);
   }
 
 }

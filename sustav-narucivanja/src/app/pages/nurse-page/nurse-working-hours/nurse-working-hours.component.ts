@@ -92,7 +92,7 @@ export class NurseWorkingHoursComponent implements OnDestroy {
       type: this.form.get('type')?.value,
     };
 
-    console.log(data);
+    //console.log(data);
 
     const appointmentSubscription = this.appointmentService
       .addRangeAppointment(data)
@@ -115,6 +115,6 @@ export class NurseWorkingHoursComponent implements OnDestroy {
   }
 
   public test() {
-    console.log(this.form.value);
+    //console.log(this.form.value);
   }
 }

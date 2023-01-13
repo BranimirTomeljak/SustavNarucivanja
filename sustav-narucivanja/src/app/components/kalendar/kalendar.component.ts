@@ -269,7 +269,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
             });
             dialogRef.afterClosed().subscribe(result => {
               if(result){
-                console.log(result);
+                //console.log(result);
                 const data : IAppointmentData = {
                   id: event.id,
                   patientid : this.authService.id,
@@ -348,7 +348,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
         dialogRef.afterClosed().subscribe(result => {
           
           if(result){
-            console.log(this.medicalServices)
+            //console.log(this.medicalServices)
             const dialogRef = this.dialog.open(CalendarMedicalServiceDialog, {
               data : { services: this.medicalServices}
             });
@@ -446,7 +446,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
             data : {apps : appointments}
           });
           dialogRef.afterClosed().subscribe(result => {
-            console.log(result);
+            //console.log(result);
             if(result != false && result != undefined){ 
               var newEvent = evs.find(e => e.title == result);
             const data : IChangeAppointmentData = {
@@ -496,7 +496,7 @@ export class KalendarComponent implements OnInit ,OnDestroy {
           data : {apps : appointments}
         });
         dialogRef.afterClosed().subscribe(result => {
-          console.log(result);
+          //console.log(result);
           if(result != false && result != undefined){ 
             var newEvent = evs.find(e => e.title == result);
           const data : IChangeAppointmentData = {

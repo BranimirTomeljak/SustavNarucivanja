@@ -31,7 +31,7 @@ export class DoctorsService {
   public getNurseTeam() {
     return this.http
       .get('/api/user/nurse/teamId')
-      .pipe(tap((resp) => console.log('teamid', resp)));
+      //.pipe(tap((resp) => console.log('teamid', resp)));
   }
 
   public createTeam(data: ITeamCreateData) {
