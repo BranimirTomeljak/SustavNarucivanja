@@ -67,7 +67,7 @@
                     \caption{Testovi za klasu termina}
                     \label{fig:test3} %label mora biti drugaciji za svaku sliku
                 \end{figure}
-                Prikazani testovi testiraju dohvačanje određenog termina iz baze podataka, testiranje postoji li određeni termin koji je u vremenskom konfliktu s odabranim terminom te testiranje updateanja termina. Testiranje konflikata ima vise rubnih slučajeva, naime isti termin mogli smo već dohvatiti iz baze podataka te tada nebi trebalo biti konflikata, zatim moguće je da se termin nalazi unutar drugoga, potpuno izvan...
+                Prikazani testovi testiraju dohvaćanje određenog termina iz baze podataka, testiranje postoji li određeni termin koji je u vremenskom konfliktu s odabranim terminom te testiranje updateanja termina. Testiranje konflikata ima više rubnih slučajeva, naime isti termin mogli smo već dohvatiti iz baze podataka te tada nebi trebalo biti konflikata, zatim moguće je da se termin nalazi unutar drugoga, potpuno izvan...
 
                 \begin{figure}[H]
                     \includegraphics[width=\textwidth]{slike/appointment_tests_out.png} %veličina u odnosu na širinu linije
@@ -176,7 +176,7 @@
 	\end{itemize}
 
     \subsection{Izrada koričkog računa na Microsoftovom Azure servisu}
-    Potrebno je posjetiti stranicu azure.com te napraviti korisnichki račun.
+    Potrebno je posjetiti stranicu azure.com te napraviti korisnički račun.
 
     \subsection{Zauzimanje nove virtualne mašine}
     Potrebno je na svojem home pageu na Azureovom servisu zauzeti novu virtualnu mašinu. Za to je potrebno pritisnuti na "Virtual Machine" te pratiti potrebne korake koji automatski dolaze jedan iza drugoga. Također je potrebno dopustiti konekciju na port 80.
@@ -196,7 +196,7 @@
     Prikaz opcija koje su vidljive na vrhu ekrana nakon što je odabrana virtualna mašina. Potrebno je stisnuti "Start", a zatim i "Connect", odabrati SSH i pratiti upute.
 
     \subsection{Instaliranje potrebnih knjižnica i programa te downloadanje programa}
-    Potrebno je klonirati program backenda i frontenda na virtualnu mašin pomoću komande "git clone <insert-url>", sustav će pitati za korisnika i lozinku. Nadalje trebamo instalirati sve potrebno za rad kloniranoga repozitorija. To postižemo s "sudo apt install nodejs" za nodejs, "npm install -g @angular/cli" za angular, "sudo apt install postgresql postgresql-contrib" za Postgres. Također da smo sigurni da je Postgres upaljen treba provesti još "sudo systemctl start postgresql.service". Ostali dijelovi se dobivaju preko "npm install" u frontend i backend direktorijima.
+    Potrebno je klonirati program backenda i frontenda na virtualnu mašin pomoću komande "git clone |insert-url|", sustav će pitati za korisnika i lozinku. Nadalje trebamo instalirati sve potrebno za rad kloniranoga repozitorija. To postižemo s "sudo apt install nodejs" za nodejs, "npm install -g @angular/cli" za angular, "sudo apt install postgresql postgresql-contrib" za Postgres. Također da smo sigurni da je Postgres upaljen treba provesti još "sudo systemctl start postgresql.service". Ostali dijelovi se dobivaju preko "npm install" u frontend i backend direktorijima.
 
     \subsection{Punjenje Postgres baze podataka}
     Potrebno je dodati u bazu podataka tablice koje se dalje koriste u backendu. Pozicionirati se u direktorij backenda ("cd sustav-narucivanja/sustav-narucivanja-server") te zatim "node db/seed.js"
