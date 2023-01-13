@@ -346,7 +346,7 @@ class Nurse extends User {
           result.mail,
           result.password,
           result.dateofbirth,
-          { teamid: result[0].teamid }
+          {teamid:result.teamid},
         )
       );
     return toreturn;
@@ -358,13 +358,18 @@ class Nurse extends User {
     const results = await db.query(sql, []);
     if (results.length === 0) throw "user does not exist";
     let toreturn = [];
-    for (let result of results)
-      toreturn.push({
-        id: result.id,
-        name: result.name,
-        surname: result.surname,
-        teamid: result.teamid,
-      });
+    for (let result of results) {
+      var app = "SELECT * FROM appointment WHERE nurseid = " + result.id;
+      var appresult = await db.query(app, []);
+      if (appresult.length === 0) {
+        toreturn.push({
+          id: result.id,
+          name: result.name,
+          surname: result.surname,
+          teamid: result.teamid,
+        });
+      }
+    }
     return toreturn;
   }
 
@@ -395,8 +400,8 @@ class Doctor extends Nurse {
   ) {
     super(id, name, surname, sex, phonenumber, mail, password, dateofbirth);
     this.type = "doctor";
-    this.teamid = rest.teamid;
-    console.log("hello" + this.teamid);
+    this.teamid = rest.teamid
+    //console.log('hello' + this.teamid)
   }
 
   static async setRule(id, hours) {
@@ -466,8 +471,8 @@ class Doctor extends Nurse {
           result.mail,
           result.password,
           result.dateofbirth,
-          { teamid: result[0].teamid }
-        )
+          {teamid:result.teamid}
+          )
       );
     return toreturn;
   }
