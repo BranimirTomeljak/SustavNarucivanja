@@ -23,7 +23,7 @@ async function sendEmail(purpose, reference){
     const transporter = nodemailer.createTransport({
         service: "hotmail",
         auth: {
-            user: "sustavzanarucivanje@outlook.com",
+            user: "sustavzn@outlook.com",
             pass: "Narucivanje1950",
         }
     });
@@ -38,7 +38,7 @@ async function sendEmail(purpose, reference){
     
     if(reference.mail != null || reference.time != null)    //osoba ili appointmemnt
         var options = {
-            from: "sustavzanarucivanje@outlook.com",
+            from: "sustavzn@outlook.com",
             to: mailToSend,
             subject: getPurposeSubject(purpose),
             html: await getPurposeMessage(purpose, reference),
@@ -112,7 +112,7 @@ async function getPurposeMessage(purpose, reference){
         <img src="https://medicinarada.hr/wp-content/uploads/2020/04/hzzo_logo_posts.jpg" text-align="center" height="100px" alt="hzzo">`;
 
     else if(purpose == "appointmentReserved")
-        return `<p>Poštovani dr. ${reference.name} ${reference.surname},<br /><br />
+        return `<p>Poštovani ${reference.name} ${reference.surname},<br /><br />
         Rezerviran Vam je termin u našemu sustavu. Molimo Vas provjerite pojedinosti o terminu na web stranici Sustava za naručivanje.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
@@ -124,7 +124,7 @@ async function getPurposeMessage(purpose, reference){
 
     else if(purpose == "appointmentCanceled"){
         let doctor = await Doctor.getById(reference.doctorid);
-        return `<p>Poštovani dr. ${doctor.name} ${doctor.surname},<br /><br />
+        return `<p>Poštovani ${doctor.name} ${doctor.surname},<br /><br />
         Nažalost, otkazan Vam je termin u ${reference.time}.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
@@ -150,7 +150,7 @@ async function getPurposeMessage(purpose, reference){
 
     else if(purpose == "appointmentChangeAccept"){
         let doctor = await Doctor.getById(reference.doctorid);
-        return `<p>Poštovani dr. ${doctor.name} ${doctor.surname},<br /><br />
+        return `<p>Poštovani ${doctor.name} ${doctor.surname},<br /><br />
         Vaš pacijent je potvrdio promjenu termina u ${reference.time}. Molimo Vas provjerite pojedinosti promjene na web stranici Sustava za naručivanje.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
@@ -163,7 +163,7 @@ async function getPurposeMessage(purpose, reference){
 
     else if(purpose == "appointmentChangeReject"){
         let doctor = await Doctor.getById(reference.doctorid);
-        return `<p>Poštovani dr. ${doctor.name} ${doctor.surname},<br /><br />
+        return `<p>Poštovani ${doctor.name} ${doctor.surname},<br /><br />
         Vaš pacijent je odbio promjenu termina u ${reference.time}. Molimo Vas provjerite pojedinosti promjene na web stranici Sustava za naručivanje.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
@@ -186,7 +186,7 @@ async function getPurposeMessage(purpose, reference){
         <img src="https://medicinarada.hr/wp-content/uploads/2020/04/hzzo_logo_posts.jpg" text-align="center" height="100px" alt="hzzo">`;
     
     else if(purpose == "remindDoctor")
-        return `<p>Poštovani dr. ${reference.name} ${reference.surname},<br /><br />
+        return `<p>Poštovani ${reference.name} ${reference.surname},<br /><br />
         Podsjećamo Vas da morate dodati termine pregleda 10 dana unaprijed. Molimo Vas provjerite vremena Vaših termina na web stranici Sustava za naručivanje.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
