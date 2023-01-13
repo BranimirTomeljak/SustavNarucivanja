@@ -79,16 +79,16 @@ export class PatientComponent implements OnInit{
     })
   );
 
-  /*
+  
   public nurseAppointments$: Observable<any> = this.trigger$.pipe(
-    /*switchMap(() => {
+    switchMap(() => {
       return this.authService.getPatientNurseId(); 
     }), tap((res) => this.nurseId = res),
     switchMap(() => {
-      return this.appointmentsService.getNurseAppointmentsByType('vađenje krvi'); 
+      return this.appointmentsService.getAllApointments('nurse', this.nurseId as number); 
     })
   );
-  */
+  
  
 
 
@@ -265,10 +265,30 @@ export class PatientComponent implements OnInit{
         }
       })
 
-
-      
+    } else if ('own_tech') {
+      this.nurseAppointments$.subscribe(
+        (modelData : IAppointmentData[]) => {
+          modelData.filter((app) => app.patientid === null)
+          .filter((app) => !this.patientAppointments.find(a => a.time == app.time))
+          .filter(app => this.addRule(new Date(app.time.slice(0, -1)), this.rule).getTime() > new Date().getTime())
+          .forEach((app) => {
+            var typeNurse : string = app.type != undefined ? ", vrsta usluge: " + app.type : "";
+            this.events.push({
+              id: app.id,
+              start: new Date(app.time.slice(0, -1)),
+              end: this.addDuration(new Date(app.time.slice(0, -1)), app.duration),
+              title: 'Slobodan termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
+              + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
+              + typeNurse,
+              color: colors['yellow'] ,
+              //actions: this.actions
+            })
+          });
+          this.refresh.next();
+          this.events.sort((a,b) => (a.title.split(' ')[2] < b.title.split(' ')[2]) ? -1 : 1);
+        },
+      )
     }
-    
   }
 }
 

@@ -340,7 +340,51 @@ export class KalendarComponent implements OnInit ,OnDestroy {
               }
             })
           
+      } else if (this.typeInput == "own_tech"){
+        const dialogRef = this.dialog.open(ReserveAppointmentDialog, {
+          data : { appointment : event.title.toLocaleLowerCase(),
+                  date : event.start.toLocaleDateString()}
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          
+          if(result){
+            console.log(this.medicalServices)
+            const dialogRef = this.dialog.open(CalendarMedicalServiceDialog, {
+              data : { services: this.medicalServices}
+            });
+            dialogRef.afterClosed().subscribe(result => {
+              if(result){
+                var appType = this.medicalServices.find(s => s.selected == true)?.title;
+                if(appType !== undefined){
+                  const data : IAppointmentData = {
+                    id: event.id,
+                    patientid : this.authService.id,
+                    doctorid : this.doctorId, 
+                    nurseid : 16, // kako dobit nurseId
+                    time : event.start.toISOString(),
+                    duration : this.getDuration(this.addTimeZone(event.start), event.end),
+                    created_on : new Date(),
+                    pending_accept : false,
+                    type : appType,
+                    patient_came : false,
+                  }
+                  const appointmentSubscription = this.appointmentsService
+                  .reserveAppointment(data)
+                  .subscribe(() => {
+                    //this.router.navigate(['/patient'])
+                    //this.refresh.next()
+                    this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+                    this.router.navigate(['/patient']));
+                  });
+                  this.subscription.add(appointmentSubscription);
+                }
+              }
+            })
+          }
+        })
+
       }
+
     }
     if(event.color?.primary == colors['red'].primary || event.color?.primary == colors['blue'].primary){
       const dialogRef = this.dialog.open(CancelAppointmentDialog, {
@@ -526,4 +570,19 @@ export class FreeAppointmentDialog {
 export class DoctorTypeDialog {
   constructor(@Inject(MAT_DIALOG_DATA) public data : {type : string}) {}
   type : string = '';
+}
+
+@Component({
+  selector: 'medical-service-dialog',
+  templateUrl: 'dialogs/medical-service-dialog.html',
+})
+export class CalendarMedicalServiceDialog {
+  constructor(@Inject(MAT_DIALOG_DATA) public data : {services : MedicalService[]}) {}
+
+  onChange(service : MedicalService, isChecked : boolean){
+    var ser = this.data.services.find(s => s == service);
+    if(ser != undefined){
+      ser.selected = isChecked;
+    }
+  }
 }
