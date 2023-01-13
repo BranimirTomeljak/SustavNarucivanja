@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, catchError, EMPTY, Subscription } from 'rxjs';
 import { IRangeData } from 'src/app/interfaces/range-data';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
@@ -96,8 +96,16 @@ export class NurseWorkingHoursComponent implements OnDestroy {
 
     const appointmentSubscription = this.appointmentService
       .addRangeAppointment(data)
+      .pipe(
+        catchError(() => {
+          this.snackBar.open('Morate definirati raspoloživost termina 10 dana unaprijed.', 'Zatvori', {
+            duration: 2000,
+          });
+          return EMPTY;
+        })
+      )
       .subscribe(() => {
-        this.router.navigate(['/doctor']);
+        this.router.navigate(['/nurse']);
       });
     this.subscription.add(appointmentSubscription);
   }
