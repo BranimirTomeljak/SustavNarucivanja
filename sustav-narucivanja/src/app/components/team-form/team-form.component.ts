@@ -116,7 +116,7 @@ export class TeamFormComponent implements OnDestroy, OnChanges {
   }
 
   public test(): void {
-    console.log(this.data);
+    //console.log(this.data);
   }
 
   public ngOnDestroy(): void {

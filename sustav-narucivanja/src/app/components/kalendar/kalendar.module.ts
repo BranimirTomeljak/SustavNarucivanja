@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { CancelAppointmentDialog, KalendarComponent, ReserveAppointmentDialog, ChangeAppointmentDialog, FreeAppointmentDialog, MedicalServiceDialog } from './kalendar.component';
+import { CancelAppointmentDialog, KalendarComponent, ReserveAppointmentDialog, ChangeAppointmentDialog, FreeAppointmentDialog, DoctorTypeDialog, CalendarMedicalServiceDialog } from './kalendar.component';
 import { FormsModule } from '@angular/forms';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { FlatpickrModule } from 'angularx-flatpickr';
@@ -20,7 +20,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     CancelAppointmentDialog,
     ChangeAppointmentDialog,
     FreeAppointmentDialog,
-    MedicalServiceDialog
+    DoctorTypeDialog,
+    CalendarMedicalServiceDialog
   ],
   imports: [
     CommonModule,

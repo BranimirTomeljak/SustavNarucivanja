@@ -56,7 +56,7 @@ class Appointment {
     }
 
     async fetchNurseAppointmentsByType(type) {
-        let sql = 'SELECT * FROM appointment WHERE nurseid IS NOT NULL AND type = ' + type;
+        let sql = `SELECT * FROM appointment WHERE nurseid IS NOT NULL AND type = \'${type}\'`;
         const result = await db.query(sql, []);
         return result;
     }

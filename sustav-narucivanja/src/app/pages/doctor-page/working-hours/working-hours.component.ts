@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, catchError, EMPTY, Subscription } from 'rxjs';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { IRangeData } from 'src/app/interfaces/range-data';
 import { AuthService } from 'src/app/services/auth/auth.service';
@@ -80,11 +80,19 @@ export class WorkingHoursComponent{
       time_end: this.addHoursAndMinutes((date), endTime)
     };
 
-    console.log(data);
+    //console.log(data);
     
     
     const appointmentSubscription = this.appointmentService
       .addRangeAppointment(data)
+      .pipe(
+        catchError(() => {
+          this.snackBar.open('Niste definirali termin 10 ili više dana unaprijed, ili već postoje zakazani termini u tom vremenu.', 'Zatvori', {
+            duration: 3000,
+          });
+          return EMPTY;
+        })
+      )
       .subscribe(() => {
         this.router.navigate(['/doctor']);
       });
@@ -97,7 +105,7 @@ export class WorkingHoursComponent{
   }
 
   public test() {
-    console.log(this.form.value);
+    //console.log(this.form.value);
   }
 
 }

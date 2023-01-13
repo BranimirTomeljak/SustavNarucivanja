@@ -105,6 +105,6 @@ export class RegisterComponent implements OnDestroy {
   }
 
   public test() {
-    console.log(this.form.value);
+    //console.log(this.form.value);
   }
 }

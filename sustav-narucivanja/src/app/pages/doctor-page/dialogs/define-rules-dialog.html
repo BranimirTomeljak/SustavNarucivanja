@@ -1,19 +1,13 @@
 
 <h2 mat-dialog-title>Definiranje vlastitih pravila</h2>
-    <mat-dialog-content class="mat-typography">
-        <h3>
-            Pacijent može rezervirati termin
-            <input matInput [(ngModel)]="newRule" type="number" placeholder="{{data.rule}}" value="{{data.rule}}">
-            sati unaprijed.
-        </h3>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button [mat-dialog-close]="false">Odustani</button>
-      <button mat-button [mat-dialog-close]="newRule"  cdkFocusInitial>Potvrdi</button>
-    </mat-dialog-actions>
-    
-    
-    <ng-template #noAppointments>
-        <h2  mat-dialog-title>Nema nepotvrđenih termina</h2>
-        <button mat-button [mat-dialog-close]="false" cdkFocusInitial>Zatvori</button>
-    </ng-template>
+<mat-dialog-content class="mat-typography" [formGroup] ="form">
+    <h3>
+        Pacijent može rezervirati termin 
+        <input matInput type="number" value="{{data.rule}}" formControlName="hour" min="0" oninput="validity.valid||(value='');">
+        sati unaprijed.
+    </h3>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false">Odustani</button>
+    <button mat-button [mat-dialog-close]="this.form.value" cdkFocusInitial>Potvrdi</button>
+</mat-dialog-actions>

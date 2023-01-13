@@ -18,16 +18,13 @@ export class AppointmentsService {
   public getAllApointments(role: string, id: number): Observable<Array<any>> {
     return this.http.get<Array<any>>(`/api/appointment?type=${role}&id=${id}`);
   }
-  
-  /*
-  public getAllApointments(): Observable<Array<any>> {
-    return this.http.get<Array<any>>(`/api/appointment?role=patient&id=1001`);
-  }
-  */
 
-  public getAllDoctorApointments(id: number): Observable<Array<any>> {
-    console.log('suadasdfsa')
-    return this.http.get<Array<any>>(`/api/appointment?type=doctor&id=${id}`);
+  public getNurseAppointmentsByType(type : string) : Observable<Array<any>> {
+    return this.http.get<Array<any>>(`/api/appointment/nurse_appointments_by_type?type=${type}`);
+  }
+  
+  public getNumFutureAppointments() : Observable<any> {
+    return this.http.get<any>(`/api/appointment/num_future_appointments`);
   }
 
   public addAppointment(data : IAppointmentData) {

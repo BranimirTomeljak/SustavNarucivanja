@@ -3,7 +3,7 @@ const db = require('../db')
 //const { rawListeners } = require('../app');
 const notification = require("../models/NotificationModel");
 var Appointment = require('../models/AppointmentModel');
-var { Doctor, Patient } = require("../models/UserModel");
+var { Doctor, Patient, Nurse } = require("../models/UserModel");
 var { Team } = require("../models/TeamModel");
 
 var router = express.Router();
@@ -162,7 +162,18 @@ router.post('/reserve', async function(req, res, next) {
   const date = new Date();
   const difference = Math.abs(app.time.getTime() - date.getTime())
 
-  const sql = "SELECT appointmentRule FROM doctor WHERE id = " + app.doctorid;
+  if (app.doctorid != null)
+    var sql = "SELECT appointmentRule FROM doctor WHERE id = " + app.doctorid;
+  else{
+    nurse = await Nurse.getById(app.nurseid);
+    if(nurse.teamid){
+      var sql = "SELECT appointmentRule FROM doctor WHERE teamId = " + nurse.teamid;
+    } else {
+      app.type = req.body.type
+      await app.updateDb();
+      res.json(app);
+    }
+  } 
   const results = await db.query(sql, []);
   console.log();
   
@@ -184,15 +195,19 @@ router.post('/reserve', async function(req, res, next) {
 // id: appointment id
 router.post('/cancel', async function(req, res, next) {
   app = (await Appointment.fetchBy('id', req.body.id))[0]
-  app.patientid = undefined
-  app.created_on = undefined
-  app.changes_from = undefined
-  app.type = undefined
-  //await app_to.updateDb()
-  await app.updateDb()
-  //notification.sendEmail("appointmentCanceled", app)
-  //res.status(300).send("OK")
-  res.json(app)
+  
+  if(((app.time.getTime() - new Date().getTime())/(60*60*1000)) < 24){
+    res.status(403).send("Ne mozete otkazati pregled prije manje od 24 sata od pocetka termina.")
+  } else {
+    app.patientid = undefined
+    app.created_on = undefined
+    app.changes_from = undefined
+    app.type = undefined
+    await app.updateDb()
+    //notification.sendEmail("appointmentCanceled", app)
+    //res.status(300).send("OK")
+    res.json(app)
+  }
 });
 
 // so doctor can change the appointment of the patient
@@ -206,17 +221,21 @@ router.post('/change', async function(req, res, next) {
   app_to   = (await Appointment.fetchBy('id', req.body.to_id))[0]
 
   let date = new Date()
+  console.log(date.getTime())
+  console.log(app_from.created_on.getTime())
 
-  if(((app_to.getTime() - date.getTime())/(60*60*1000)) < 24) 
+  if(((date.getTime() - app_from.created_on.getTime())/(60*60*1000)) > 24)
     res.status(403).send("Ne mozete pomaknuti pregled do cijeg je pocetka manje od 24 sata.")
   
   else {
     app_to.changes_from = req.body.from_id
     app_to.patientid = app_from.patientid
+    app_to.type = app_from.type
     await app_to.updateDb()
     let patient = await Patient.getById(app_from.patientid);
     //notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
-    res.status(300).send("OK")
+    res.json()
+    //res.status(300).send("OK")
   }
 });
 
@@ -231,7 +250,9 @@ router.post('/accept_change', async function(req, res, next) {
   app_from.patientid = undefined
   app_from.created_on = undefined
   app_from.changes_from = undefined
-  app_from.type = undefined
+  if(app_from.nurseid == undefined){
+    app_from.type = undefined;
+  }
   await app_to.updateDb()
   await app_from.updateDb()
   //notification.sendEmail("appointmentChangeAccept", app_to);
@@ -295,15 +316,9 @@ router.post('/delete', async function(req, res, next) {
 });
 
 router.get("/nurse_appointments_by_type", async function(req, res, next) {
-  let app = new Appointment(
-    id = req.body.id,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined
-  )
-  const appointments = await app.fetchNurseAppointmentsByType(req.body.type);
+  console.log(req.query.type)
+  let app = new Appointment();
+  const appointments = await app.fetchNurseAppointmentsByType(req.query.type);
   res.json(appointments);
 });
 
