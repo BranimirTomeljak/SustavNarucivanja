@@ -358,13 +358,18 @@ class Nurse extends User {
     const results = await db.query(sql, []);
     if (results.length === 0) throw "user does not exist";
     let toreturn = [];
-    for (let result of results)
-      toreturn.push({
-        id: result.id,
-        name: result.name,
-        surname: result.surname,
-        teamid: result.teamid,
-      });
+    for (let result of results) {
+      var app = "SELECT * FROM appointment WHERE nurseid = " + result.id;
+      var appresult = await db.query(app, []);
+      if (appresult.length === 0) {
+        toreturn.push({
+          id: result.id,
+          name: result.name,
+          surname: result.surname,
+          teamid: result.teamid,
+        });
+      }
+    }
     return toreturn;
   }
 
