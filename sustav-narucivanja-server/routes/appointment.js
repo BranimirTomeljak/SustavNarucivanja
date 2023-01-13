@@ -166,7 +166,13 @@ router.post('/reserve', async function(req, res, next) {
     var sql = "SELECT appointmentRule FROM doctor WHERE id = " + app.doctorid;
   else{
     nurse = await Nurse.getById(app.nurseid);
-    var sql = "SELECT appointmentRule FROM doctor WHERE teamId = " + nurse.teamid;
+    if(nurse.teamid){
+      var sql = "SELECT appointmentRule FROM doctor WHERE teamId = " + nurse.teamid;
+    } else {
+      app.type = req.body.type
+      await app.updateDb();
+      res.json(app);
+    }
   } 
   const results = await db.query(sql, []);
   console.log();
