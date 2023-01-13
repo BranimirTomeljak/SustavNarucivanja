@@ -2,7 +2,7 @@ var express = require('express');
 const db = require('../db');
 const notification = require("../models/NotificationModel");
 var Appointment = require('../models/AppointmentModel');
-var { Patient, Nurse } = require("../models/UserModel");
+var { Patient, Nurse, Doctor } = require("../models/UserModel");
 var { Team } = require("../models/TeamModel");
 
 var router = express.Router();
@@ -154,13 +154,14 @@ router.post('/reserve', async function(req, res, next) {
   if (app.doctorid != null)
     var sql = "SELECT appointmentRule FROM doctor WHERE id = " + app.doctorid;
   else{
-    nurse = await Nurse.getById(app.nurseid);
+    var nurse = await Nurse.getById(app.nurseid);
     if(nurse.teamid){
       var sql = "SELECT appointmentRule FROM doctor WHERE teamId = " + nurse.teamid;
     } else {
       app.type = req.body.type
       await app.updateDb();
       res.json(app);
+      return;
     }
   } 
   const results = await db.query(sql, []);
@@ -171,8 +172,12 @@ router.post('/reserve', async function(req, res, next) {
   app.type = req.body.type
   await app.updateDb()
 
-  let doctor = await Doctor.getById(app.doctorid);
-  notification.sendEmail("appointmentReserved", doctor); //obavijesti doktora o rezervaciji termina
+  if(app.doctorid != null){
+    let doctor = await Doctor.getById(app.doctorid);
+    notification.sendEmail("appointmentReserved", doctor); //obavijesti doktora o rezervaciji termina
+  }
+  else
+    notification.sendEmail("appointmentReserved", nurse); //obavijesti nurse o rezervaciji termina
   res.json(app);
 });
 
@@ -298,7 +303,6 @@ router.get("/nurse_appointments_by_type", async function(req, res, next) {
   const appointments = await app.fetchNurseAppointmentsByType(req.query.type);
   res.json(appointments);
 });
-
 
 notification.appointmentReminderEmail();
 
