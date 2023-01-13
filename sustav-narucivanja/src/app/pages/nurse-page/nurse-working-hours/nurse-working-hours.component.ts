@@ -92,8 +92,6 @@ export class NurseWorkingHoursComponent implements OnDestroy {
       type: this.form.get('type')?.value,
     };
 
-    //console.log(data);
-
     const appointmentSubscription = this.appointmentService
       .addRangeAppointment(data)
       .pipe(
@@ -112,9 +110,5 @@ export class NurseWorkingHoursComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-  }
-
-  public test() {
-    //console.log(this.form.value);
   }
 }

@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const { Nurse } = require("../models/UserModel");
 
-/* GET users listing. */
+/* GET nurses listing. */
 router.get("/all", async function (req, res) {
     let nurses = await Nurse.getIdNameSurnameOfAll();
     res.json(nurses);

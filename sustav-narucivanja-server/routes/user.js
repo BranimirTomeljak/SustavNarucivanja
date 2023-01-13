@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const { User, Patient, Doctor, Nurse, Admin } = require("../models/UserModel");
+const { Patient, Nurse } = require("../models/UserModel");
 
 router.get("/", async function (req, res, next) {
   res.json(req.session.user);
@@ -23,7 +23,6 @@ router.get("/nurse", async function (req, res, next) {
 router.get("/nurse/teamId", async function (req, res, next) {
   const id = req.session.user.id;
   const result = await Nurse.getTeamId(id);
-  console.log(result);
 
   res.json(result);
 });

@@ -22,7 +22,6 @@ export class AcceptChangeDialogComponent {
     private _formBuilder: FormBuilder
   ) {}
   onChange(appointment : AppForChange, attendance : boolean){
-    //console.log(appointment.selected);
     var app = this.data.appointments.find(a => a == appointment);
     if(app != undefined){
       app.selected = attendance;

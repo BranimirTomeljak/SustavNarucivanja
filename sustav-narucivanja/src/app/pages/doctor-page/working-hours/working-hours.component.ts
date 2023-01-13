@@ -70,8 +70,6 @@ export class WorkingHoursComponent{
     var date : Date = this.form.get('date')?.value;
     var startTime = this.form.get('start')?.value;
     var endTime = this.form.get('end')?.value;
-    
-    
 
     const data: IRangeData = {
       doctorid: this.id,
@@ -80,9 +78,6 @@ export class WorkingHoursComponent{
       time_end: this.addHoursAndMinutes((date), endTime)
     };
 
-    //console.log(data);
-    
-    
     const appointmentSubscription = this.appointmentService
       .addRangeAppointment(data)
       .pipe(
@@ -103,9 +98,4 @@ export class WorkingHoursComponent{
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
-
-  public test() {
-    //console.log(this.form.value);
-  }
-
 }

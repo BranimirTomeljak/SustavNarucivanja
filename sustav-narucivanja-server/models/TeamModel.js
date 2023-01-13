@@ -45,7 +45,6 @@ class Team {
   static async dbGetDoctorsByTeamId(teamId) {
     const sqlDoctors = `SELECT id, name, surname FROM doctor NATURAL JOIN users WHERE teamId = ${teamId}`;
     const doctors = await db.query(sqlDoctors, []);
-    console.log("doctors", doctors);
     return doctors;
   }
 
@@ -77,21 +76,18 @@ class Team {
     for (let team of result) {
       ret.push(await Team.fetchByTeamId(team.teamid));
     }
-    console.log("result is", result);
     return ret;
   }
 
   static async fetchAllDoctorsFromTeam(team) {
     const sql = "SELECT * FROM doctor WHERE teamId = " + team;
     const result = await db.query(sql, []);
-    console.log("result is", result);
     return result;
   }
 
   static async fetchAllNursesFromTeam(team) {
     const sql = "SELECT * FROM nurse WHERE teamId = " + team;
     const result = await db.query(sql, []);
-    console.log("result is", result);
     return result;
   }
 
@@ -110,10 +106,8 @@ class Team {
 
   //dohvat tima iz baze podataka na osnovu `what` i `table` odakle uzimamo
   static async dbGetTeamBy(what, that, table) {
-    console.log("Usli");
     const sql = "SELECT * FROM " + table + " WHERE " + what + " = " + that;
     const result = await db.query(sql, []);
-    console.log("result is", result, table, what, that);
     return result;
   }
 
@@ -147,7 +141,6 @@ class Team {
     const result = await db.query(sql, []);
   }
   async addNurseToTeam(nurse) {
-    console.log('fasjdf;lkdsajf;lkdjasfl;jask;dlfjad;slkjf;lkasdjlfk;jasdko;fj;lkadsj')
     if (this.teamId === undefined)
       throw "cannot have undefined teamId and try to add the nurse to the team";
       let sql = `Select * from appointment WHERE nurseid = ${nurse} and patientid is Null and now() at time zone 'Europe/Paris'<time`;

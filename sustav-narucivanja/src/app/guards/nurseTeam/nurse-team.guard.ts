@@ -32,7 +32,6 @@ export class NurseTeamGuard implements CanActivate {
       tap((resp) => (user = resp)),
       switchMap(() => this.doctorsService.getNurseTeam()),
       map((resp) => {
-        //console.log(resp);
         if (user?.type === 'nurse' && !resp) {
           return true;
         }

@@ -1,9 +1,8 @@
 var express = require('express');
-const db = require('../db')
-//const { rawListeners } = require('../app');
+const db = require('../db');
 const notification = require("../models/NotificationModel");
 var Appointment = require('../models/AppointmentModel');
-var { Doctor, Patient, Nurse } = require("../models/UserModel");
+var { Patient, Nurse } = require("../models/UserModel");
 var { Team } = require("../models/TeamModel");
 
 var router = express.Router();
@@ -11,11 +10,7 @@ const appointment_duration = 30;
 const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;} 
 const curr_date_factory = ()=> {return add_hour(new Date())}
 
-// IMPORTANT!!!!
-// once we get the authentification and session working you will not need to send id and type
-
-
-// get all appointemnts from an `id` with `type`
+// get all appointments from an `id` with `type`
 router.get('/', async function(req, res, next) {
   let type = req.query.type
   let id   = req.query.id
@@ -55,9 +50,7 @@ router.post('/add_range', async function(req, res, next) {
     // Parse the start and end times as Date objects
     const startTime = add_hour(new Date(Date.parse(req.body.time_start)));
     const endTime   = add_hour(new Date(Date.parse(req.body.time_end)));
-    console.log(" OVO JE  ENDTIME: " + endTime)
     let date = new Date()
-    console.log(" OVO JE DATE: " + date.getTime())
     const diff = Math.abs(endTime.getTime() - date.getTime())
     if (Math.ceil(diff / (1000 * 60 * 60 * 24)) < 10) {
       res.status(403).send("Moguce je definirati slobodne termine samo 10 dana ili više unaprijed.");
@@ -69,9 +62,7 @@ router.post('/add_range', async function(req, res, next) {
 
     // Loop until the current time is past the end time
     while (currentTime.getTime() + appointment_duration * 60 * 1000 <= endTime.getTime()) {
-      console.log(currentTime.toISOString())
       let dateString = currentTime.toISOString().slice(0, 19).replace('T', ' ');
-      console.log(dateString)
       if (await func(dateString))
         return false
 
@@ -133,9 +124,7 @@ router.post('/add_range', async function(req, res, next) {
     }  
   }
   else{
-    console.log('1')
       if (await loop_over_appointments(async (time) => {await check_errors(appointment_factory(time, undefined, req.session.user.id, appType))})){
-        console.log('2')
         await loop_over_appointments(async (time) => {await save_to_db(appointment_factory(time, undefined, req.session.user.id, appType))})
         res.json();
     }  
@@ -175,7 +164,6 @@ router.post('/reserve', async function(req, res, next) {
     }
   } 
   const results = await db.query(sql, []);
-  console.log();
   
   if ( results[0].appointmentrule != undefined && (difference / (60*60*1000)) < results[0].appointmentrule) {
     res.status(403).send("Nije moguce ugovoriti pregled više od " + results[0].appointmentrule + " sati prije pocetka")
@@ -183,9 +171,8 @@ router.post('/reserve', async function(req, res, next) {
   app.type = req.body.type
   await app.updateDb()
 
-  //let doctor = await Doctor.getById(app.doctorid);
-  //notification.sendEmail("appointmentReserved", doctor); //obavijesti doktora o rezervaciji termina
-  //res.status(300).send("OK")
+  let doctor = await Doctor.getById(app.doctorid);
+  notification.sendEmail("appointmentReserved", doctor); //obavijesti doktora o rezervaciji termina
   res.json(app);
 });
 
@@ -203,9 +190,8 @@ router.post('/cancel', async function(req, res, next) {
     app.created_on = undefined
     app.changes_from = undefined
     app.type = undefined
-    await app.updateDb()
-    //notification.sendEmail("appointmentCanceled", app)
-    //res.status(300).send("OK")
+    await app.updateDb();
+    notification.sendEmail("appointmentCanceled", app);
     res.json(app)
   }
 });
@@ -221,8 +207,6 @@ router.post('/change', async function(req, res, next) {
   app_to   = (await Appointment.fetchBy('id', req.body.to_id))[0]
 
   let date = new Date()
-  console.log(date.getTime())
-  console.log(app_from.created_on.getTime())
 
   if(((date.getTime() - app_from.created_on.getTime())/(60*60*1000)) > 24)
     res.status(403).send("Ne mozete pomaknuti pregled do cijeg je pocetka manje od 24 sata.")
@@ -233,9 +217,8 @@ router.post('/change', async function(req, res, next) {
     app_to.type = app_from.type
     await app_to.updateDb()
     let patient = await Patient.getById(app_from.patientid);
-    //notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
-    res.json()
-    //res.status(300).send("OK")
+    notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
+    res.json();
   }
 });
 
@@ -255,8 +238,7 @@ router.post('/accept_change', async function(req, res, next) {
   }
   await app_to.updateDb()
   await app_from.updateDb()
-  //notification.sendEmail("appointmentChangeAccept", app_to);
-  //res.status(300).send("OK")
+  notification.sendEmail("appointmentChangeAccept", app_to);
   res.json();
 });
 
@@ -269,7 +251,6 @@ router.post('/reject_change', async function(req, res, next) {
   app_to.patientid = undefined
   await app_to.updateDb()
   notification.sendEmail("appointmentChangeReject", app_to);
-  //res.status(300).send("OK")
   res.json();
 });
 
@@ -283,8 +264,6 @@ router.post('/record_attendance', async function(req, res, next) {
   app.patient_came = JSON.parse(req.body.patient_came)
   await app.updateDb()
   let patient = await Patient.fetchById(app.patientid)
-  console.log(patient)
-  console.log(app)
   if (!app.patient_came)
     await patient.incrementNfailedAppointments()
   res.json(app);
@@ -308,15 +287,13 @@ router.post('/delete', async function(req, res, next) {
   if (!app.isSavedToDb())
     res.status(500).send('Does not exist in the database.')
   else{
-    app.removeFromDb()
-    //res.status(300).send("OK");
+    app.removeFromDb();
     res.json();
   }
 
 });
 
 router.get("/nurse_appointments_by_type", async function(req, res, next) {
-  console.log(req.query.type)
   let app = new Appointment();
   const appointments = await app.fetchNurseAppointmentsByType(req.query.type);
   res.json(appointments);

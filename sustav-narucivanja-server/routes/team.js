@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const { Team } = require("../models/TeamModel");
 
-/* GET users listing. */
+/* GET teams listing. */
 router.get("/all", async function (req, res, next) {
   let teams = await Team.fetchAllTeams();
   res.json(teams);
@@ -16,7 +16,6 @@ router.post("/create", async function (req, res, next) {
 router.delete("/delete/:id", function (req, res, next) {
   try {
     let team = new Team(req.params.id);
-    console.log(team);
     team.removeTeamFromDb();
     res.status(200).json("Successfully deleted team");
   } catch {
@@ -27,7 +26,6 @@ router.delete("/delete/:id", function (req, res, next) {
 router.post("/edit/:id", async function (req, res, next) {
   try {
     let team = new Team(req.params.id);
-    console.log(team.teamId);
     let doctors = await Team.fetchAllDoctorsFromTeam(team.teamId);
     let nurses = await Team.fetchAllNursesFromTeam(team.teamId);
 
@@ -37,7 +35,6 @@ router.post("/edit/:id", async function (req, res, next) {
     for (let nurse of nurses) {
       await team.removeNurseFromTeam(nurse.id);
     }
-    console.log("removed");
 
     await team.changeTeamName(req.body.name);
 

@@ -8,31 +8,20 @@ var express = require("express");
 var path = require("path");
 var app = express();
 
-const { pool } = require("./db/dbConfig");
-const bcrypt = require("bcrypt");
 const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
-var adminRouter = require("./routes/admin");
-var patientRouter = require("./routes/patient");
-var createRouter = require("./routes/create");
-var loginRouter = require("./routes/login");
-var registerRouter = require("./routes/register");
-var appointmentRouter = require("./routes/appointment");
-var patientRouter = require("./routes/patient");
-var teamRouter = require("./routes/team");
-
 const PORT = process.env.PORT || 3000;
 
 const initializePassport = require("./db/passportConfig");
 initializePassport(passport);
 
-var adminRouter = require("./routes/admin");
+var appointmentRouter = require("./routes/appointment");
+var teamRouter = require("./routes/team");
 var patientRouter = require("./routes/patient");
-var createRouter = require("./routes/create");
 var loginRouter = require("./routes/login");
 var registerRouter = require("./routes/register");
 var logoutRouter = require("./routes/logout");
@@ -56,9 +45,7 @@ app.use(passport.session()); // Store our variables to be persisted across the w
 app.use(flash());
 app.use(cookieParser());
 
-app.use("/api/admin", adminRouter);
 app.use("/api/patient", patientRouter);
-app.use("/api/create", createRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/register", registerRouter);
 app.use("/api/logout", logoutRouter);
@@ -82,24 +69,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  // res.render("error");
 });
-
-/*function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect("/patient");
-  }
-  next();
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/login");
-}
-
-export {checkAuthenticated, checkNotAuthenticated};*/
 
 module.exports = app;
 
