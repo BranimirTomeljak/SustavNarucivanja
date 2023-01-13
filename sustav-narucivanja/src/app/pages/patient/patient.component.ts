@@ -201,8 +201,6 @@ export class PatientComponent implements OnInit{
     this.events = [];
     this.fetchAppointments();
     if(type == 'doctor'){
-      //console.log(this.rule)
-      //console.log(this.doctorId)
       this.doctorAppointments$.subscribe(
         (modelData : IAppointmentData[]) => {
           modelData.filter((app) => app.patientid === null)

@@ -120,7 +120,6 @@ export class DoctorPageComponent implements OnInit {
     this.events = [];
     this.appointments$.subscribe(
       (modelData : IAppointmentData[]) => {
-        //console.log(modelData);
         this.badgeContent = this.pendingAppointments.length;
         modelData.forEach((app) => {
           this.allAppointments.push(app);
@@ -169,13 +168,11 @@ export class DoctorPageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if(result){
         apps.forEach(app => {
-          //console.log(app)
           if(app.selected != undefined) {
             var id = app.id;
             var toRecordApp = this.pendingAppointments.find(a => a.id == id);
             if(toRecordApp != undefined){
               toRecordApp.patient_came = app.selected;
-              //console.log(toRecordApp);
               const appointmentSubscription = this.appointmentsService
                   .recordAttendance(toRecordApp)
                   .subscribe(() => {
@@ -191,7 +188,6 @@ export class DoctorPageComponent implements OnInit {
   }
 
   defineRules(){
-    //console.log(this.rule)
     const dialogRef = this.dialog.open(DefineRulesDialog, { 
       data : {
         rule : this.rule,

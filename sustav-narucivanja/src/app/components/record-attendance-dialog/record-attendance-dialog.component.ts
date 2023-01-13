@@ -19,7 +19,6 @@ export class RecordAttendanceDialogComponent {
     private _formBuilder: FormBuilder
   ) {}
   onChange(appointment : App, attendance : boolean){
-    //console.log(appointment.selected);
     var app = this.data.appointments.find(a => a == appointment);
     if(app != undefined){
       app.selected = attendance;

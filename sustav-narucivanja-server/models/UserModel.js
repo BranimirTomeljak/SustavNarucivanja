@@ -269,7 +269,6 @@ class Patient extends User {
       "SELECT nurse.id FROM patient JOIN doctor ON patient.doctorid=doctor.id NATURAL JOIN team JOIN nurse ON nurse.teamid=team.teamid WHERE patient.id=" +
       id;
     const result = await db.query(sql, []);
-    console.log("result", result);
     if (result.length === 0) {
       return 0;
     }
@@ -301,7 +300,7 @@ class Nurse extends User {
   }
 
   async addToDb() {
-    if (await this.isUserInDb()) console.log("the user was alread there");
+    if (await this.isUserInDb()) console.log("the user was already there");
     else await this.saveUserToDb();
 
     const sql =
@@ -401,7 +400,6 @@ class Doctor extends Nurse {
     super(id, name, surname, sex, phonenumber, mail, password, dateofbirth);
     this.type = "doctor";
     this.teamid = rest.teamid
-    //console.log('hello' + this.teamid)
   }
 
   static async setRule(id, hours) {
@@ -440,8 +438,6 @@ class Doctor extends Nurse {
     const sql = "SELECT * FROM doctor WHERE id = " + id;
     const result = await db.query(sql, []);
     if (result.length === 0) throw "doctor does not exist";
-    console.log(result);
-    console.log("sorry");
     return new Doctor(
       user.id,
       user.name,
@@ -549,35 +545,3 @@ module.exports = {
   Admin: Admin,
 };
 
-async function test() {
-  // razred User enkapsulira korisnika web trgovine
-  const sql = "SELECT * FROM users";
-  console.log("selecting from db...");
-  const result = await db.query(sql, []);
-
-  u = new User();
-  console.log("fetching id=1...");
-  u = await User.fetchById(1);
-  console.log(u);
-
-  u = new User(
-    (id = undefined),
-    (name = "ante"),
-    (surname = "iva"),
-    (sex = "M"),
-    (phonenumber = "asdaf"),
-    (mail = "fff"),
-    (password = "password"),
-    (dateofbirth = "2020-01-01")
-  );
-
-  console.log("insertion...");
-  console.log(u);
-  const t = await u.saveUserToDb();
-  console.log(u);
-  console.log(t);
-  console.log("deletion...");
-  await u.removeUserFromDb();
-}
-
-// test()

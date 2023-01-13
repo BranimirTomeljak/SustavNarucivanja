@@ -55,7 +55,6 @@ export class CreateUserComponent implements OnDestroy {
       dateOfBirth: this.form.get('dateOfBirth')?.value,
       phoneNumber: this.form.get('phoneNumber')?.value,
     };
-    //console.log(this.form.value);
 
     if (
       this.form.get('password')?.value !==

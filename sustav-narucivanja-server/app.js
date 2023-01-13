@@ -85,22 +85,6 @@ app.use(function (err, req, res, next) {
   // res.render("error");
 });
 
-/*function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect("/patient");
-  }
-  next();
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/login");
-}
-
-export {checkAuthenticated, checkNotAuthenticated};*/
-
 module.exports = app;
 
 app.listen(PORT, "0.0.0.0", function () {

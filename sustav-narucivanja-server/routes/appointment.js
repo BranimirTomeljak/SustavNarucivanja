@@ -55,9 +55,7 @@ router.post('/add_range', async function(req, res, next) {
     // Parse the start and end times as Date objects
     const startTime = add_hour(new Date(Date.parse(req.body.time_start)));
     const endTime   = add_hour(new Date(Date.parse(req.body.time_end)));
-    console.log(" OVO JE  ENDTIME: " + endTime)
     let date = new Date()
-    console.log(" OVO JE DATE: " + date.getTime())
     const diff = Math.abs(endTime.getTime() - date.getTime())
     if (Math.ceil(diff / (1000 * 60 * 60 * 24)) < 10) {
       res.status(403).send("Moguce je definirati slobodne termine samo 10 dana ili više unaprijed.");
@@ -69,9 +67,7 @@ router.post('/add_range', async function(req, res, next) {
 
     // Loop until the current time is past the end time
     while (currentTime.getTime() + appointment_duration * 60 * 1000 <= endTime.getTime()) {
-      console.log(currentTime.toISOString())
       let dateString = currentTime.toISOString().slice(0, 19).replace('T', ' ');
-      console.log(dateString)
       if (await func(dateString))
         return false
 
@@ -133,9 +129,7 @@ router.post('/add_range', async function(req, res, next) {
     }  
   }
   else{
-    console.log('1')
       if (await loop_over_appointments(async (time) => {await check_errors(appointment_factory(time, undefined, req.session.user.id, appType))})){
-        console.log('2')
         await loop_over_appointments(async (time) => {await save_to_db(appointment_factory(time, undefined, req.session.user.id, appType))})
         res.json();
     }  
@@ -175,7 +169,6 @@ router.post('/reserve', async function(req, res, next) {
     }
   } 
   const results = await db.query(sql, []);
-  console.log();
   
   if ( results[0].appointmentrule != undefined && (difference / (60*60*1000)) < results[0].appointmentrule) {
     res.status(403).send("Nije moguce ugovoriti pregled više od " + results[0].appointmentrule + " sati prije pocetka")
@@ -221,8 +214,6 @@ router.post('/change', async function(req, res, next) {
   app_to   = (await Appointment.fetchBy('id', req.body.to_id))[0]
 
   let date = new Date()
-  console.log(date.getTime())
-  console.log(app_from.created_on.getTime())
 
   if(((date.getTime() - app_from.created_on.getTime())/(60*60*1000)) > 24)
     res.status(403).send("Ne mozete pomaknuti pregled do cijeg je pocetka manje od 24 sata.")
@@ -283,8 +274,6 @@ router.post('/record_attendance', async function(req, res, next) {
   app.patient_came = JSON.parse(req.body.patient_came)
   await app.updateDb()
   let patient = await Patient.fetchById(app.patientid)
-  console.log(patient)
-  console.log(app)
   if (!app.patient_came)
     await patient.incrementNfailedAppointments()
   res.json(app);
@@ -316,7 +305,6 @@ router.post('/delete', async function(req, res, next) {
 });
 
 router.get("/nurse_appointments_by_type", async function(req, res, next) {
-  console.log(req.query.type)
   let app = new Appointment();
   const appointments = await app.fetchNurseAppointmentsByType(req.query.type);
   res.json(appointments);

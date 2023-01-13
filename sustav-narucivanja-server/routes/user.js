@@ -23,7 +23,6 @@ router.get("/nurse", async function (req, res, next) {
 router.get("/nurse/teamId", async function (req, res, next) {
   const id = req.session.user.id;
   const result = await Nurse.getTeamId(id);
-  console.log(result);
 
   res.json(result);
 });

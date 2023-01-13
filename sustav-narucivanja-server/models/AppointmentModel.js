@@ -98,9 +98,7 @@ class Appointment {
             ].join(" , ") + 
             ") RETURNING id;"
 
-        console.log(sql)
         const result = await db.query(sql, []);
-        console.log(result)
         this.id = result[0].id
         return result
     }
@@ -161,10 +159,6 @@ class Appointment {
                     and (` + constraint_str +`) 
         `
         const result = await db.query(sql, []);
-        if (result.length){
-            console.log('conflicts')
-            console.log(result, this.id, result.length, result.length>0)
-        }
 
         if (this.id === undefined)
             return result.length > 0
@@ -176,7 +170,6 @@ class Appointment {
         let f = Appointment._stringify_all
         const sql = 'SELECT * FROM appointment WHERE ' + propertya + "=" + f(ida) + " and " + propertyb + "=" + f(idb);
         const appointments = await db.query(sql, []);
-        console.log(appointments)
         let toreturn = []
         for (let app of appointments){
             app.time = add_hour(app.time)
@@ -194,7 +187,7 @@ class Appointment {
     // for example can fetch by patientid, doctorid
     async updateDb() {
         let f = Appointment._stringify_all
-        console.log('updationg...')
+        console.log('updating...')
         console.log(this.time)
         const sql = `UPDATE appointment 
                     SET patientid=` + f(this.patientid) + 
