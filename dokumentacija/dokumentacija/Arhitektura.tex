@@ -58,9 +58,9 @@
                
 		\section{Baza podataka}
 			
+		
 			
-			
-		{PostgresSQL baza podataka sastoji se od 7 tablica. Entitet users je supertip koji se disjointed grana na četiri tablice: admin, patient, doctor i nurse. Primarni ključ svih tih entiteta je id koji se u tablici user automatski generira. Tablica patient također sadrži strani ključ doctorid, jer je pacijent pri registraciji obavezan izabrati svog liječnika. Tablica nurse ima strani ključ teamid, referencu na tablicu team, jer u jednom timu kojeg administrator određuje može raditi više medicinskih tehničara. Također ta vrijednost može biti null jer tehničar ne mora nužno biti dio tima. Isto vrijedi i za liječnika. Osim tih tablica također baza podataka sadrži već prije spomenutu tablicu team te appointment. Primarni ključ teama je teamid, a tablica team također sadrži ime tima pod nazivom varijable name. Tablica appointment sadrži primarni ključ appointmentId koji se automatski generira te tri strana ključa. Patientid koji obavezno nije null, referenca na pacijenta koji dolazi na pregled. Druga dva strana ključa doctorId i nurseId su međusobno isključivi, odnosno ako jedan ima vrijednost, drugi mora biti null, jer pacijent dolazi na pregled ili kod liječnika ili kod tehničara. Pregled je također određen timestampom time, vremenom kad je ugovoren i intervalom duration.}
+		{PostgresSQL baza podataka sastoji se od 7 tablica. Entitet users je supertip koji se disjointed grana na četiri tablice: admin, patient, doctor i nurse. Primarni ključ svih tih entiteta je id koji se u tablici user automatski generira. Tablica patient također sadrži strani ključ doctorid, jer je pacijent pri registraciji obavezan izabrati svog liječnika. Tablica nurse ima strani ključ teamid, referencu na tablicu team. Također ta vrijednost može biti null jer tehničar ne mora nužno biti dio tima. Isto vrijedi i za liječnika. Uz to on još ima atribut appointmentRule u kojem se sadrži njegovo pravilo o rezervaciji termina. Osim tih tablica također baza podataka sadrži već prije spomenutu tablicu team te appointment. Primarni ključ teama je teamid, a tablica team također sadrži ime tima pod nazivom varijable name. Tablica appointment sadrži primarni ključ appointmentId koji se automatski generira te tri strana ključa. Patientid koji obavezno nije null, referenca na pacijenta koji dolazi na pregled. Druga dva strana ključa doctorId i nurseId su međusobno isključivi, odnosno ako jedan ima vrijednost, drugi mora biti null, jer pacijent dolazi na pregled ili kod liječnika ili kod tehničara. Pregled je također određen timestampom time, vremenom kad je ugovoren i intervalom duration.}
 		
 			\subsection{Opis tablica}
 			
@@ -107,10 +107,14 @@
 						colspec={|X[12,l]|X[6, l]|X[20, l]|}, 
 						rowhead = 1,
 					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
-					\hline \multicolumn{3}{|c|}{\textbf{patient}}	 \\ \hline[3pt]
-					nFailedAppointments   &   INT & Broj ugovorenih pregleda koje je pacjent propustio \\ \hline
+					\hline \multicolumn{3}{|c|}{\textbf{patient}}	 \\ 
+                    \hline[3pt]
 					\SetCell{LightGreen} id     &   INT     &  	Strani ključ, referenca na id u tablici users \\ \hline
 					\SetCell{LightBlue} doctorid & INT & ID doktora kojeg je pacijent izabrao pri registraciji \\ \hline
+                  
+					nFailedAppointments   &   INT & Broj ugovorenih pregleda koje je pacjent propustio \\ \hline
+                
+					notificationMethod   &   VARCHAR & Način na koji će pacijent biti obavješten o pregledima. \\ \hline
 				\end{longtblr}
 			
 			
@@ -125,6 +129,8 @@
 					\hline \multicolumn{3}{|c|}{\textbf{doctor}}	 \\ \hline[3pt]
 					\SetCell{LightGreen} id      &   INT     &  	Strani ključ, referenca na id u tablici users \\ \hline
 					\SetCell{LightBlue}teamid & INT & Id tima kojem je doktor dodjeljen, može biti null \\\hline
+                    \SetCell{} appRule & INT & Pravilo koliko je sati unaprijed pacijent obavezan rezervirati termin. 
+                    \\ \hline
 				\end{longtblr}
 			
 			\begin{longtblr}[
@@ -168,18 +174,22 @@
 					\SetCell{LightBlue}nurseid & INT & Strani ključ, ID medicinskog tehničara koji vrši pregled \\\hline
 					time & TIMESTAMP & Vrijeme u koje je pregled ugovoren \\ \hline
 					duration & INTERVAL & Trajanje pregleda \\ \hline
+                    created_on & TIMESTAMP & Vrijeme ugovaranja pregleda. \\ \hline
+                    changes_from & TIMESTAMP & Vrijeme promjene pregleda.
+                    type & VARCHAR & Vrsta pregleda.
+                    patient_came & BOOLEAN & Zabilježavanje dolaska pacijenta.
 				\end{longtblr}
 			
 			
 			\subsection{Dijagram baze podataka}
 				\begin{figure}[H]
-			            \includegraphics[width=\textwidth]{slike/erplus.png} %veličina u odnosu na širinu linije
+			            \includegraphics[width=\textwidth]{image.png} %veličina u odnosu na širinu linije
 			            \caption{ER dijagram baze podataka}
 			            \label{fig:bp1} %label mora biti drugaciji za svaku sliku
 		            \end{figure}			
 			\subsection{Dijagram baze podataka}
 				\begin{figure}[H]
-			            \includegraphics[width=\textwidth]{slike/relacijski.png} %veličina u odnosu na širinu linije
+			            \includegraphics[width=\textwidth]{image(1).png} %veličina u odnosu na širinu linije
 			            \caption{Relacijski dijagram baze podataka}
 			            \label{fig:bp2} %label mora biti drugaciji za svaku sliku
 		            \end{figure}
@@ -220,7 +230,7 @@
 			
 		%	\textbf{\textit{dio 2. revizije}}\\			
 			
-		\textit{Prilikom druge predaje projekta dijagram razreda i opisi moraju odgovarati stvarnom stanju implementacije}
+		%\textit{Prilikom druge predaje projekta dijagram razreda i opisi moraju odgovarati stvarnom stanju implementacije}
 			
 			
 			
@@ -229,21 +239,31 @@
 		\section{Dijagram stanja}
 			
 			
-			\textbf{\textit{dio 2. revizije}}\\
+			%\textbf{\textit{dio 2. revizije}}\\
 			
-			\textit{Potrebno je priložiti dijagram stanja i opisati ga. Dovoljan je jedan dijagram stanja koji prikazuje \textbf{značajan dio funkcionalnosti} sustava. Na primjer, stanja korisničkog sučelja i tijek korištenja neke ključne funkcionalnosti jesu značajan dio sustava, a registracija i prijava nisu. }
+                      \begin{figure}[H]
+			            \includegraphics[width=\textwidth]{Zaposlenici.png} %veličina u odnosu na širinu linije
+			          \caption{Dijagram stanja zaposlenika}
+			            \label{fig:class2} %label mora biti drugaciji za svaku sliku
+		      \end{figure}
+
+         \begin{figure}[H]
+			            \includegraphics[width=\textwidth]{Dijagram stanja 1 Pacijent.png} %veličina u odnosu na širinu linije
+			          \caption{Dijagram stanja pacijenta}
+			            \label{fig:class2} %label mora biti drugaciji za svaku sliku
+		      \end{figure}
 			
 			
 			\eject 
 		\section{Dijagram aktivnosti}
   
 			 \begin{figure}[H]         %DODAO SAM TU BROJ 0.88
-			            \includegraphics[width=0.88\textwidth]  {slike/dijagram_aktivnosti.jpg} %veličina u odnosu na širinu linije
+			            \includegraphics[width=0.88\textwidth]  {slike/dijagram_aktivnosti_v2.jpg} %veličina u odnosu na širinu linije
 			          \caption{Dijagram aktivnosti}
 			            \label{fig:act} %label mora biti drugaciji za svaku sliku
 		      \end{figure}
                  \texttt{}{
-                 Na slici 4.6. prikazan je dijagram aktivnosti sustava za naručivanje. Opisan je slučaj naručivanja pregleda. Iako je u dijagramu detaljno opisana radnja naručivanja, ovdje ćemo je sažeti. Korisnik se prijavljuje u sustav, ukoliko je unio pogrešne podatke sustav ga vraća na početak. Ukoliko su podatci postojani, tada se prikazuje kalendar korisniku. Nakon toga aplikacija ispituje je li status pacijenta redovan. Ako je, pacijentu se dozvoljava odabir termina. Ako je pacijent imao previše izostanaka, šalje ga da zakaže sastanak s doktorom uživo. Ako je pacijent imao previše zakazanih pregleda, ispisuje se poruka: "Pacijent ima previše zakazanih pregleda".
+                 Na slici 4.8. prikazan je dijagram aktivnosti sustava za naručivanje. Opisan je slučaj naručivanja pregleda. Iako je u dijagramu detaljno opisana radnja naručivanja, ovdje ćemo je sažeti. Korisnik se prijavljuje u sustav, ukoliko je unio pogrešne podatke sustav ga vraća na početak. Ukoliko su podatci postojani, tada se prikazuje kalendar korisniku. Nakon toga aplikacija ispituje je li status pacijenta redovan. Ako je, pacijentu se dozvoljava odabir termina. Ako je pacijent imao previše izostanaka, šalje ga da zakaže sastanak s doktorom uživo. Ako je pacijent imao previše zakazanih pregleda, ispisuje se poruka: "Pacijent ima previše zakazanih pregleda".
                  }
 			
 			\eject
@@ -253,10 +273,10 @@
 		
 			 %\textit{Potrebno je priložiti dijagram komponenti s pripadajućim opisom. Dijagram komponenti treba prikazivati strukturu cijele aplikacije.}
 			 
-			 Na slici 4.8 prikazan je dijagram komponenti. Korisnik iz web preglednika pristupa aplikaciji korištenjem REST API-ja. Sama aplikacija se sastoji od dvije komponente. Prva komponenta odgovara frontendu i izgrđena je korištenjem Angular biblioteke. Druga komponenta odgovara backendu i izgradena je korištenjem radnog okvira Express. Frontend i backend komuniciraju korištenjem REST API-ja. Baza podataka je relacijska i backend joj pristupa slanjem SQL upita.
+			 Na slici 4.9 prikazan je dijagram komponenti. Korisnik iz web preglednika pristupa aplikaciji korištenjem REST API-ja. Sama aplikacija se sastoji od dvije komponente. Prva komponenta odgovara frontendu i izgrđena je korištenjem Angular biblioteke. Druga komponenta odgovara backendu i izgradena je korištenjem radnog okvira Express. Frontend i backend komuniciraju korištenjem REST API-ja. Baza podataka je relacijska i backend joj pristupa slanjem SQL upita.
 			 
 			 \begin{figure}[H]
-			            \includegraphics[width=\textwidth]{slike/komponenti.vpd_1.png} %veličina u odnosu na širinu linije
+			            \includegraphics[width=\textwidth]{slike/komponenti_v2.png} %veličina u odnosu na širinu linije
 			          \caption{Dijagram komponenti}
 			            \label{fig:comp} %label mora biti drugaciji za svaku sliku
 		      \end{figure}
