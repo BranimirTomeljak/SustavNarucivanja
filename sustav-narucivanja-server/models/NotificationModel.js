@@ -2,7 +2,7 @@ const db = require('../db');
 const nodemailer = require("nodemailer");
 const cron = require('node-cron');
 const xml2js = require('xml2js');
-const { Patient, Doctor } = require("../models/UserModel");
+const { Patient, Doctor, Nurse } = require("../models/UserModel");
 
 const { Vonage } = require('@vonage/server-sdk');
 const vonage = new Vonage({
@@ -123,8 +123,11 @@ async function getPurposeMessage(purpose, reference){
         <img src="https://medicinarada.hr/wp-content/uploads/2020/04/hzzo_logo_posts.jpg" text-align="center" height="100px" alt="hzzo">`;
 
     else if(purpose == "appointmentCanceled"){
-        let doctor = await Doctor.getById(reference.doctorid);
-        return `<p>Poštovani ${doctor.name} ${doctor.surname},<br /><br />
+        if(reference.doctorid != null)
+            var medicalPersonel = await Doctor.getById(reference.doctorid);
+        else
+            var medicalPersonel = await Nurse.getById(reference.nurseid);
+        return `<p>Poštovani ${medicalPersonel.name} ${medicalPersonel.surname},<br /><br />
         Nažalost, otkazan Vam je termin u ${reference.time}.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
@@ -149,8 +152,11 @@ async function getPurposeMessage(purpose, reference){
     }
 
     else if(purpose == "appointmentChangeAccept"){
-        let doctor = await Doctor.getById(reference.doctorid);
-        return `<p>Poštovani ${doctor.name} ${doctor.surname},<br /><br />
+        if(reference.doctorid != null)
+            var medicalPersonel = await Doctor.getById(reference.doctorid);
+        else
+            var medicalPersonel = await Nurse.getById(reference.nurseid);
+        return `<p>Poštovani ${medicalPersonel.name} ${medicalPersonel.surname},<br /><br />
         Vaš pacijent je potvrdio promjenu termina u ${reference.time}. Molimo Vas provjerite pojedinosti promjene na web stranici Sustava za naručivanje.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
@@ -162,8 +168,11 @@ async function getPurposeMessage(purpose, reference){
     }
 
     else if(purpose == "appointmentChangeReject"){
-        let doctor = await Doctor.getById(reference.doctorid);
-        return `<p>Poštovani ${doctor.name} ${doctor.surname},<br /><br />
+        if(reference.doctorid != null)
+            var medicalPersonel = await Doctor.getById(reference.doctorid);
+        else
+            var medicalPersonel = await Nurse.getById(reference.nurseid);
+        return `<p>Poštovani ${medicalPersonel.name} ${medicalPersonel.surname},<br /><br />
         Vaš pacijent je odbio promjenu termina u ${reference.time}. Molimo Vas provjerite pojedinosti promjene na web stranici Sustava za naručivanje.<br /><br />
         Lijep pozdrav, Vaš Sustav za naručivanje!<br />
         
