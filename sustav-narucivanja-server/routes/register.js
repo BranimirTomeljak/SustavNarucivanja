@@ -1,8 +1,6 @@
 var express = require("express");
 var router = express.Router();
 const bcrypt = require("bcrypt");
-const { pool } = require("../db/dbConfig");
-const flash = require("express-flash");
 const notification = require("../models/NotificationModel");
 const { User, Patient, Doctor, Nurse, Admin } = require("../models/UserModel");
 
@@ -119,7 +117,6 @@ const check_and_put = async (req, res, where) =>{
     hashedPassword,
     dateOfBirth,
     {
-      // TODO
       // this is very important, the frontent uses 'doctorId' while database uses 'doctorid'
       doctorid:doctorId,
       notificationMethod:notificationMethod,
@@ -128,7 +125,7 @@ const check_and_put = async (req, res, where) =>{
   )
   try{
     await person.addToDb();
-    //notification.sendNotification(notificationMethod, "registration", person);
+    notification.sendNotification(notificationMethod, "registration", person);
     res.json(person);
   }
   catch{

@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const { User, Patient, Doctor, Nurse, Admin } = require("../models/UserModel");
+const { Patient, Nurse } = require("../models/UserModel");
 
 router.get("/", async function (req, res, next) {
   res.json(req.session.user);

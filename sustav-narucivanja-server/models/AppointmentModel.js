@@ -17,7 +17,6 @@ const app_factory = (obj) =>{
 }
 
 class Appointment {
-    //konstruktor korisnika
     constructor(
         id = undefined,
         patientid,
@@ -61,7 +60,7 @@ class Appointment {
         return result;
     }
 
-    // da li je appointment pohranjen u bazu podataka?
+    //je li appointment pohranjen u bazu podataka?
     async isSavedToDb() {
         if (this.id === undefined)
             return false

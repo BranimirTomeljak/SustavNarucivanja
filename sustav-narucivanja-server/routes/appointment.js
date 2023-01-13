@@ -1,9 +1,8 @@
 var express = require('express');
-const db = require('../db')
-//const { rawListeners } = require('../app');
+const db = require('../db');
 const notification = require("../models/NotificationModel");
 var Appointment = require('../models/AppointmentModel');
-var { Doctor, Patient, Nurse } = require("../models/UserModel");
+var { Patient, Nurse } = require("../models/UserModel");
 var { Team } = require("../models/TeamModel");
 
 var router = express.Router();
@@ -11,11 +10,7 @@ const appointment_duration = 30;
 const add_hour = (date) => {date.setHours(date.getHours() + 1); return date;} 
 const curr_date_factory = ()=> {return add_hour(new Date())}
 
-// IMPORTANT!!!!
-// once we get the authentification and session working you will not need to send id and type
-
-
-// get all appointemnts from an `id` with `type`
+// get all appointments from an `id` with `type`
 router.get('/', async function(req, res, next) {
   let type = req.query.type
   let id   = req.query.id
@@ -176,9 +171,8 @@ router.post('/reserve', async function(req, res, next) {
   app.type = req.body.type
   await app.updateDb()
 
-  //let doctor = await Doctor.getById(app.doctorid);
-  //notification.sendEmail("appointmentReserved", doctor); //obavijesti doktora o rezervaciji termina
-  //res.status(300).send("OK")
+  let doctor = await Doctor.getById(app.doctorid);
+  notification.sendEmail("appointmentReserved", doctor); //obavijesti doktora o rezervaciji termina
   res.json(app);
 });
 
@@ -196,9 +190,8 @@ router.post('/cancel', async function(req, res, next) {
     app.created_on = undefined
     app.changes_from = undefined
     app.type = undefined
-    await app.updateDb()
-    //notification.sendEmail("appointmentCanceled", app)
-    //res.status(300).send("OK")
+    await app.updateDb();
+    notification.sendEmail("appointmentCanceled", app);
     res.json(app)
   }
 });
@@ -224,9 +217,8 @@ router.post('/change', async function(req, res, next) {
     app_to.type = app_from.type
     await app_to.updateDb()
     let patient = await Patient.getById(app_from.patientid);
-    //notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
-    res.json()
-    //res.status(300).send("OK")
+    notification.sendNotification(patient.notificationMethod, "appointmentChangeRequest", app_to);
+    res.json();
   }
 });
 
@@ -246,8 +238,7 @@ router.post('/accept_change', async function(req, res, next) {
   }
   await app_to.updateDb()
   await app_from.updateDb()
-  //notification.sendEmail("appointmentChangeAccept", app_to);
-  //res.status(300).send("OK")
+  notification.sendEmail("appointmentChangeAccept", app_to);
   res.json();
 });
 
@@ -260,7 +251,6 @@ router.post('/reject_change', async function(req, res, next) {
   app_to.patientid = undefined
   await app_to.updateDb()
   notification.sendEmail("appointmentChangeReject", app_to);
-  //res.status(300).send("OK")
   res.json();
 });
 
@@ -297,8 +287,7 @@ router.post('/delete', async function(req, res, next) {
   if (!app.isSavedToDb())
     res.status(500).send('Does not exist in the database.')
   else{
-    app.removeFromDb()
-    //res.status(300).send("OK");
+    app.removeFromDb();
     res.json();
   }
 

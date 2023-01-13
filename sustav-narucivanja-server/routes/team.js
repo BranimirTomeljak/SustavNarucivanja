@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const { Team } = require("../models/TeamModel");
 
-/* GET users listing. */
+/* GET teams listing. */
 router.get("/all", async function (req, res, next) {
   let teams = await Team.fetchAllTeams();
   res.json(teams);
