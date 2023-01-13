@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { ISingleTeam } from 'src/app/interfaces/single-team';
 import { ITeamCreateData } from 'src/app/interfaces/team-create-data';
 import { ITeamData } from 'src/app/interfaces/team-data';
@@ -25,6 +25,12 @@ export class DoctorsService {
 
   public getNurseById(id: number) {
     return this.http.get(`/api/nurse/${id}`);
+  }
+
+  public getNurseTeam() {
+    return this.http
+      .get('/api/user/nurse/teamId')
+      .pipe(tap((resp) => console.log('teamid', resp)));
   }
 
   public createTeam(data: ITeamCreateData) {

@@ -34,6 +34,9 @@ import { NursePageModule } from './pages/nurse-page/nurse-page.module';
 import { DoctorGuard } from './guards/doctor/doctor.guard';
 import { NurseGuard } from './guards/nurse/nurse.guard';
 import { PatientGuard } from './guards/patient/patient.guard';
+import { NurseWorkingHoursComponent } from './pages/nurse-page/nurse-working-hours/nurse-working-hours.component';
+import { NurseWorkingHoursModule } from './pages/nurse-page/nurse-working-hours/nurse-working-hours.module';
+import { NurseTeamGuard } from './guards/nurseTeam/nurse-team.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -72,7 +75,14 @@ const routes: Routes = [
       },
       {
         path: 'nurse',
-        component: NursePageComponent,
+        children: [
+          { path: '', component: NursePageComponent },
+          {
+            path: 'working-hours',
+            component: NurseWorkingHoursComponent,
+            canActivate: [NurseTeamGuard],
+          },
+        ],
         canActivate: [NurseGuard],
       },
       { path: 'profile', component: ProfileComponent },
@@ -107,6 +117,7 @@ const routes: Routes = [
     TeamViewModule,
     AllTeamsModule,
     ProfileModule,
+    NurseWorkingHoursModule,
   ],
   exports: [RouterModule],
 })
