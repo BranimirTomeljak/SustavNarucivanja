@@ -45,7 +45,7 @@ async function sendEmail(purpose, reference){
         };
     else{
         var options = { //izvješče HZZO-u
-            from: "sustavzanarucivanje@outlook.com",
+            from: "sustavzn@outlook.com",
             to: "mailadresahzzo@hzzo100posto.hr",
             subject: getPurposeSubject(purpose),
             attachments: [{
