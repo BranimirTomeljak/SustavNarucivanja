@@ -98,8 +98,8 @@ export class NurseWorkingHoursComponent implements OnDestroy {
       .addRangeAppointment(data)
       .pipe(
         catchError(() => {
-          this.snackBar.open('Morate definirati raspoloživost termina 10 dana unaprijed.', 'Zatvori', {
-            duration: 2000,
+          this.snackBar.open('Niste definirali termin 10 ili više dana unaprijed, ili već postoje zakazani termini u tom vremenu.', 'Zatvori', {
+            duration: 3000,
           });
           return EMPTY;
         })
