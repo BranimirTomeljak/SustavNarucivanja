@@ -232,7 +232,6 @@ export class PatientComponent implements OnInit{
         if(result){
           var appType = this.medicalServices.find(s => s.selected == true)?.title;
           this.medicalServices.forEach(ms => ms.selected = false);
-          console.log(appType)
           var nurseAppointments$: Observable<any> = this.trigger$.pipe(
             /*switchMap(() => {
               return this.authService.getPatientNurseId(); 
@@ -243,7 +242,6 @@ export class PatientComponent implements OnInit{
           );
           nurseAppointments$.subscribe(
             (modelData : IAppointmentData[]) => {
-              console.log(modelData);
               modelData.filter((app) => app.patientid === null)
               .filter((app) => !this.patientAppointments.find(a => a.time == app.time))
               .filter(app => this.addRule(new Date(app.time.slice(0, -1)), this.rule).getTime() > new Date().getTime())
