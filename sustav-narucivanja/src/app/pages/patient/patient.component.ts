@@ -272,14 +272,12 @@ export class PatientComponent implements OnInit{
           .filter((app) => !this.patientAppointments.find(a => a.time == app.time))
           .filter(app => this.addRule(new Date(app.time.slice(0, -1)), this.rule).getTime() > new Date().getTime())
           .forEach((app) => {
-            var typeNurse : string = app.type != undefined ? ", vrsta usluge: " + app.type : "";
             this.events.push({
               id: app.id,
               start: new Date(app.time.slice(0, -1)),
               end: this.addDuration(new Date(app.time.slice(0, -1)), app.duration),
-              title: 'Slobodan termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
-              + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
-              + typeNurse,
+              title: 'Slobodan termina ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
+              + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3),
               color: colors['yellow'] ,
               //actions: this.actions
             })

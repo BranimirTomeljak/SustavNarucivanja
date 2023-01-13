@@ -9,7 +9,7 @@ import {
   CalendarView,
 } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
-import { BehaviorSubject, Observable, Subject, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, switchMap, tap } from 'rxjs';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { IAppointmentData } from 'src/app/interfaces/appointment-data';
 import { Router } from '@angular/router';
@@ -17,6 +17,7 @@ import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Form, FormBuilder} from '@angular/forms';
 import { RecordAttendanceDialogComponent } from 'src/app/components/record-attendance-dialog/record-attendance-dialog.component';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { DoctorsService } from 'src/app/services/doctors/doctors.service';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -41,11 +42,14 @@ const colors: Record<string, EventColor> = {
 })
 export class NursePageComponent implements OnInit {
   private id = this.authService.id || 0;
-
+  private teamId?: number;
   private readonly subscription = new Subscription();
   // dohvacanje appointmenta
   private readonly trigger$ = new BehaviorSubject<any>(null);
   public appointments$: Observable<any> = this.trigger$.pipe(
+    switchMap(() => {
+      return this.doctorService.getNurseTeam();
+    }), tap((res) => this.teamId = res as number),
     switchMap(() => {
       return this.appointmentsService.getAllApointments('nurse', this.id);
     })
@@ -55,6 +59,7 @@ export class NursePageComponent implements OnInit {
   constructor(
     private readonly appointmentsService: AppointmentsService,
     private readonly authService: AuthService,
+    private readonly doctorService: DoctorsService,
     private readonly router: Router,
     public dialog : MatDialog
   ) {
@@ -122,7 +127,9 @@ export class NursePageComponent implements OnInit {
               .filter(app => app.patient_came == null)
               .filter(app => new Date(app.time.slice(0,-1)).toLocaleDateString() == new Date().toLocaleDateString())
               .filter(app => this.addDuration(new Date(app.time.slice(0, -1)), app.duration).getTime() < new Date().getTime());
-          var type : string = app.type != undefined ? ", vrsta usluge: " + app.type : "";
+          var typeRes : string = app.type != undefined ? ", vrsta usluge: " + app.type : "";
+          var typeFree : string = this.teamId == undefined ? ", vrsta usluge: " + app.type : "";
+          //var type : string = this.teamId == undefined ? ", vrsta usluge: " + app.type : "";
           this.badgeContent = this.pendingAppointments.length;
           this.events.push({
             id: app.id,
@@ -131,10 +138,10 @@ export class NursePageComponent implements OnInit {
             title: app.patientid !== null 
               ? 'Rezerviran termin ' + new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                   + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
-                  + type
+                  + typeRes
               : 'Slobodan termin ' +  new Date(app.time.slice(0, -1)).toLocaleTimeString().slice(0, -3) + ' - ' 
                   + this.addDuration(new Date(app.time.slice(0, -1)), app.duration).toLocaleTimeString().slice(0, -3)
-                  + type,
+                  + typeFree,
             color: app.patientid !== null ? { ...colors['red'] } : { ...colors['yellow'] },
             //actions: this.actions
           })
