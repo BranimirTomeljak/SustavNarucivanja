@@ -36,7 +36,7 @@ async function sendEmail(purpose, reference){
         var mailToSend = reference.mail;
     }
     
-    if(reference.mail != null || reference.time != null)
+    if(reference.mail != null || reference.time != null)    //osoba ili appointmemnt
         var options = {
             from: "sustavzanarucivanje@outlook.com",
             to: mailToSend,
@@ -44,7 +44,7 @@ async function sendEmail(purpose, reference){
             html: await getPurposeMessage(purpose, reference),
         };
     else{
-        var options = {
+        var options = { //izvješče HZZO-u
             from: "sustavzanarucivanje@outlook.com",
             to: "mailadresahzzo@hzzo100posto.hr",
             subject: getPurposeSubject(purpose),
@@ -85,6 +85,9 @@ function getPurposeSubject(purpose){
 
     else if(purpose == "reminder")
         return "Podsjetnik za termin pregleda";
+
+    else if(purpose == "remindDoctor")
+        return "Podsjetnik za dodavanje termina 10 dana unaprijed";
 
     else if(purpose == "xmlDay")
         return "Dnevno izvješće Sustava za naručivanje";
@@ -182,6 +185,17 @@ async function getPurposeMessage(purpose, reference){
         
         <img src="https://medicinarada.hr/wp-content/uploads/2020/04/hzzo_logo_posts.jpg" text-align="center" height="100px" alt="hzzo">`;
     
+    else if(purpose == "remindDoctor")
+        return `<p>Poštovani dr. ${reference.name} ${reference.surname},<br /><br />
+        Podsjećamo Vas da morate dodati termine pregleda 10 dana unaprijed. Molimo Vas provjerite vremena Vaših termina na web stranici Sustava za naručivanje.<br /><br />
+        Lijep pozdrav, Vaš Sustav za naručivanje!<br />
+        
+        <p style="color: blue"> Web stranica sustava: <a style="color: dark-blue" href="http://51.103.208.150/">http://51.103.208.150/</a></p>
+        <p style="color: red; font-style: italic"> Null team 2022. </p>
+        <p style="color: #878787; font-style: bold"> Ova poruka je automatski generirana </p>
+        
+        <img src="https://medicinarada.hr/wp-content/uploads/2020/04/hzzo_logo_posts.jpg" text-align="center" height="100px" alt="hzzo">`;
+    
     else
         return undefined;
 }
@@ -199,34 +213,10 @@ async function getPurposeSMS(purpose, reference){
         Lijep pozdrav, Vaš Sustav za naručivanje!
         Web stranica sustava: http://51.103.208.150/`;
 
-    else if(purpose == "appointmentCanceled"){
-        let doctor = await Doctor.getById(reference.doctorid);
-        return `Poštovani dr. ${doctor.name} ${doctor.surname},
-        Nažalost, otkazan Vam je termin u ${reference.time}.
-        Lijep pozdrav, Vaš Sustav za naručivanje!
-        Web stranica sustava: http://51.103.208.150/`;
-    }
-
     else if(purpose == "appointmentChangeRequest"){
         let patient = await Patient.getById(reference.patientid);
         return `Poštovani ${patient.name} ${patient.surname},
         Vaš doktor je zatražio promjenu termina. Molimo Vas provjerite pojedinosti promjene na web stranici Sustava za naručivanje.
-        Lijep pozdrav, Vaš Sustav za naručivanje!
-        Web stranica sustava: http://51.103.208.150/`;
-    }
-
-    else if(purpose == "appointmentChangeAccept"){
-        let doctor = await Doctor.getById(reference.doctorid);
-        return `Poštovani dr. ${doctor.name} ${doctor.surname},
-        Vaš pacijent je potvrdio promjenu termina u ${reference.time}. Molimo Vas provjerite pojedinosti promjene na web stranici Sustava za naručivanje.
-        Lijep pozdrav, Vaš Sustav za naručivanje!
-        Web stranica sustava: http://51.103.208.150/`;
-    }
-
-    else if(purpose == "appointmentChangeReject"){
-        let doctor = await Doctor.getById(reference.doctorid);
-        return `Poštovani dr. ${doctor.name} ${doctor.surname},
-        Vaš pacijent je odbio promjenu termina u ${reference.time}. Molimo Vas provjerite pojedinosti promjene na web stranici Sustava za naručivanje.
         Lijep pozdrav, Vaš Sustav za naručivanje!
         Web stranica sustava: http://51.103.208.150/`;
     }
@@ -257,7 +247,7 @@ async function appointmentReminderEmail() {
                 sendEmail("reminder", patient.email);
             }
         }
-    }, 60*60*1000);
+    }, 60*60*1000); //svakih sat vremena
 }
 
 async function sendSMS(purpose, reference){
@@ -344,7 +334,16 @@ async function monthlyReport(){
     const builder = new xml2js.Builder();
     let xml = builder.buildObject(obj);
     sendEmail("xmlMonth", xml);
-}   
+}
+
+async function remindDoctorToAdd(id){
+    const sql = "SELECT * FROM appointment WHERE doctorid = " + id + " AND time > (CURRENT_TIMESTAMP + INTERVAL '10' day)";
+    const result = await db.query(sql, []);
+    if(result.length == 0)  //nema termina poslije 10 dana od sada
+        return true;
+    else
+        return false;
+}
 
 cron.schedule("0 0 0 * * *", async function () { // Daily report
     await dailyReport();
@@ -352,6 +351,16 @@ cron.schedule("0 0 0 * * *", async function () { // Daily report
 
 cron.schedule("0 0 */30 * *", async function () { // Monthly report
     await monthlyReport();
+})
+
+// notify doctor to add appointements if he/she doesn't have any in range [today + 10 days, inf>
+cron.schedule("0 0 0 * * *", async function () {
+    let doctors = Doctor.getAll();
+    for(const doctor in doctors){
+        const shouldSendEmail = await remindDoctorToAdd(doctor.id);
+        if(shouldSendEmail)
+            sendEmail("remindDoctor", doctor);
+    }
 })
 
 module.exports = {

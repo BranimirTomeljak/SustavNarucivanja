@@ -346,7 +346,7 @@ class Nurse extends User {
           result.mail,
           result.password,
           result.dateofbirth,
-          { teamid: result[0].teamid }
+          {teamid:result.teamid},
         )
       );
     return toreturn;
@@ -400,8 +400,8 @@ class Doctor extends Nurse {
   ) {
     super(id, name, surname, sex, phonenumber, mail, password, dateofbirth);
     this.type = "doctor";
-    this.teamid = rest.teamid;
-    console.log("hello" + this.teamid);
+    this.teamid = rest.teamid
+    //console.log('hello' + this.teamid)
   }
 
   static async setRule(id, hours) {
@@ -465,8 +465,8 @@ class Doctor extends Nurse {
           result.mail,
           result.password,
           result.dateofbirth,
-          { teamid: result[0].teamid }
-        )
+          {teamid:result.teamid}
+          )
       );
     return toreturn;
   }
