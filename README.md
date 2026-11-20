@@ -1,28 +1,44 @@
-# Sustav narucivanja
+# Sustav naručivanja: Healthcare Appointment Booking
 
-Deployana aplikacija moze se naci [ovdje](http://51.103.208.150/).
+A web system for booking appointments in Croatian healthcare, built by a team of seven for the *Software Engineering* course at FER Zagreb (Oct 2022 – Jan 2023). Doctors publish their available appointments, patients book them, and everyone gets reminders by email and SMS.
 
-## Opis projekta
+## Features
 
-Kako je zdravlje najvažnija stvar u ljudskome životu za normalnu funkcional-
-nost društva, došlo je vrijeme da stvari krenu na bolje i da se naše zdravstvo mo-
-dernizira. Zdravstvo samo po sebi je ogroman sustav sa jako puno sudionika,
-bilo radnika ili pacijenata, stoga se na prvu čini jako teško riješiti problem ubr-
-zanja naručivanja pregleda i poboljšanja korisničkih usluga u zdravtsvu. No, na-
-kon sažimanja i kompresiranja problema u manje stavke, možemo sa sigurnošću
-reći da je problem rješiv i ostvariv. Cilj ovog projektnog zadatka je realizirati sus-
-tav planiranja zdravstvenih usluga i komunikacije s korisnicima koji bi omogućio
-učinkovite primarne, polikliničke i bolničke zdravstvene usluge u hrvatskom zdrav-
-stvu, lako dostupne svim gradanima. Kako su korisnici ove aplikacije svi puno-
-ljetni gradani Republike Hrvatske, sustav mora omogućavati jednostavnu uporabu
-sustava naručivanja koja mora biti prilagodena svim uzrastima.
+- Accounts for patients, doctors and nurses, with registration, login and session-based authentication (Passport, bcrypt)
+- Doctors publish ranges of available appointments, and patients book them through a calendar
+- Medical teams that group a doctor with nurses
+- Email (Nodemailer) and SMS (Vonage) notifications, with scheduled reminders for upcoming appointments
+- XML reports of appointments
+- Jest tests for the data models and Selenium IDE end-to-end tests
+- Project documentation with UML diagrams, written in LaTeX (in Croatian)
 
-## Opis strukture projekta
-- sustav-narucivanje
-    - folder koji sadrzi frontend dio
-- sustav-narucivanje-server
-    - folder koji sadrzi backend dio
-- dokumentacija
-    - tex fileovi koristeni za izradu dokumentacije
-- restart.sh
-    - skripta za pokretanje aplikacije
+## My part
+
+Backend: registration, login and logout, the appointment and patient routes, the notification model with email and SMS reminders, XML reports and database seed data, plus parts of the documentation.
+
+## Tech
+
+Angular 14 · Angular Material · angular-calendar · Bootstrap · Node.js · Express · PostgreSQL · Passport · Nodemailer · Vonage · node-cron · Jest
+
+## Structure
+
+- `sustav-narucivanja/`: Angular frontend
+- `sustav-narucivanja-server/`: Express backend (routes, models, database setup and seed)
+- `dokumentacija/`: LaTeX documentation and diagrams
+- `system_test.side`: Selenium IDE test suite
+- `restart.sh`: starts the frontend and backend on a server
+
+## Running locally
+
+```bash
+# backend: needs PostgreSQL and a .env with DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE and SESSION_SECRET
+cd sustav-narucivanja-server
+npm install
+npm run seed
+npm run dev
+
+# frontend
+cd sustav-narucivanja
+npm install
+npm start   # http://localhost:4200
+```
