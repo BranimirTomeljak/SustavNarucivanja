@@ -8,8 +8,8 @@ const { Vonage } = require('@vonage/server-sdk');
 const vonage = new Vonage({
     applicationId: 'da9774a8-73a3-4a59-9568-1937558b6b85',
     privateKey: './private.key',
-    apiKey: "01bf6b5f",
-    apiSecret: "jcfVCTE4UVYOaVfK"
+    apiKey: process.env.VONAGE_API_KEY,
+    apiSecret: process.env.VONAGE_API_SECRET
 });
 
 async function sendNotification(method, purpose, reference){
@@ -24,7 +24,7 @@ async function sendEmail(purpose, reference){
         service: "hotmail",
         auth: {
             user: "sustavzn@outlook.com",
-            pass: "Narucivanje1950",
+            pass: process.env.EMAIL_PASSWORD,
         }
     });
   
